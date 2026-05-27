@@ -5,513 +5,978 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Open Water Thermal Index</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    min-height: 100vh;
-    background: linear-gradient(160deg, #050d1a 0%, #0a1628 50%, #081420 100%);
-    font-family: 'Courier New', monospace;
-    color: #c8dff0;
-    padding: 24px 16px 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .header { text-align: center; margin-bottom: 28px; max-width: 480px; width: 100%; }
-  .header-sub { font-size: 11px; letter-spacing: 6px; color: #4fc3f7; margin-bottom: 8px; opacity: 0.7; }
-  .header h1 { font-size: 24px; font-weight: 700; color: #e8f4ff; letter-spacing: 1px; }
-  .header p { font-size: 12px; color: #7ab0cc; margin-top: 6px; opacity: 0.8; }
-  .container { width: 100%; max-width: 440px; }
-  .card {
-    background: linear-gradient(135deg, #0d1e35 0%, #0a1628 100%);
-    border: 1px solid #1a3050;
-    border-radius: 14px;
-    padding: 20px;
-    margin-bottom: 16px;
-  }
-  .card-title { font-size: 11px; letter-spacing: 3px; color: #4fc3f7; margin-bottom: 14px; }
-  input[type="text"], input[type="number"] {
-    width: 100%;
-    padding: 12px;
-    background: #050d1a;
-    border: 1px solid #1a3050;
-    border-radius: 8px;
-    color: #c8dff0;
-    font-size: 13px;
-    font-family: 'Courier New', monospace;
-    margin-bottom: 12px;
-    outline: none;
-  }
-  input::placeholder { color: #3a5a7a; }
-  input:focus { border-color: #4fc3f7; }
-  .btn {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, #4fc3f7 0%, #4fc3f7cc 100%);
-    color: #000;
-    border: none;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    cursor: pointer;
-    font-family: 'Courier New', monospace;
-    margin-bottom: 4px;
-  }
-  .btn:disabled { background: #0d2040; color: #7ab0cc; cursor: not-allowed; }
-  .btn.green { background: linear-gradient(135deg, #00e5a0 0%, #00e5a0cc 100%); }
-  .link-btn { text-align: center; margin-top: 12px; font-size: 11px; color: #4fc3f7; cursor: pointer; opacity: 0.7; text-decoration: underline; }
-  .search-results { margin-top: 8px; border: 1px solid #1a3050; border-radius: 8px; overflow: hidden; }
-  .search-result { padding: 12px 14px; font-size: 13px; color: #c8dff0; cursor: pointer; border-bottom: 1px solid #1a3050; }
-  .search-result:last-child { border-bottom: none; }
-  .search-result:active { background: #0d2040; }
-  .option-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
-  .option-btn {
-    padding: 8px 14px;
-    background: #050d1a;
-    color: #7ab0cc;
-    border: 1px solid #1a3050;
-    border-radius: 8px;
-    font-size: 12px;
-    cursor: pointer;
-    font-family: 'Courier New', monospace;
-  }
-  .option-btn.active { background: #4fc3f7; color: #000; border-color: #4fc3f7; font-weight: 700; }
-  .label { font-size: 11px; color: #7ab0cc; letter-spacing: 2px; margin-bottom: 8px; margin-top: 16px; }
-  .label:first-child { margin-top: 0; }
-  .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .data-cell { background: #050d1a; border-radius: 8px; padding: 10px 12px; border: 1px solid #1a3050; }
-  .data-cell-label { font-size: 10px; color: #4a7a9b; letter-spacing: 1px; margin-bottom: 4px; }
-  .data-cell-value { font-size: 15px; font-weight: 700; color: #c8dff0; }
-  .hrv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .hrv-label { font-size: 10px; color: #7ab0cc; margin-bottom: 4px; }
-  .error-box { margin-top: 12px; padding: 12px; background: #1a0a0a; border: 1px solid #ff2244; border-radius: 8px; font-size: 12px; color: #ff8080; }
+:root {
+  --bg0: #04090f;
+  --bg1: #081422;
+  --bg2: #0d1e35;
+  --bg3: #122540;
+  --border: #1a3050;
+  --border2: #244060;
+  --accent: #4fc3f7;
+  --accent2: #00e5a0;
+  --accent3: #f5a623;
+  --text: #c8dff0;
+  --text2: #7ab0cc;
+  --text3: #4a7a9b;
+  --danger: #ff4466;
+  --warn: #ff8c35;
+  --ok: #00e5a0;
+  --rad: 14px;
+  --rad-sm: 8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{
+  min-height:100vh;
+  background:var(--bg0);
+  background-image:
+    radial-gradient(ellipse at 20% 20%, #0a2040 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, #051828 0%, transparent 60%);
+  font-family:'Courier New',monospace;
+  color:var(--text);
+  padding:0 0 60px;
+  display:flex;flex-direction:column;align-items:center;
+}
 
-  /* RESULT */
-  .equiv-block {
-    border-radius: 16px;
-    padding: 28px 24px;
-    margin-bottom: 16px;
-    text-align: center;
-    border: 2px solid #4fc3f7;
-  }
-  .equiv-label { font-size: 11px; letter-spacing: 5px; color: #4fc3f7; margin-bottom: 6px; }
-  .equiv-real { font-size: 13px; color: #7ab0cc; margin-bottom: 16px; }
-  .equiv-temp { font-size: 80px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
-  .equiv-sub { font-size: 12px; opacity: 0.6; margin-bottom: 20px; }
-  .zone-badge {
-    display: inline-block;
-    padding: 6px 20px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 3px;
-    color: #000;
-    margin-bottom: 16px;
-  }
-  .factors-card { margin-bottom: 16px; }
-  .factor-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #0d2040;
-    font-size: 13px;
-  }
-  .factor-row:last-child { border-bottom: none; }
-  .factor-name { color: #7ab0cc; }
-  .factor-val { font-weight: 700; font-size: 15px; }
-  .factor-val.neg { color: #ff6b35; }
-  .factor-val.pos { color: #00e5a0; }
-  .factor-val.neu { color: #7ab0cc; }
+/* ── HEADER ── */
+.app-header{
+  width:100%;
+  background:linear-gradient(180deg,#051020 0%,transparent 100%);
+  padding:28px 20px 20px;
+  text-align:center;
+  position:relative;
+  border-bottom:1px solid var(--border);
+  margin-bottom:24px;
+}
+.app-header .eyebrow{font-size:10px;letter-spacing:6px;color:var(--accent);opacity:.6;margin-bottom:8px;}
+.app-header h1{font-size:22px;font-weight:900;color:#e8f4ff;letter-spacing:2px;}
+.app-header .sub{font-size:11px;color:var(--text2);margin-top:6px;opacity:.8;}
+.info-btn{
+  position:absolute;top:24px;right:20px;
+  width:32px;height:32px;border-radius:50%;
+  background:var(--bg2);border:1px solid var(--border2);
+  color:var(--accent);font-size:15px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.info-btn:hover{background:var(--bg3);border-color:var(--accent);}
 
-  .step { display: none; }
-  .step.active { display: block; }
-  .gps-info { font-size: 16px; margin-bottom: 6px; }
-  .gps-coords { font-size: 11px; color: #7ab0cc; margin-bottom: 20px; }
-  .location-confirmed { margin-top: 14px; padding: 10px 14px; background: #0a2a1a; border: 1px solid #00e5a0; border-radius: 8px; font-size: 13px; color: #00e5a0; margin-bottom: 12px; }
-  .footer { margin-top: 32px; font-size: 10px; color: #4fc3f7; opacity: 0.3; text-align: center; letter-spacing: 2px; }
+/* ── CONTAINER ── */
+.container{width:100%;max-width:460px;padding:0 16px;}
+
+/* ── CARD ── */
+.card{
+  background:linear-gradient(135deg,var(--bg2) 0%,var(--bg1) 100%);
+  border:1px solid var(--border);border-radius:var(--rad);
+  padding:20px;margin-bottom:16px;
+  box-shadow:0 4px 24px rgba(0,0,0,.3);
+}
+.card-title{
+  font-size:10px;letter-spacing:4px;color:var(--accent);
+  margin-bottom:16px;display:flex;align-items:center;gap:8px;
+}
+.card-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── INPUTS ── */
+input[type=text],input[type=number]{
+  width:100%;padding:13px 14px;
+  background:var(--bg0);border:1px solid var(--border);border-radius:var(--rad-sm);
+  color:var(--text);font-size:14px;font-family:'Courier New',monospace;
+  margin-bottom:12px;outline:none;transition:border-color .2s;
+}
+input::placeholder{color:var(--text3);}
+input:focus{border-color:var(--accent);}
+
+/* ── BUTTONS ── */
+.btn{
+  width:100%;padding:15px;border:none;border-radius:var(--rad-sm);
+  font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;
+  font-family:'Courier New',monospace;transition:all .2s;margin-bottom:4px;
+  position:relative;overflow:hidden;
+}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#2aa8e0);color:#000;}
+.btn-green{background:linear-gradient(135deg,var(--accent2),#00b880);color:#000;}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn:active:not(:disabled){transform:scale(.98);}
+
+/* ── OPTION PILLS ── */
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px;}
+.pill{
+  padding:9px 16px;background:var(--bg0);color:var(--text2);
+  border:1px solid var(--border);border-radius:20px;font-size:12px;
+  cursor:pointer;font-family:'Courier New',monospace;transition:all .2s;
+}
+.pill.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700;}
+.pill:active{transform:scale(.96);}
+
+/* ── LABELS ── */
+.label{font-size:10px;color:var(--text2);letter-spacing:2px;margin:16px 0 8px;}
+.label:first-child{margin-top:0;}
+
+/* ── DATA CELLS ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.dcell{background:var(--bg0);border-radius:var(--rad-sm);padding:11px 13px;border:1px solid var(--border);}
+.dcell-lbl{font-size:9px;color:var(--text3);letter-spacing:1px;margin-bottom:5px;}
+.dcell-val{font-size:15px;font-weight:700;color:var(--text);}
+
+/* ── SEARCH RESULTS ── */
+.search-box{margin-top:8px;border:1px solid var(--border);border-radius:var(--rad-sm);overflow:hidden;}
+.sresult{padding:13px 15px;font-size:13px;color:var(--text);cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s;}
+.sresult:last-child{border-bottom:none;}
+.sresult:active{background:var(--bg3);}
+
+/* ── ALERTS ── */
+.alert{padding:12px 14px;border-radius:var(--rad-sm);font-size:12px;margin-top:10px;line-height:1.5;}
+.alert-err{background:#1a0808;border:1px solid var(--danger);color:#ff9090;}
+.alert-ok{background:#081a12;border:1px solid var(--ok);color:#80ffcc;}
+
+/* ── STEPS ── */
+.step{display:none;}.step.active{display:block;}
+
+/* ── LINK BTN ── */
+.link-btn{text-align:center;margin-top:14px;font-size:11px;color:var(--accent);cursor:pointer;opacity:.7;letter-spacing:1px;}
+
+/* ── SECTION DIVIDER ── */
+.section-title{font-size:10px;letter-spacing:4px;color:var(--text3);margin:20px 0 12px;padding-left:2px;}
+
+/* ── RESULT ── */
+.balance-card{
+  border-radius:var(--rad);padding:24px;margin-bottom:16px;
+  border:2px solid var(--ok);
+  background:linear-gradient(135deg,#051a10 0%,var(--bg1) 100%);
+}
+.balance-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;
+}
+.balance-row:last-child{border-bottom:none;}
+.balance-row.total{
+  margin-top:6px;padding-top:14px;border-top:2px solid var(--border2);
+  font-size:15px;font-weight:700;
+}
+.brow-name{color:var(--text2);}
+.brow-val{font-weight:700;font-size:14px;}
+.pos{color:var(--ok);}
+.neg{color:var(--warn);}
+.neu{color:var(--text2);}
+
+.net-block{
+  text-align:center;padding:20px;border-radius:var(--rad);
+  margin-bottom:16px;border:2px solid;
+}
+.net-label{font-size:10px;letter-spacing:4px;margin-bottom:8px;}
+.net-value{font-size:60px;font-weight:900;line-height:1;margin-bottom:4px;}
+.net-unit{font-size:12px;opacity:.6;margin-bottom:14px;}
+.net-badge{
+  display:inline-block;padding:6px 20px;border-radius:20px;
+  font-size:12px;font-weight:700;letter-spacing:3px;color:#000;
+}
+
+/* ── TIME BAR ── */
+.time-section{margin-bottom:16px;}
+.time-row{margin-bottom:14px;}
+.time-header{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;}
+.time-label{color:var(--text2);}
+.time-val{color:var(--text);font-weight:700;}
+.bar-bg{background:var(--bg0);border-radius:4px;height:8px;overflow:hidden;border:1px solid var(--border);}
+.bar-fill{height:100%;border-radius:4px;transition:width .6s ease;}
+
+/* ── RECOVERY ── */
+.recovery-box{
+  padding:16px;border-radius:var(--rad-sm);border:1px solid;margin-top:6px;
+}
+.recovery-title{font-size:10px;letter-spacing:3px;margin-bottom:6px;}
+.recovery-text{font-size:13px;line-height:1.5;}
+
+/* ── MINUTE INPUT ── */
+.min-row{display:flex;gap:10px;align-items:center;margin-bottom:12px;}
+.min-row input{margin-bottom:0;flex:1;}
+.min-row .btn{width:auto;padding:13px 20px;flex-shrink:0;}
+
+/* ── PROFILE FORM ── */
+.profile-saved{
+  padding:12px 14px;background:var(--bg0);border:1px solid var(--border);
+  border-radius:var(--rad-sm);font-size:12px;color:var(--text2);margin-bottom:12px;
+}
+.profile-saved span{color:var(--accent);font-weight:700;}
+
+/* ── INFO PAGE ── */
+.info-page{display:none;width:100%;max-width:460px;padding:0 16px 40px;}
+.info-page.active{display:block;}
+.info-section{margin-bottom:28px;}
+.info-section h2{font-size:13px;color:var(--accent);letter-spacing:3px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.info-section p{font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px;}
+.info-section code{
+  display:block;background:var(--bg0);border:1px solid var(--border);
+  border-radius:var(--rad-sm);padding:12px 14px;font-size:11px;
+  color:var(--accent2);margin:8px 0;line-height:1.6;white-space:pre-wrap;
+}
+.info-section a{color:var(--accent);text-decoration:none;}
+.ref-pill{
+  display:inline-block;padding:4px 10px;background:var(--bg0);
+  border:1px solid var(--border);border-radius:12px;
+  font-size:11px;color:var(--text2);margin:4px 4px 4px 0;
+}
+
+/* ── DISCLAIMER ── */
+.disclaimer{
+  background:var(--bg0);border:1px solid #3a2a00;border-radius:var(--rad);
+  padding:16px;font-size:11px;color:#aa8844;line-height:1.7;
+}
+.disclaimer strong{color:var(--accent3);}
+
+/* ── LOADING SPINNER ── */
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── FOOTER ── */
+.app-footer{margin-top:32px;font-size:9px;color:var(--text3);opacity:.4;text-align:center;letter-spacing:3px;}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-sub">OPEN WATER THERMAL INDEX</div>
-  <h1>🌊 Calculadora Térmica</h1>
-  <p>Temperatura equivalente real para nadadores en aguas abiertas</p>
+<!-- ═══════════════ HEADER ═══════════════ -->
+<div class="app-header">
+  <div class="eyebrow">OPEN WATER THERMAL INDEX</div>
+  <h1>🌊 OWTI</h1>
+  <div class="sub">Balance térmico real para nadadores en aguas abiertas</div>
+  <button class="info-btn" id="btn-info" title="Acerca de">ℹ</button>
 </div>
 
-<div class="container">
+<!-- ═══════════════ MAIN APP ═══════════════ -->
+<div class="container" id="main-app">
 
   <!-- STEP 1: LOCATION -->
   <div id="step-location" class="step active">
+
+    <!-- GPS card -->
     <div class="card" id="gps-card" style="display:none">
       <div class="card-title">UBICACIÓN GPS</div>
-      <div class="gps-info" id="gps-name">📍 Detectando...</div>
-      <div class="gps-coords" id="gps-coords"></div>
-      <button class="btn" id="btn-fetch-gps">Obtener condiciones actuales</button>
-      <div class="link-btn" id="link-use-search">→ Buscar otra ubicación</div>
+      <div style="font-size:15px;margin-bottom:6px" id="gps-name">📍 Detectando...</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:20px" id="gps-coords"></div>
+      <button class="btn btn-primary" id="btn-fetch-gps">Obtener condiciones actuales</button>
+      <div class="link-btn" id="link-search">→ Buscar otra ubicación</div>
     </div>
 
+    <!-- Search card -->
     <div class="card" id="search-card">
       <div class="card-title">BUSCAR UBICACIÓN</div>
-      <input type="text" id="search-input" placeholder="ej: Montevideo, Mar del Plata..." autocomplete="off" />
-      <button class="btn" id="btn-search">Buscar</button>
-      <div id="search-results" class="search-results" style="display:none"></div>
-      <div id="location-confirmed" class="location-confirmed" style="display:none"></div>
-      <button class="btn" id="btn-fetch-search" style="display:none; margin-top:4px">Obtener condiciones actuales</button>
+      <input type="text" id="search-input" placeholder="ej: Montevideo, Mar del Plata..." autocomplete="off"/>
+      <button class="btn btn-primary" id="btn-search">Buscar</button>
+      <div id="search-results" class="search-box" style="display:none"></div>
+      <div id="loc-confirmed" class="alert alert-ok" style="display:none"></div>
+      <button class="btn btn-primary" id="btn-fetch-search" style="display:none;margin-top:4px">Obtener condiciones actuales</button>
     </div>
-    <div id="error-location" class="error-box" style="display:none"></div>
+
+    <div id="err-location" class="alert alert-err" style="display:none"></div>
   </div>
 
-  <!-- STEP 2: PARAMS -->
+  <!-- STEP 2: PROFILE + SESSION -->
   <div id="step-params" class="step">
+
+    <!-- Weather summary -->
     <div class="card">
       <div class="card-title">CONDICIONES ACTUALES</div>
-      <div class="data-grid" id="weather-grid"></div>
-      <div style="font-size:11px; color:#7ab0cc; margin-top:10px" id="location-label"></div>
+      <div class="grid2" id="weather-grid"></div>
+      <div style="font-size:11px;color:var(--text2);margin-top:10px" id="loc-label"></div>
     </div>
+
+    <!-- Profile -->
     <div class="card">
-      <div class="card-title">TU SESIÓN</div>
-      <div class="label">Tipo de traje</div>
-      <div class="option-group" id="suit-group">
-        <button class="option-btn" data-value="none">Sin traje</button>
-        <button class="option-btn active" data-value="standard">Traje estándar</button>
-        <button class="option-btn" data-value="thermal">Traje térmico</button>
-      </div>
-      <div class="label">Intensidad de nado</div>
-      <div class="option-group" id="intensity-group">
-        <button class="option-btn" data-value="slow">Lento</button>
-        <button class="option-btn active" data-value="moderate">Moderado</button>
-        <button class="option-btn" data-value="intense">Intenso</button>
-      </div>
-      <div class="label">HRV hoy (opcional)</div>
-      <div class="hrv-grid">
-        <div>
-          <div class="hrv-label">HRV actual (ms)</div>
-          <input type="number" id="hrv-input" placeholder="ej: 67" style="margin-bottom:0">
+      <div class="card-title">PERFIL FÍSICO</div>
+      <div id="profile-saved" class="profile-saved" style="display:none"></div>
+      <div id="profile-form">
+        <div class="grid2">
+          <div>
+            <div class="label">ALTURA (cm)</div>
+            <input type="number" id="p-altura" placeholder="ej: 175" style="margin-bottom:0">
+          </div>
+          <div>
+            <div class="label">PESO (kg)</div>
+            <input type="number" id="p-peso" placeholder="ej: 66" style="margin-bottom:0">
+          </div>
         </div>
-        <div>
-          <div class="hrv-label">Baseline (ms)</div>
-          <input type="number" id="baseline-input" placeholder="ej: 80" style="margin-bottom:0">
+        <div class="grid2" style="margin-top:10px">
+          <div>
+            <div class="label">EDAD</div>
+            <input type="number" id="p-edad" placeholder="ej: 53" style="margin-bottom:0">
+          </div>
+          <div>
+            <div class="label">% GRASA (opcional)</div>
+            <input type="number" id="p-grasa" placeholder="ej: 14" style="margin-bottom:0">
+          </div>
+        </div>
+        <div class="label" style="margin-top:12px">SEXO</div>
+        <div class="pills" id="sex-group">
+          <button class="pill active" data-value="1">Masculino</button>
+          <button class="pill" data-value="0">Femenino</button>
         </div>
       </div>
     </div>
-    <button class="btn green" id="btn-calculate">Calcular temperatura equivalente</button>
-    <div class="link-btn" id="link-back-location">← Cambiar ubicación</div>
+
+    <!-- Session -->
+    <div class="card">
+      <div class="card-title">PARÁMETROS DE SESIÓN</div>
+      <div class="label">INTENSIDAD DE NADO</div>
+      <div class="pills" id="intensity-group">
+        <button class="pill" data-value="slow">Lento</button>
+        <button class="pill active" data-value="moderate">Moderado</button>
+        <button class="pill" data-value="intense">Intenso</button>
+      </div>
+      <div class="label">PROTECCIÓN</div>
+      <div class="pills" id="suit-group">
+        <button class="pill active" data-value="none">Sin traje</button>
+        <button class="pill" data-value="standard">Traje estándar</button>
+        <button class="pill" data-value="thermal">Traje térmico</button>
+      </div>
+    </div>
+
+    <button class="btn btn-green" id="btn-calculate">Calcular balance térmico</button>
+    <div class="link-btn" id="link-back-loc">← Cambiar ubicación</div>
   </div>
 
   <!-- STEP 3: RESULT -->
   <div id="step-result" class="step">
-    <div class="equiv-block" id="equiv-block">
-      <div class="equiv-label">TEMPERATURA EQUIVALENTE</div>
-      <div class="equiv-real" id="equiv-real"></div>
-      <div class="equiv-temp" id="equiv-temp"></div>
-      <div class="equiv-sub">°C percibidos en el agua</div>
-      <div class="zone-badge" id="zone-badge"></div>
+
+    <!-- Net balance big display -->
+    <div class="net-block" id="net-block">
+      <div class="net-label" id="net-label">BALANCE NETO</div>
+      <div class="net-value" id="net-value">—</div>
+      <div class="net-unit">Watts</div>
+      <div class="net-badge" id="net-badge">—</div>
     </div>
 
-    <div class="card factors-card">
-      <div class="card-title">FACTORES DE AJUSTE</div>
-      <div id="factors-list"></div>
-    </div>
-
+    <!-- Balance breakdown -->
     <div class="card">
-      <div class="card-title">CONDICIONES</div>
-      <div class="data-grid" id="summary-grid"></div>
+      <div class="card-title">DESGLOSE TÉRMICO</div>
+      <div id="balance-rows"></div>
     </div>
 
-    <button class="btn" id="btn-recalc">← Recalcular</button>
-    <div class="link-btn" id="link-new-location">→ Nueva ubicación</div>
+    <!-- Time to thresholds -->
+    <div class="card" id="time-card">
+      <div class="card-title">TIEMPO HASTA UMBRALES</div>
+      <div id="time-bars"></div>
+    </div>
+
+    <!-- Minute simulator -->
+    <div class="card">
+      <div class="card-title">SIMULADOR DE SESIÓN</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:12px">¿Cuántos minutos planificás nadar?</div>
+      <div class="min-row">
+        <input type="number" id="sim-min" placeholder="minutos" min="1" max="120">
+        <button class="btn btn-primary" id="btn-sim" style="font-size:12px;letter-spacing:1px">Simular</button>
+      </div>
+      <div id="sim-result"></div>
+    </div>
+
+    <button class="btn btn-ghost" id="btn-recalc">← Recalcular sesión</button>
+    <div class="link-btn" id="link-new-loc">→ Nueva ubicación</div>
   </div>
 
 </div>
 
-<div class="footer">OPEN WATER THERMAL INDEX v1.0</div>
+<!-- ═══════════════ INFO PAGE ═══════════════ -->
+<div class="info-page" id="info-page">
+
+  <div class="card" style="margin-top:8px">
+    <div class="card-title">SOBRE OWTI</div>
+    <div class="info-section">
+      <p>Open Water Thermal Index (OWTI) es una herramienta de estimación del balance térmico para nadadores en aguas abiertas, basada en física de transferencia de calor y fisiología del ejercicio en frío.</p>
+      <p>Desarrollada en colaboración entre <strong style="color:var(--accent)">Martin Thomas</strong> y <strong style="color:var(--accent2)">Claude (Anthropic)</strong>, como proyecto open source personal.</p>
+      <div style="margin-top:12px">
+        <a href="https://github.com/martin1homas/Impacto-termico" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg0);border:1px solid var(--border2);border-radius:var(--rad-sm);font-size:12px;color:var(--accent);text-decoration:none">
+          ⚙ GitHub: martin1homas/Impacto-termico
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">EL MODELO FÍSICO</div>
+    <div class="info-section">
+      <h2>1. ÁREA SUPERFICIAL CORPORAL</h2>
+      <p>Fórmula de Du Bois (1916), estándar en fisiología clínica:</p>
+      <code>A = 0.007184 × altura(cm)^0.725 × peso(kg)^0.425  [m²]</code>
+      <p>Distribución en crawl: 82% sumergida, 10% aérea (brazos+cabeza), 14% solar (espalda+cabeza).</p>
+
+      <h2>2. COMPOSICIÓN CORPORAL</h2>
+      <p>Si no se ingresa % grasa medido, se estima con la fórmula de Deurenberg (1991), validada en 1229 adultos:</p>
+      <code>BF% = 1.20×BMI + 0.23×edad - 10.8×sexo - 5.4
+(sexo: hombre=1, mujer=0, R²=0.79)</code>
+
+      <h2>3. PRODUCCIÓN METABÓLICA</h2>
+      <p>Basada en equivalentes metabólicos (MET) para nado crawl:</p>
+      <code>Q_met = MET × 3.5 × peso/1000 × 20.9 × 1000/60  [W]
+Lento (MET 6): ~290W | Moderado (8): ~390W | Intenso (10): ~490W</code>
+
+      <h2>4. PÉRDIDA AL AGUA</h2>
+      <code>T_piel = T_agua + 6°C  (estado estacionario, crawl activo)
+h_agua = 200–400 W/m²°C según intensidad, ajustado por grasa subcutánea
+Sin traje:  Q = h × ΔT × A_sumergida
+Con traje:  Q = ΔT / (1/h + R_traje) × A_sumergida
+  R_estándar = 0.05 m²°C/W | R_térmico = 0.10 m²°C/W</code>
+
+      <h2>5. PÉRDIDA AL AIRE + VIENTO</h2>
+      <p>Fórmula de Mitchell (1974) para coeficiente convectivo humano. Viento lateral (70% del frontal) por trayecto ida/vuelta:</p>
+      <code>h_aire = 8.3 × (v_ms × 0.70)^0.6  [W/m²°C]
+Q_aire = h_aire × (T_piel_aire - T_aire) × A_aérea</code>
+
+      <h2>6. GANANCIA SOLAR</h2>
+      <p>Modelo astronómico completo con declinación solar, ángulo horario y masa de aire:</p>
+      <code>δ = 23.45 × sin(2π/365 × (día-81))  [declinación]
+sin(α) = sin(lat)×sin(δ) + cos(lat)×cos(δ)×cos(H)  [elevación]
+I = 1361 × 0.7^(1/sin(α)) × sin(α)  [W/m²]
+Q_solar = I × A_solar × 0.70  (absortividad piel)</code>
+
+      <h2>7. BALANCE Y CAPACIDAD TÉRMICA</h2>
+      <code>Q_neta = Q_met - Q_agua - Q_aire + Q_solar  [W]
+masa_efectiva = masa_magra × 0.82
+c_tejido = 3470 J/kg°C
+ΔT_núcleo(t) = (Q_neta × t) / (masa_efectiva × c_tejido)</code>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">FUENTES DE DATOS</div>
+    <div class="info-section">
+      <p>Todos los datos meteorológicos y oceánicos son obtenidos en tiempo real de APIs abiertas y gratuitas:</p>
+      <div style="margin-top:10px">
+        <div class="ref-pill">🌡 Open-Meteo API — temperatura, viento, radiación solar</div>
+        <div class="ref-pill">🌊 Open-Meteo Marine API — temperatura superficial del agua</div>
+        <div class="ref-pill">📍 Open-Meteo Geocoding API — búsqueda de ubicaciones</div>
+      </div>
+      <p style="margin-top:12px">Open-Meteo utiliza modelos meteorológicos de ECMWF, DWD, NOAA y otros servicios meteorológicos nacionales. Resolución temporal: 15 minutos. Cobertura: global.</p>
+      <div style="margin-top:10px">
+        <a href="https://open-meteo.com" target="_blank" class="ref-pill" style="color:var(--accent)">→ open-meteo.com</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">REFERENCIAS CIENTÍFICAS</div>
+    <div class="info-section">
+      <div class="ref-pill">Du Bois & Du Bois (1916) — Área superficial corporal</div>
+      <div class="ref-pill">Deurenberg et al. (1991) — Estimación % grasa por BMI</div>
+      <div class="ref-pill">Mitchell (1974) — Transferencia de calor convectiva humana</div>
+      <div class="ref-pill">Meeus (1998) — Algoritmos astronómicos</div>
+      <div class="ref-pill">Tipton et al. (2017) — Fisiología inmersión agua fría</div>
+      <div class="ref-pill">Castellani & Young (2016) — Human physiological responses to cold exposure</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">AVISO LEGAL</div>
+    <div class="disclaimer">
+      <strong>DISCLAIMER — LIMITACIÓN DE RESPONSABILIDAD</strong><br><br>
+      Open Water Thermal Index (OWTI) es una herramienta educativa e informativa basada en modelos físicos y fisiológicos simplificados. <strong>No constituye asesoramiento médico, deportivo ni de seguridad de ningún tipo.</strong><br><br>
+      Los cálculos son estimaciones teóricas que no consideran variaciones individuales, condiciones de salud preexistentes, factores ambientales no medidos, ni circunstancias imprevistas. Las respuestas fisiológicas al frío varían significativamente entre individuos.<br><br>
+      <strong>La natación en aguas abiertas, especialmente en agua fría, conlleva riesgos reales incluyendo hipotermia, colapso cardiovascular y ahogamiento.</strong> Nunca nade solo en aguas frías. Consulte siempre a un profesional médico calificado antes de realizar actividad física en condiciones extremas.<br><br>
+      Los autores, colaboradores y cualquier parte asociada al desarrollo de esta aplicación <strong>no asumen responsabilidad alguna</strong> por daños directos, indirectos, incidentales o consecuentes derivados del uso o mal uso de esta herramienta, en cualquier jurisdicción.<br><br>
+      Al utilizar esta aplicación, el usuario acepta estos términos y reconoce que actúa bajo su propia responsabilidad.<br><br>
+      <em>This disclaimer applies internationally and supersedes any local consumer protection claims to the extent permitted by applicable law.</em>
+    </div>
+  </div>
+
+  <div style="margin-top:20px">
+    <button class="btn btn-ghost" id="btn-close-info">← Volver a la calculadora</button>
+  </div>
+  <div class="app-footer" style="margin-top:20px">OWTI v2.0 · MARTIN THOMAS × CLAUDE (ANTHROPIC)</div>
+</div>
 
 <script>
-const GEO_API    = "https://geocoding-api.open-meteo.com/v1";
-const METEO_API  = "https://api.open-meteo.com/v1";
-const MARINE_API = "https://marine-api.open-meteo.com/v1";
+// ═══════════════════════════════════════════════
+// CONSTANTS & STATE
+// ═══════════════════════════════════════════════
+const GEO    = "https://geocoding-api.open-meteo.com/v1";
+const METEO  = "https://api.open-meteo.com/v1";
+const MARINE = "https://marine-api.open-meteo.com/v1";
 
-// Protection values: how many °C the suit adds back
-const SUIT_WARMTH    = { none: 0, standard: 3.5, thermal: 6.0 };
-const SUIT_LABEL     = { none: "Sin traje", standard: "Traje estándar", thermal: "Traje térmico" };
-const INTENSITY_HEAT = { slow: 0.8, moderate: 1.8, intense: 3.2 };
-const INTENSITY_LABEL= { slow: "Nado lento", moderate: "Nado moderado", intense: "Nado intenso" };
+const SUIT_R    = { none:0, standard:0.05, thermal:0.10 };
+const SUIT_LBL  = { none:"Sin traje", standard:"Traje estándar", thermal:"Traje térmico" };
+const INT_MET   = { slow:6, moderate:8, intense:10 };
+const INT_H     = { slow:200, moderate:300, intense:400 };
+const INT_LBL   = { slow:"Nado lento", moderate:"Nado moderado", intense:"Nado intenso" };
+const SEX_LBL   = { 1:"Masculino", 0:"Femenino" };
 
-const ZONES = [
-  { max: 8,  label: "EXTREMO",   bg: "#3a0000", accent: "#ff2244", text: "#ffb0b0" },
-  { max: 11, label: "MUY FRÍO",  bg: "#3a1500", accent: "#ff6b35", text: "#ffc9a0" },
-  { max: 14, label: "FRÍO",      bg: "#3a2a00", accent: "#f5a623", text: "#ffe0a0" },
-  { max: 18, label: "FRESCO",    bg: "#1a3a0a", accent: "#7ed321", text: "#c8f0a0" },
-  { max: 99, label: "CONFORTABLE",bg:"#0a3d2e", accent: "#00e5a0", text: "#b3ffe0" },
-];
+let S = {
+  coords:null, locName:"", weather:null,
+  suit:"none", intensity:"moderate", sex:1,
+  result:null,
+  profile: JSON.parse(localStorage.getItem("owti_profile")||"null"),
+};
 
-function getZone(temp) {
-  return ZONES.find(z => temp < z.max) || ZONES[ZONES.length - 1];
-}
-
-let state = { coords: null, locationName: "", weather: null, suit: "standard", intensity: "moderate" };
-
-// ── GPS ──────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════
+// GPS
+// ═══════════════════════════════════════════════
 window.addEventListener('load', () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
-      state.coords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-      state.locationName = "Tu ubicación GPS";
-      document.getElementById('gps-name').textContent = "📍 " + state.locationName;
-      document.getElementById('gps-coords').textContent =
-        pos.coords.latitude.toFixed(4) + ", " + pos.coords.longitude.toFixed(4);
-      document.getElementById('gps-card').style.display = 'block';
-      document.getElementById('search-card').style.display = 'none';
-    }, () => { /* denied — keep search visible */ });
+  loadProfile();
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(pos=>{
+      S.coords = {lat:pos.coords.latitude, lon:pos.coords.longitude};
+      S.locName = "Tu ubicación GPS";
+      $('gps-name').textContent = "📍 " + S.locName;
+      $('gps-coords').textContent = pos.coords.latitude.toFixed(4)+", "+pos.coords.longitude.toFixed(4);
+      $('gps-card').style.display='block';
+      $('search-card').style.display='none';
+    }, ()=>{});
   }
 });
 
-document.getElementById('link-use-search').addEventListener('click', () => {
-  document.getElementById('gps-card').style.display = 'none';
-  document.getElementById('search-card').style.display = 'block';
+// ═══════════════════════════════════════════════
+// PROFILE
+// ═══════════════════════════════════════════════
+function loadProfile(){
+  if(!S.profile) return;
+  const p = S.profile;
+  $('p-altura').value = p.altura||'';
+  $('p-peso').value   = p.peso||'';
+  $('p-edad').value   = p.edad||'';
+  $('p-grasa').value  = p.grasa||'';
+  S.sex = p.sex ?? 1;
+  activatePill('sex-group', String(S.sex));
+  showProfileSaved();
+}
+
+function saveProfile(){
+  S.profile = {
+    altura: parseFloat($('p-altura').value)||null,
+    peso:   parseFloat($('p-peso').value)||null,
+    edad:   parseFloat($('p-edad').value)||null,
+    grasa:  parseFloat($('p-grasa').value)||null,
+    sex:    S.sex,
+  };
+  localStorage.setItem("owti_profile", JSON.stringify(S.profile));
+}
+
+function showProfileSaved(){
+  const p = S.profile;
+  if(!p||!p.altura||!p.peso) return;
+  const bmi = (p.peso/((p.altura/100)**2)).toFixed(1);
+  const bf = p.grasa ? p.grasa+"%" : estimateBF(bmi,p.edad,p.sex).toFixed(1)+"%*";
+  $('profile-saved').innerHTML =
+    `<span>${p.altura}cm · ${p.peso}kg · BMI ${bmi} · Grasa ${bf}</span> <span style="color:var(--text3);cursor:pointer;float:right" onclick="editProfile()">editar</span>`;
+  $('profile-saved').style.display='block';
+  $('profile-form').style.display='none';
+}
+
+function editProfile(){
+  $('profile-saved').style.display='none';
+  $('profile-form').style.display='block';
+}
+
+// ═══════════════════════════════════════════════
+// LOCATION SEARCH
+// ═══════════════════════════════════════════════
+on('link-search','click',()=>{
+  $('gps-card').style.display='none';
+  $('search-card').style.display='block';
 });
+on('search-input','keydown',e=>{ if(e.key==='Enter') doSearch(); });
+on('btn-search','click', doSearch);
 
-// ── Search ───────────────────────────────────────────────────
-document.getElementById('search-input').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
-document.getElementById('btn-search').addEventListener('click', doSearch);
-
-async function doSearch() {
-  const q = document.getElementById('search-input').value.trim();
-  if (!q) return;
-  setBtn('btn-search', true, 'Buscando...');
-  hideError('error-location');
-  try {
-    const url = GEO_API + "/search?name=" + encodeURIComponent(q) + "&count=6&language=es&format=json";
+async function doSearch(){
+  const q = $('search-input').value.trim();
+  if(!q) return;
+  setBtn('btn-search',true,'<span class="spinner"></span>Buscando...');
+  hide('err-location');
+  try{
+    const url = `${GEO}/search?name=${encodeURIComponent(q)}&count=6&language=es&format=json`;
     const res = await fetch(url);
-    if (!res.ok) throw new Error("HTTP " + res.status);
+    if(!res.ok) throw new Error("HTTP "+res.status);
     const data = await res.json();
-    renderResults(data.results || []);
-  } catch(e) {
-    showError('error-location', 'No se pudo buscar (' + e.message + '). Verificá tu conexión.');
+    renderSearchResults(data.results||[]);
+  }catch(e){
+    showErr('err-location','No se pudo buscar ('+e.message+'). Verificá tu conexión a internet.');
   }
-  setBtn('btn-search', false, 'Buscar');
+  setBtn('btn-search',false,'Buscar');
 }
 
-function renderResults(results) {
-  const box = document.getElementById('search-results');
-  if (!results.length) {
-    box.innerHTML = '<div class="search-result" style="color:#7ab0cc">Sin resultados — intentá con otro nombre</div>';
-    box.style.display = 'block';
-    return;
+function renderSearchResults(results){
+  const box = $('search-results');
+  box.innerHTML='';
+  if(!results.length){
+    box.innerHTML='<div class="sresult" style="color:var(--text2)">Sin resultados — intentá con otro nombre</div>';
+    box.style.display='block'; return;
   }
-  box.innerHTML = '';
-  results.forEach(r => {
-    const div = document.createElement('div');
-    div.className = 'search-result';
-    div.textContent = '📍 ' + r.name + (r.admin1 ? ', ' + r.admin1 : '') + ', ' + r.country;
-    div.addEventListener('click', () => {
-      state.coords = { lat: r.latitude, lon: r.longitude };
-      state.locationName = r.name + (r.admin1 ? ', ' + r.admin1 : '') + ', ' + r.country;
-      box.style.display = 'none';
-      const conf = document.getElementById('location-confirmed');
-      conf.textContent = '✓ ' + state.locationName;
-      conf.style.display = 'block';
-      document.getElementById('btn-fetch-search').style.display = 'block';
+  results.forEach(r=>{
+    const d=document.createElement('div');
+    d.className='sresult';
+    d.textContent=`📍 ${r.name}${r.admin1?', '+r.admin1:''}, ${r.country}`;
+    d.addEventListener('click',()=>{
+      S.coords={lat:r.latitude,lon:r.longitude};
+      S.locName=`${r.name}${r.admin1?', '+r.admin1:''}, ${r.country}`;
+      box.style.display='none';
+      const c=$('loc-confirmed');
+      c.textContent='✓ '+S.locName; c.style.display='block';
+      $('btn-fetch-search').style.display='block';
     });
-    box.appendChild(div);
+    box.appendChild(d);
   });
-  box.style.display = 'block';
+  box.style.display='block';
 }
 
-// ── Fetch weather ────────────────────────────────────────────
-document.getElementById('btn-fetch-gps').addEventListener('click', fetchWeather);
-document.getElementById('btn-fetch-search').addEventListener('click', fetchWeather);
+// ═══════════════════════════════════════════════
+// FETCH WEATHER
+// ═══════════════════════════════════════════════
+on('btn-fetch-gps','click', fetchWeather);
+on('btn-fetch-search','click', fetchWeather);
 
-async function fetchWeather() {
-  if (!state.coords) return;
-  const isGps = document.getElementById('gps-card').style.display !== 'none';
-  const btnId = isGps ? 'btn-fetch-gps' : 'btn-fetch-search';
-  setBtn(btnId, true, 'Obteniendo datos...');
-  hideError('error-location');
-  try {
-    const lat = state.coords.lat, lon = state.coords.lon;
-    const [meteo, marine] = await Promise.all([
-      fetch(METEO_API + "/forecast?latitude=" + lat + "&longitude=" + lon +
-        "&current=temperature_2m,wind_speed_10m,shortwave_radiation,weather_code&timezone=auto").then(r => r.json()),
-      fetch(MARINE_API + "/marine?latitude=" + lat + "&longitude=" + lon +
-        "&current=sea_surface_temperature&timezone=auto").then(r => r.json()),
+async function fetchWeather(){
+  if(!S.coords) return;
+  const isGps=$('gps-card').style.display!=='none';
+  const btnId=isGps?'btn-fetch-gps':'btn-fetch-search';
+  setBtn(btnId,true,'<span class="spinner"></span>Obteniendo datos...');
+  hide('err-location');
+  try{
+    const {lat,lon}=S.coords;
+    const [meteo,marine]=await Promise.all([
+      fetch(`${METEO}/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,shortwave_radiation,weather_code&timezone=auto`).then(r=>r.json()),
+      fetch(`${MARINE}/marine?latitude=${lat}&longitude=${lon}&current=sea_surface_temperature&timezone=auto`).then(r=>r.json()),
     ]);
-    if (!meteo.current) throw new Error("Sin datos meteorológicos");
-    state.weather = {
-      airTemp:     meteo.current.temperature_2m    ?? null,
-      windSpeed:   meteo.current.wind_speed_10m    ?? 0,
-      solarRad:    meteo.current.shortwave_radiation ?? 0,
-      weatherCode: meteo.current.weather_code      ?? 0,
-      waterTemp:   marine.current?.sea_surface_temperature ?? null,
+    if(!meteo.current) throw new Error("Sin datos del servidor meteorológico");
+    S.weather={
+      airTemp:   meteo.current.temperature_2m    ?? 20,
+      windSpeed: meteo.current.wind_speed_10m    ?? 0,
+      solarRad:  meteo.current.shortwave_radiation ?? 0,
+      weatherCode:meteo.current.weather_code     ?? 0,
+      waterTemp: marine.current?.sea_surface_temperature ?? null,
+      timezone:  meteo.timezone ?? "UTC",
     };
     renderWeatherGrid();
     showStep('params');
-  } catch(e) {
-    showError('error-location', 'No se pudieron obtener datos: ' + e.message);
+  }catch(e){
+    showErr('err-location','No se pudieron obtener datos: '+e.message);
   }
-  setBtn(btnId, false, 'Obtener condiciones actuales');
+  setBtn(btnId,false,isGps?'Obtener condiciones actuales':'Obtener condiciones actuales');
 }
 
-function renderWeatherGrid() {
-  const w = state.weather;
-  document.getElementById('weather-grid').innerHTML = `
-    <div class="data-cell"><div class="data-cell-label">TEMP. AGUA</div><div class="data-cell-value">${w.waterTemp != null ? w.waterTemp.toFixed(1) + '°C' : 'N/D'}</div></div>
-    <div class="data-cell"><div class="data-cell-label">TEMP. AIRE</div><div class="data-cell-value">${w.airTemp.toFixed(1)}°C</div></div>
-    <div class="data-cell"><div class="data-cell-label">VIENTO</div><div class="data-cell-value">${w.windSpeed.toFixed(1)} km/h</div></div>
-    <div class="data-cell"><div class="data-cell-label">CIELO</div><div class="data-cell-value">${weatherDesc(w.weatherCode)}</div></div>
+function renderWeatherGrid(){
+  const w=S.weather;
+  $('weather-grid').innerHTML=`
+    <div class="dcell"><div class="dcell-lbl">TEMP. AGUA</div><div class="dcell-val">${w.waterTemp!=null?w.waterTemp.toFixed(1)+'°C':'N/D'}</div></div>
+    <div class="dcell"><div class="dcell-lbl">TEMP. AIRE</div><div class="dcell-val">${w.airTemp.toFixed(1)}°C</div></div>
+    <div class="dcell"><div class="dcell-lbl">VIENTO</div><div class="dcell-val">${w.windSpeed.toFixed(1)} km/h</div></div>
+    <div class="dcell"><div class="dcell-lbl">CIELO</div><div class="dcell-val">${weatherDesc(w.weatherCode)}</div></div>
   `;
-  document.getElementById('location-label').textContent = '📍 ' + state.locationName;
+  $('loc-label').textContent='📍 '+S.locName;
 }
 
-// ── Option groups ────────────────────────────────────────────
-function setupGroup(id, key) {
-  document.getElementById(id).addEventListener('click', e => {
-    const btn = e.target.closest('.option-btn');
-    if (!btn) return;
-    document.querySelectorAll('#' + id + ' .option-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    state[key] = btn.dataset.value;
+// ═══════════════════════════════════════════════
+// OPTION PILLS
+// ═══════════════════════════════════════════════
+function setupPills(groupId,key){
+  $(groupId).addEventListener('click',e=>{
+    const btn=e.target.closest('.pill');
+    if(!btn) return;
+    activatePill(groupId, btn.dataset.value);
+    S[key]=isNaN(btn.dataset.value)?btn.dataset.value:Number(btn.dataset.value);
   });
 }
-setupGroup('suit-group', 'suit');
-setupGroup('intensity-group', 'intensity');
+setupPills('suit-group','suit');
+setupPills('intensity-group','intensity');
+setupPills('sex-group','sex');
 
-// ── Calculate ────────────────────────────────────────────────
-document.getElementById('btn-calculate').addEventListener('click', calculate);
+function activatePill(groupId, val){
+  document.querySelectorAll(`#${groupId} .pill`).forEach(b=>{
+    b.classList.toggle('active', b.dataset.value===String(val));
+  });
+}
 
-function calculate() {
-  const w = state.weather;
-  const waterTemp = w.waterTemp ?? 13;
-  const hrv      = parseFloat(document.getElementById('hrv-input').value)      || 0;
-  const baseline = parseFloat(document.getElementById('baseline-input').value) || 0;
+// ═══════════════════════════════════════════════
+// PHYSICS ENGINE
+// ═══════════════════════════════════════════════
+function degToRad(d){ return d*Math.PI/180; }
 
-  // --- Factor calculations ---
-  // 1. Wind chill on exposed skin (face, arms)
-  const ws = w.windSpeed;
-  const windChillAir = ws > 1
-    ? 13.12 + 0.6215 * w.airTemp - 11.37 * Math.pow(ws, 0.16) + 0.3965 * w.airTemp * Math.pow(ws, 0.16)
-    : w.airTemp;
-  // Wind effect on perceived water temp (partial — face/arms exposed)
-  const windEffect = Math.round((windChillAir - w.airTemp) * 0.25 * 10) / 10;
+function solarElevation(lat, lon, date){
+  const dayOfYear = Math.floor((date-(new Date(date.getFullYear(),0,0)))/864e5);
+  const decl = 23.45 * Math.sin(degToRad(360/365*(dayOfYear-81)));
+  // Equation of time approximation
+  const B = degToRad(360/365*(dayOfYear-81));
+  const eot = 9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B);
+  // Solar noon offset by longitude
+  const tzOffset = -date.getTimezoneOffset()/60;
+  const solarNoon = 12 - (lon - tzOffset*15)/15 - eot/60;
+  const hourAngle = (date.getHours()+date.getMinutes()/60 - solarNoon)*15;
+  const sinAlpha = Math.sin(degToRad(lat))*Math.sin(degToRad(decl))
+                 + Math.cos(degToRad(lat))*Math.cos(degToRad(decl))*Math.cos(degToRad(hourAngle));
+  return Math.max(0, sinAlpha);
+}
 
-  // 2. Solar radiation benefit
-  const solarEffect = Math.round(Math.min(1, w.solarRad / 700) * 1.5 * 10) / 10;
+function solarIrradiance(sinAlpha){
+  if(sinAlpha<=0) return 0;
+  return 1361 * Math.pow(0.7, 1/sinAlpha) * sinAlpha;
+}
 
-  // 3. Suit warmth
-  const suitEffect = SUIT_WARMTH[state.suit] || 0;
+function estimateBF(bmi,age,sex){
+  return Math.max(5, 1.20*bmi + 0.23*age - 10.8*sex - 5.4);
+}
 
-  // 4. Swimmer heat generation
-  const intensityEffect = INTENSITY_HEAT[state.intensity] || 0;
+function calcThermal(profile, session, weather, coords){
+  const {altura, peso, edad, sex} = profile;
+  const {suit, intensity} = session;
+  const {airTemp, windSpeed, waterTemp, waterTempUsed} = weather;
 
-  // 5. HRV adjustment (autonomic reserve)
-  let hrvEffect = 0;
-  let hrvLabel = "";
-  if (hrv > 0 && baseline > 0) {
-    const ratio = hrv / baseline;
-    if (ratio < 0.75)       { hrvEffect = -1.5; hrvLabel = "HRV bajo (estrés extra)"; }
-    else if (ratio < 0.88)  { hrvEffect = -0.5; hrvLabel = "HRV moderado"; }
-    else                     { hrvEffect =  0.5; hrvLabel = "HRV alto (buena reserva)"; }
+  // ── Anthropometry
+  const h=altura/100;
+  const bmi=peso/(h*h);
+  const bf=(profile.grasa!=null&&profile.grasa>0)?profile.grasa:estimateBF(bmi,edad,sex);
+  const A_total=0.007184*Math.pow(altura,0.725)*Math.pow(peso,0.425);
+  const A_sub  =0.82*A_total;
+  const A_air  =0.10*A_total;
+  const A_sol  =0.14*A_total;
+  const leanMass=peso*(1-bf/100);
+  const effMass =leanMass*0.82;
+  const fatFactor=1+(bf-15)*0.008;
+
+  // ── Metabolic production
+  const met=INT_MET[intensity];
+  const Q_met=met*3.5*peso/1000*20.9*1000/60;
+
+  // ── Water heat loss
+  const T_piel_w=waterTempUsed+6;
+  const h_w_base=INT_H[intensity];
+  const h_w=h_w_base/Math.max(1,fatFactor);
+  const R_suit=SUIT_R[suit];
+  let Q_water;
+  if(R_suit===0){
+    Q_water=h_w*(T_piel_w-waterTempUsed)*A_sub;
+  } else {
+    Q_water=((T_piel_w-waterTempUsed)/(1/h_w+R_suit))*A_sub;
   }
 
-  // Equivalent temperature
-  const equiv = Math.round((waterTemp + windEffect + solarEffect + suitEffect + intensityEffect + hrvEffect) * 10) / 10;
-  const zone = getZone(equiv);
+  // ── Air + wind heat loss
+  const T_piel_a=T_piel_w-2;
+  const v_ms=windSpeed/3.6;
+  const v_eff=v_ms*0.70;
+  const h_air=v_eff>0.1?(8.3*Math.pow(v_eff,0.6)):3.5;
+  const Q_air=h_air*(T_piel_a-airTemp)*A_air;
 
-  // Render result header
-  const block = document.getElementById('equiv-block');
-  block.style.background = `linear-gradient(135deg, ${zone.bg} 0%, #0a1628 100%)`;
-  block.style.borderColor = zone.accent;
+  // ── Solar gain
+  const now=new Date();
+  const sinAlpha=solarElevation(coords.lat, coords.lon, now);
+  const I=solarIrradiance(sinAlpha);
+  const Q_solar=I*A_sol*0.70;
 
-  document.getElementById('equiv-real').textContent = `Agua real: ${waterTemp.toFixed(1)}°C`;
-  document.getElementById('equiv-real').style.color = '#7ab0cc';
+  // ── Net balance
+  const Q_net=Q_met-Q_water-Q_air+Q_solar;
 
-  const tempEl = document.getElementById('equiv-temp');
-  tempEl.textContent = equiv.toFixed(1);
-  tempEl.style.color = zone.accent;
+  // ── Thermal capacity
+  const c=3470;
+  const cap_mild =effMass*c*2.0/1000; // kJ to 35°C
+  const cap_mod  =effMass*c*4.0/1000; // kJ to 33°C
 
-  const badge = document.getElementById('zone-badge');
-  badge.textContent = zone.label;
-  badge.style.background = zone.accent;
+  return {
+    Q_met,Q_water,Q_air,Q_solar,Q_net,
+    effMass,c,cap_mild,cap_mod,
+    A_total,bf,bmi,
+    sinAlpha,I,
+    windSpeed,suit,intensity,
+    waterTemp:waterTempUsed,airTemp,
+  };
+}
 
-  // Factors list
-  const factors = [
-    { name: "Temperatura real del agua", val: waterTemp.toFixed(1), unit: "°C", delta: null },
-    { name: "Viento " + ws.toFixed(0) + " km/h", val: windEffect, delta: windEffect },
-    { name: "Radiación solar", val: solarEffect, delta: solarEffect },
-    { name: SUIT_LABEL[state.suit], val: suitEffect, delta: suitEffect },
-    { name: INTENSITY_LABEL[state.intensity], val: intensityEffect, delta: intensityEffect },
-  ];
-  if (hrv > 0 && baseline > 0) {
-    factors.push({ name: hrvLabel, val: hrvEffect, delta: hrvEffect });
+// ═══════════════════════════════════════════════
+// CALCULATE
+// ═══════════════════════════════════════════════
+on('btn-calculate','click', calculate);
+
+function calculate(){
+  // Validate
+  const altura=parseFloat($('p-altura').value);
+  const peso  =parseFloat($('p-peso').value);
+  const edad  =parseFloat($('p-edad').value);
+  if(!altura||!peso||!edad){
+    alert('Ingresá altura, peso y edad para continuar.'); return;
   }
+  const grasa=parseFloat($('p-grasa').value)||null;
+  const profile={altura,peso,edad,grasa,sex:S.sex};
+  saveProfile();
+  showProfileSaved();
 
-  document.getElementById('factors-list').innerHTML = factors.map(f => {
-    if (f.delta === null) {
-      return `<div class="factor-row"><span class="factor-name">${f.name}</span><span class="factor-val neu">${f.val}°C</span></div>`;
-    }
-    const sign = f.delta > 0 ? "+" : "";
-    const cls  = f.delta > 0 ? "pos" : f.delta < 0 ? "neg" : "neu";
-    return `<div class="factor-row"><span class="factor-name">${f.name}</span><span class="factor-val ${cls}">${sign}${f.val.toFixed(1)}°C</span></div>`;
-  }).join('') +
-  `<div class="factor-row" style="border-top:1px solid #4fc3f7; margin-top:4px; padding-top:14px">
-    <span class="factor-name" style="color:#c8dff0; font-weight:700">EQUIVALENTE</span>
-    <span class="factor-val" style="color:${zone.accent}; font-size:18px">${equiv.toFixed(1)}°C</span>
-  </div>`;
+  const w=S.weather;
+  const waterTempUsed=w.waterTemp??13;
+  const weatherAdj={...w, waterTempUsed};
 
-  // Summary grid
-  let sumHTML = `
-    <div class="data-cell"><div class="data-cell-label">AGUA REAL</div><div class="data-cell-value">${waterTemp.toFixed(1)}°C</div></div>
-    <div class="data-cell"><div class="data-cell-label">EQUIVALENTE</div><div class="data-cell-value" style="color:${zone.accent}">${equiv.toFixed(1)}°C</div></div>
-    <div class="data-cell"><div class="data-cell-label">AIRE</div><div class="data-cell-value">${w.airTemp.toFixed(1)}°C</div></div>
-    <div class="data-cell"><div class="data-cell-label">VIENTO</div><div class="data-cell-value">${ws.toFixed(1)} km/h</div></div>
-  `;
-  if (hrv > 0) sumHTML += `<div class="data-cell"><div class="data-cell-label">HRV ACTUAL</div><div class="data-cell-value">${hrv} ms</div></div>`;
-  if (baseline > 0) sumHTML += `<div class="data-cell"><div class="data-cell-label">BASELINE</div><div class="data-cell-value">${baseline} ms</div></div>`;
-  document.getElementById('summary-grid').innerHTML = sumHTML;
+  const r=calcThermal(profile,{suit:S.suit,intensity:S.intensity},weatherAdj,S.coords);
+  S.result=r;
 
+  renderResult(r, waterTempUsed);
   showStep('result');
 }
 
-// ── Navigation ───────────────────────────────────────────────
-document.getElementById('link-back-location').addEventListener('click', () => showStep('location'));
-document.getElementById('btn-recalc').addEventListener('click', () => showStep('params'));
-document.getElementById('link-new-location').addEventListener('click', () => {
-  state.weather = null; state.coords = null; state.locationName = '';
-  document.getElementById('location-confirmed').style.display = 'none';
-  document.getElementById('btn-fetch-search').style.display = 'none';
-  document.getElementById('search-results').style.display = 'none';
-  document.getElementById('search-input').value = '';
+function renderResult(r, waterTempUsed){
+  // ── Net block
+  const net=r.Q_net;
+  const netAbs=Math.abs(net);
+  let zBg,zAccent,zLabel;
+  if(net>50)      { zBg="#051a10"; zAccent="#00e5a0"; zLabel="NÚCLEO ESTABLE"; }
+  else if(net>0)  { zBg="#0a1a05"; zAccent="#7ed321"; zLabel="EQUILIBRIO"; }
+  else if(net>-100){ zBg="#1a1000"; zAccent="#f5a623"; zLabel="ENFRIAMIENTO LEVE"; }
+  else if(net>-250){ zBg="#1a0800"; zAccent="#ff6b35"; zLabel="ENFRIAMIENTO NOTABLE"; }
+  else             { zBg="#1a0000"; zAccent="#ff2244"; zLabel="ENFRIAMIENTO SEVERO"; }
+
+  const nb=$('net-block');
+  nb.style.background=`linear-gradient(135deg,${zBg} 0%,var(--bg1) 100%)`;
+  nb.style.borderColor=zAccent;
+  $('net-label').style.color=zAccent;
+  $('net-value').style.color=zAccent;
+  $('net-value').textContent=(net>=0?"+":"")+Math.round(net);
+  const badge=$('net-badge');
+  badge.textContent=zLabel; badge.style.background=zAccent;
+
+  // ── Balance rows
+  const rows=[
+    {name:"⚡ Producción metabólica ("+INT_LBL[r.intensity]+")", val:r.Q_met, sign:1},
+    {name:"💧 Pérdida al agua ("+waterTempUsed.toFixed(1)+"°C)", val:r.Q_water, sign:-1},
+    {name:"💨 Pérdida al aire + viento ("+r.windSpeed.toFixed(1)+"km/h)", val:r.Q_air, sign:-1},
+    {name:"☀️ Ganancia solar (elev. "+(Math.asin(r.sinAlpha)*180/Math.PI).toFixed(1)+"°)", val:r.Q_solar, sign:1},
+  ];
+  $('balance-rows').innerHTML=rows.map(row=>{
+    const v=Math.round(Math.abs(row.val));
+    const cls=row.sign===1?'pos':'neg';
+    const prefix=row.sign===1?'+':'-';
+    return `<div class="balance-row">
+      <span class="brow-name">${row.name}</span>
+      <span class="brow-val ${cls}">${prefix}${v} W</span>
+    </div>`;
+  }).join('')+
+  `<div class="balance-row total">
+    <span class="brow-name">BALANCE NETO</span>
+    <span class="brow-val" style="color:${zAccent}">${net>=0?"+":""}${Math.round(net)} W</span>
+  </div>`;
+
+  // ── Time bars (only if net negative)
+  if(net<0){
+    const tMild =r.cap_mild *1000/netAbs/60;
+    const tMod  =r.cap_mod  *1000/netAbs/60;
+    $('time-card').style.display='block';
+    $('time-bars').innerHTML=`
+      ${timeBar("Hipotermia leve (35°C)",tMild,"#f5a623")}
+      ${timeBar("Hipotermia moderada (33°C)",tMod,"#ff4466")}
+    `;
+  } else {
+    $('time-card').style.display='none';
+  }
+
+  // ── Reset simulator
+  $('sim-min').value='';
+  $('sim-result').innerHTML='';
+}
+
+function timeBar(label, minutes, color){
+  const m=Math.round(minutes);
+  const pct=Math.min(100, (30/m)*100); // 30min reference
+  return `<div class="time-row">
+    <div class="time-header">
+      <span class="time-label">${label}</span>
+      <span class="time-val">~${m} min</span>
+    </div>
+    <div class="bar-bg">
+      <div class="bar-fill" style="width:${pct}%;background:${color}"></div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// SIMULATOR
+// ═══════════════════════════════════════════════
+on('btn-sim','click', runSimulator);
+
+function runSimulator(){
+  const mins=parseFloat($('sim-min').value);
+  if(!mins||mins<=0||!S.result) return;
+  const r=S.result;
+  const secs=mins*60;
+  const deficit=Math.abs(r.Q_net)*secs; // J
+  const deltaT=deficit/(r.effMass*r.c);
+  const Tnucleo=37-deltaT;
+
+  let recovColor,recovLabel,recovDetail;
+  const defKJ=deficit/1000;
+  if(r.Q_net>=0){
+    recovColor="#00e5a0"; recovLabel="Sin déficit térmico";
+    recovDetail="Balance positivo: el núcleo se mantiene estable o gana calor.";
+  } else if(defKJ<50){
+    recovColor="#00e5a0"; recovLabel="🟢 Recuperación rápida";
+    recovDetail="10–15 minutos con ropa seca y bebida tibia.";
+  } else if(defKJ<150){
+    recovColor="#f5a623"; recovLabel="🟡 Recuperación moderada";
+    recovDetail="20–40 minutos: ropa seca, bebida caliente, ambiente cálido.";
+  } else if(defKJ<300){
+    recovColor="#ff6b35"; recovLabel="🟠 Recuperación larga";
+    recovDetail="45–90 minutos con calor activo. Evitá exposición inmediata al frío.";
+  } else {
+    recovColor="#ff2244"; recovLabel="🔴 Zona de riesgo";
+    recovDetail="Más de 90 min de recuperación. Considerar asistencia médica.";
+  }
+
+  $('sim-result').innerHTML=`
+    <div class="grid2" style="margin-bottom:12px">
+      <div class="dcell">
+        <div class="dcell-lbl">T° NÚCLEO EST.</div>
+        <div class="dcell-val" style="color:${Tnucleo>36?'var(--ok)':Tnucleo>35?'var(--accent3)':'var(--danger)'}">${Tnucleo.toFixed(2)}°C</div>
+      </div>
+      <div class="dcell">
+        <div class="dcell-lbl">DÉFICIT ACUM.</div>
+        <div class="dcell-val">${Math.round(defKJ)} kJ</div>
+      </div>
+    </div>
+    <div class="recovery-box" style="border-color:${recovColor};background:${recovColor}11">
+      <div class="recovery-title" style="color:${recovColor}">${recovLabel}</div>
+      <div class="recovery-text">${recovDetail}</div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+on('link-back-loc','click',()=>showStep('location'));
+on('btn-recalc','click',()=>showStep('params'));
+on('link-new-loc','click',()=>{
+  S.weather=null; S.coords=null; S.locName='';
+  $('loc-confirmed').style.display='none';
+  $('btn-fetch-search').style.display='none';
+  $('search-results').style.display='none';
+  $('search-input').value='';
   showStep('location');
 });
 
-// ── Helpers ──────────────────────────────────────────────────
-function showStep(name) {
-  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-  document.getElementById('step-' + name).classList.add('active');
-  window.scrollTo(0, 0);
+on('btn-info','click',()=>{
+  $('main-app').style.display='none';
+  $('info-page').classList.add('active');
+  window.scrollTo(0,0);
+});
+on('btn-close-info','click',()=>{
+  $('main-app').style.display='block';
+  $('info-page').classList.remove('active');
+  window.scrollTo(0,0);
+});
+
+function showStep(name){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  $('step-'+name).classList.add('active');
+  window.scrollTo(0,0);
 }
-function setBtn(id, disabled, text) {
-  const b = document.getElementById(id);
-  b.disabled = disabled;
-  b.textContent = text;
-}
-function showError(id, msg) {
-  const el = document.getElementById(id);
-  el.textContent = '⚠️ ' + msg;
-  el.style.display = 'block';
-}
-function hideError(id) {
-  document.getElementById(id).style.display = 'none';
-}
-function weatherDesc(code) {
-  if (code === 0)  return "☀️ Despejado";
-  if (code <= 3)   return "🌤 Parcial";
-  if (code <= 49)  return "🌫 Neblina";
-  if (code <= 67)  return "🌧 Lluvia";
-  if (code <= 77)  return "🌨 Nieve";
-  if (code <= 82)  return "🌦 Chubascos";
+
+// ═══════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════
+function $(id){ return document.getElementById(id); }
+function on(id,ev,fn){ $(id).addEventListener(ev,fn); }
+function hide(id){ $(id).style.display='none'; }
+function showErr(id,msg){ const e=$(id); e.innerHTML='⚠️ '+msg; e.style.display='block'; }
+function setBtn(id,dis,html){ const b=$(id); b.disabled=dis; b.innerHTML=html; }
+
+function weatherDesc(code){
+  if(code===0)  return "☀️ Despejado";
+  if(code<=3)   return "🌤 Parcial";
+  if(code<=49)  return "🌫 Neblina";
+  if(code<=67)  return "🌧 Lluvia";
+  if(code<=77)  return "🌨 Nieve";
+  if(code<=82)  return "🌦 Chubascos";
   return "⛈ Tormenta";
 }
 </script>
