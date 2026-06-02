@@ -5,31 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Open Water Thermal Index</title>
 <style>
-:root {
-  --bg0:#04090f;--bg1:#081422;--bg2:#0d1e35;--bg3:#122540;
-  --border:#1a3050;--border2:#244060;
-  --accent:#4fc3f7;--accent2:#00e5a0;--accent3:#f5a623;
-  --text:#c8dff0;--text2:#7ab0cc;--text3:#4a7a9b;
-  --danger:#ff4466;--warn:#ff8c35;--ok:#00e5a0;
+:root{
+  --bg0:#0a1628;--bg1:#0f2040;--bg2:#162850;--bg3:#1e3460;
+  --border:#2a4a7a;--border2:#3a5a8a;
+  --accent:#60c8f8;--accent2:#40e8b0;--accent3:#f8b040;
+  --text:#d0e8ff;--text2:#90b8e0;--text3:#5888b8;
+  --danger:#ff5577;--warn:#ff9040;--ok:#40e8b0;
   --rad:14px;--rad-sm:8px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{
   min-height:100vh;
-  background:var(--bg0);
-  background-image:radial-gradient(ellipse at 20% 20%,#0a2040 0%,transparent 60%),
-                   radial-gradient(ellipse at 80% 80%,#051828 0%,transparent 60%);
+  background:linear-gradient(160deg,#061020 0%,#0a1628 40%,#0c1e38 100%);
   font-family:'Courier New',monospace;color:var(--text);
   padding:0 0 60px;display:flex;flex-direction:column;align-items:center;
 }
 .app-header{
-  width:100%;background:linear-gradient(180deg,#051020 0%,transparent 100%);
+  width:100%;
+  background:linear-gradient(180deg,#061828 0%,transparent 100%);
   padding:28px 20px 20px;text-align:center;position:relative;
   border-bottom:1px solid var(--border);margin-bottom:24px;
 }
-.app-header .eyebrow{font-size:10px;letter-spacing:6px;color:var(--accent);opacity:.6;margin-bottom:8px;}
-.app-header h1{font-size:22px;font-weight:900;color:#e8f4ff;letter-spacing:2px;}
-.app-header .sub{font-size:11px;color:var(--text2);margin-top:6px;opacity:.8;}
+.eyebrow{font-size:10px;letter-spacing:6px;color:var(--accent);opacity:.7;margin-bottom:8px;}
+.app-header h1{font-size:22px;font-weight:900;color:#e0f4ff;letter-spacing:2px;}
+.app-sub{font-size:11px;color:var(--text2);margin-top:6px;opacity:.8;}
 .info-btn{
   position:absolute;top:24px;right:20px;width:32px;height:32px;border-radius:50%;
   background:var(--bg2);border:1px solid var(--border2);color:var(--accent);
@@ -39,7 +38,7 @@ body{
 .card{
   background:linear-gradient(135deg,var(--bg2) 0%,var(--bg1) 100%);
   border:1px solid var(--border);border-radius:var(--rad);
-  padding:20px;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.3);
+  padding:20px;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.4);
 }
 .card-title{
   font-size:10px;letter-spacing:4px;color:var(--accent);margin-bottom:16px;
@@ -59,8 +58,8 @@ input:focus{border-color:var(--accent);}
   font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;
   font-family:'Courier New',monospace;transition:all .2s;margin-bottom:4px;
 }
-.btn-primary{background:linear-gradient(135deg,var(--accent),#2aa8e0);color:#000;}
-.btn-green{background:linear-gradient(135deg,var(--accent2),#00b880);color:#000;}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#3a9ad0);color:#000;}
+.btn-green{background:linear-gradient(135deg,var(--accent2),#20c090);color:#000;}
 .btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2);}
 .btn:disabled{opacity:.4;cursor:not-allowed;}
 .btn:active:not(:disabled){transform:scale(.98);}
@@ -71,55 +70,37 @@ input:focus{border-color:var(--accent);}
   cursor:pointer;font-family:'Courier New',monospace;transition:all .2s;
 }
 .pill.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700;}
-.pill:active{transform:scale(.96);}
 .label{font-size:10px;color:var(--text2);letter-spacing:2px;margin:16px 0 8px;}
 .label:first-child{margin-top:0;}
+.label-opt{font-size:9px;color:var(--text3);margin-left:6px;letter-spacing:1px;}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
 .dcell{background:var(--bg0);border-radius:var(--rad-sm);padding:11px 13px;border:1px solid var(--border);}
 .dcell-lbl{font-size:9px;color:var(--text3);letter-spacing:1px;margin-bottom:5px;}
 .dcell-val{font-size:15px;font-weight:700;color:var(--text);}
-.search-box{margin-top:8px;border:1px solid var(--border);border-radius:var(--rad-sm);overflow:hidden;}
-.sresult{padding:13px 15px;font-size:13px;color:var(--text);cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s;}
+.search-box{margin-top:8px;border:1px solid var(--border);border-radius:var(--rad-sm);overflow:hidden;max-height:280px;overflow-y:auto;}
+.sresult{padding:13px 15px;font-size:12px;color:var(--text);cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s;line-height:1.4;}
 .sresult:last-child{border-bottom:none;}
 .sresult:active{background:var(--bg3);}
+.sresult-name{font-weight:700;color:var(--accent);}
+.sresult-detail{font-size:10px;color:var(--text3);margin-top:2px;}
 .alert{padding:12px 14px;border-radius:var(--rad-sm);font-size:12px;margin-top:10px;line-height:1.5;}
-.alert-err{background:#1a0808;border:1px solid var(--danger);color:#ff9090;}
+.alert-err{background:#1a0a0a;border:1px solid var(--danger);color:#ff9090;}
 .alert-ok{background:#081a12;border:1px solid var(--ok);color:#80ffcc;}
 .step{display:none;}.step.active{display:block;}
 .link-btn{text-align:center;margin-top:14px;font-size:11px;color:var(--accent);cursor:pointer;opacity:.7;letter-spacing:1px;}
-.net-block{
-  border-radius:var(--rad);padding:24px;margin-bottom:16px;
-  border:2px solid;text-align:center;
+/* Direction compass */
+.compass{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:200px;margin:0 auto;}
+.dir-btn{
+  padding:10px 4px;background:var(--bg0);color:var(--text2);
+  border:1px solid var(--border);border-radius:var(--rad-sm);
+  font-size:12px;cursor:pointer;font-family:'Courier New',monospace;
+  text-align:center;transition:all .2s;font-weight:700;
 }
-.net-label{font-size:10px;letter-spacing:4px;margin-bottom:8px;}
-.net-value{font-size:60px;font-weight:900;line-height:1;margin-bottom:4px;}
-.net-unit{font-size:12px;opacity:.6;margin-bottom:14px;}
-.net-badge{display:inline-block;padding:6px 20px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:3px;color:#000;}
-.balance-row{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;
-}
-.balance-row:last-child{border-bottom:none;}
-.balance-row.total{margin-top:6px;padding-top:14px;border-top:2px solid var(--border2);font-size:15px;font-weight:700;}
-.brow-name{color:var(--text2);font-size:12px;}
-.brow-val{font-weight:700;font-size:14px;}
-.pos{color:var(--ok);}.neg{color:var(--warn);}.neu{color:var(--text2);}
-.time-row{margin-bottom:14px;}
-.time-header{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;}
-.time-label{color:var(--text2);}.time-val{color:var(--text);font-weight:700;}
-.bar-bg{background:var(--bg0);border-radius:4px;height:8px;overflow:hidden;border:1px solid var(--border);}
-.bar-fill{height:100%;border-radius:4px;transition:width .6s ease;}
-.recovery-box{padding:16px;border-radius:var(--rad-sm);border:1px solid;margin-top:6px;}
-.recovery-title{font-size:10px;letter-spacing:3px;margin-bottom:6px;}
-.recovery-text{font-size:13px;line-height:1.5;}
-.min-row{display:flex;gap:10px;align-items:center;margin-bottom:12px;}
-.min-row input{margin-bottom:0;flex:1;}
-.min-row .btn{width:auto;padding:13px 20px;flex-shrink:0;}
-.profile-saved{
-  padding:12px 14px;background:var(--bg0);border:1px solid var(--border);
-  border-radius:var(--rad-sm);font-size:12px;color:var(--text2);margin-bottom:12px;
-}
+.dir-btn.active{background:var(--accent);color:#000;border-color:var(--accent);}
+.dir-btn.center{background:transparent;border:none;color:var(--text3);font-size:10px;cursor:default;}
+.dir-btn:active:not(.center):not(.active){transform:scale(.95);}
+/* Speed grid */
 .speed-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .speed-pill{
   padding:10px 8px;background:var(--bg0);color:var(--text2);
@@ -128,33 +109,66 @@ input:focus{border-color:var(--accent);}
   text-align:center;transition:all .2s;line-height:1.4;
 }
 .speed-pill.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700;}
-.speed-pill:active{transform:scale(.96);}
 .speed-pill .sp-pace{font-size:13px;font-weight:700;}
-.speed-pill .sp-desc{font-size:10px;opacity:.7;margin-top:2px;}
-.formula-box{
+.speed-pill .sp-ms{font-size:9px;opacity:.6;margin-top:1px;}
+/* Forecast */
+.forecast-row{
+  display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;
+  scrollbar-width:none;
+}
+.forecast-row::-webkit-scrollbar{display:none;}
+.fc-slot{
+  flex-shrink:0;background:var(--bg0);border:1px solid var(--border);
+  border-radius:var(--rad-sm);padding:10px 8px;text-align:center;min-width:70px;
+}
+.fc-slot.now{border-color:var(--accent);background:var(--bg2);}
+.fc-time{font-size:10px;color:var(--text3);margin-bottom:6px;}
+.fc-icon{font-size:18px;margin-bottom:4px;}
+.fc-temp{font-size:13px;font-weight:700;color:var(--text);}
+.fc-wind{font-size:10px;color:var(--text2);margin-top:3px;}
+.fc-water{font-size:10px;color:var(--accent);margin-top:2px;}
+/* Result */
+.net-block{border-radius:var(--rad);padding:24px;margin-bottom:16px;border:2px solid;text-align:center;}
+.net-label{font-size:10px;letter-spacing:4px;margin-bottom:8px;}
+.net-value{font-size:60px;font-weight:900;line-height:1;margin-bottom:4px;}
+.net-unit{font-size:12px;opacity:.6;margin-bottom:14px;}
+.net-badge{display:inline-block;padding:6px 20px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:3px;color:#000;}
+.balance-row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);}
+.balance-row:last-child{border-bottom:none;}
+.balance-row.total{margin-top:6px;padding-top:14px;border-top:2px solid var(--border2);align-items:center;}
+.brow-name{color:var(--text2);font-size:12px;}
+.brow-detail{font-size:10px;color:var(--text3);margin-top:2px;}
+.brow-val{font-weight:700;font-size:14px;white-space:nowrap;padding-left:12px;flex-shrink:0;}
+.pos{color:var(--ok);}.neg{color:var(--warn);}
+.time-row{margin-bottom:14px;}
+.time-header{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;}
+.bar-bg{background:var(--bg0);border-radius:4px;height:8px;overflow:hidden;border:1px solid var(--border);}
+.bar-fill{height:100%;border-radius:4px;transition:width .8s ease;}
+.recovery-box{padding:16px;border-radius:var(--rad-sm);border:1px solid;margin-top:10px;}
+.recovery-title{font-size:10px;letter-spacing:3px;margin-bottom:6px;}
+.recovery-text{font-size:13px;line-height:1.5;}
+.min-row{display:flex;gap:10px;align-items:center;margin-bottom:12px;}
+.min-row input{margin-bottom:0;flex:1;}
+.min-row .btn{width:auto;padding:13px 20px;flex-shrink:0;margin-bottom:0;}
+.profile-bar{padding:10px 13px;background:var(--bg0);border:1px solid var(--border);border-radius:var(--rad-sm);font-size:12px;color:var(--text2);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;}
+.wind-info{
   background:var(--bg0);border:1px solid var(--border);border-radius:var(--rad-sm);
-  padding:12px 14px;font-size:11px;color:var(--accent2);
-  margin:8px 0;line-height:1.6;white-space:pre-wrap;font-family:'Courier New',monospace;
+  padding:10px 14px;font-size:11px;color:var(--text2);margin-top:8px;
+  display:flex;align-items:center;gap:8px;
 }
-.info-page{display:none;width:100%;max-width:460px;padding:0 16px 40px;}
-.info-page.active{display:block;}
-.info-h2{font-size:11px;color:var(--accent);letter-spacing:3px;margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border);}
-.info-p{font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px;}
-.ref-pill{
-  display:inline-block;padding:4px 10px;background:var(--bg0);
-  border:1px solid var(--border);border-radius:12px;
-  font-size:11px;color:var(--text2);margin:3px 3px 3px 0;
-}
-.disclaimer{
-  background:var(--bg0);border:1px solid #3a2a00;border-radius:var(--rad);
-  padding:16px;font-size:11px;color:#aa8844;line-height:1.7;
-}
-.disclaimer strong{color:var(--accent3);}
+.wind-arrow{font-size:20px;transition:transform .3s;}
 .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.app-footer{margin-top:32px;font-size:9px;color:var(--text3);opacity:.4;text-align:center;letter-spacing:3px;}
-.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;letter-spacing:1px;margin-left:6px;vertical-align:middle;}
-.tag-new{background:#0a2a1a;color:var(--ok);border:1px solid var(--ok);}
+/* Info page */
+.info-page{display:none;width:100%;max-width:460px;padding:0 16px 40px;}
+.info-page.active{display:block;}
+.ih2{font-size:11px;color:var(--accent);letter-spacing:3px;margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.ip{font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px;}
+.fbox{background:var(--bg0);border:1px solid var(--border);border-radius:var(--rad-sm);padding:12px 14px;font-size:11px;color:var(--accent2);margin:8px 0;line-height:1.6;white-space:pre-wrap;}
+.ref-pill{display:inline-block;padding:4px 10px;background:var(--bg0);border:1px solid var(--border);border-radius:12px;font-size:11px;color:var(--text2);margin:3px 3px 3px 0;}
+.disclaimer{background:var(--bg0);border:1px solid #4a3a00;border-radius:var(--rad);padding:16px;font-size:11px;color:#c0a060;line-height:1.7;}
+.disclaimer strong{color:var(--accent3);}
+.footer{margin-top:32px;font-size:9px;color:var(--text3);opacity:.5;text-align:center;letter-spacing:3px;}
 </style>
 </head>
 <body>
@@ -162,7 +176,7 @@ input:focus{border-color:var(--accent);}
 <div class="app-header">
   <div class="eyebrow">OPEN WATER THERMAL INDEX</div>
   <h1>🌊 OWTI</h1>
-  <div class="sub">Balance térmico real para nadadores en aguas abiertas</div>
+  <div class="app-sub">Balance térmico real para nadadores en aguas abiertas</div>
   <button class="info-btn" id="btn-info">ℹ</button>
 </div>
 
@@ -179,25 +193,39 @@ input:focus{border-color:var(--accent);}
     </div>
     <div class="card" id="search-card">
       <div class="card-title">BUSCAR UBICACIÓN</div>
-      <input type="text" id="search-input" placeholder="ej: Montevideo, Mar del Plata..." autocomplete="off"/>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:10px">Playas, ríos, lagos, ciudades — cualquier lugar geográfico.</div>
+      <input type="text" id="search-input" placeholder="ej: Playa Ramírez Montevideo..." autocomplete="off"/>
       <button class="btn btn-primary" id="btn-search">Buscar</button>
       <div id="search-results" class="search-box" style="display:none"></div>
       <div id="loc-confirmed" class="alert alert-ok" style="display:none"></div>
-      <button class="btn btn-primary" id="btn-fetch-search" style="display:none;margin-top:4px">Obtener condiciones actuales</button>
+      <button class="btn btn-primary" id="btn-fetch-search" style="display:none;margin-top:8px">Obtener condiciones actuales</button>
     </div>
     <div id="err-location" class="alert alert-err" style="display:none"></div>
   </div>
 
-  <!-- STEP 2: PROFILE + SESSION -->
+  <!-- STEP 2: PARAMS -->
   <div id="step-params" class="step">
+
+    <!-- Current conditions -->
     <div class="card">
-      <div class="card-title">CONDICIONES ACTUALES</div>
+      <div class="card-title">AHORA</div>
       <div class="grid2" id="weather-grid"></div>
       <div style="font-size:11px;color:var(--text2);margin-top:10px" id="loc-label"></div>
     </div>
+
+    <!-- Forecast -->
+    <div class="card" id="forecast-card" style="display:none">
+      <div class="card-title">PRONÓSTICO HOY</div>
+      <div class="forecast-row" id="forecast-row"></div>
+    </div>
+
+    <!-- Profile -->
     <div class="card">
       <div class="card-title">PERFIL FÍSICO</div>
-      <div id="profile-saved" class="profile-saved" style="display:none"></div>
+      <div id="profile-bar" class="profile-bar" style="display:none">
+        <span id="profile-bar-text"></span>
+        <span style="color:var(--text3);cursor:pointer;font-size:11px" onclick="editProfile()">editar</span>
+      </div>
       <div id="profile-form">
         <div class="grid2">
           <div><div class="label">ALTURA (cm)</div><input type="number" id="p-altura" placeholder="ej: 175" style="margin-bottom:0"></div>
@@ -205,7 +233,7 @@ input:focus{border-color:var(--accent);}
         </div>
         <div class="grid2" style="margin-top:10px">
           <div><div class="label">EDAD</div><input type="number" id="p-edad" placeholder="ej: 53" style="margin-bottom:0"></div>
-          <div><div class="label">% GRASA (opcional)</div><input type="number" id="p-grasa" placeholder="estimado" style="margin-bottom:0"></div>
+          <div><div class="label">% GRASA<span class="label-opt">OPCIONAL</span></div><input type="number" id="p-grasa" placeholder="estimado si vacío" style="margin-bottom:0"></div>
         </div>
         <div class="label" style="margin-top:12px">SEXO</div>
         <div class="pills" id="sex-group">
@@ -214,18 +242,20 @@ input:focus{border-color:var(--accent);}
         </div>
       </div>
     </div>
+
+    <!-- Session -->
     <div class="card">
       <div class="card-title">PARÁMETROS DE SESIÓN</div>
 
-      <div class="label">VELOCIDAD EN AGUA (min/100m) <span class="tag tag-new">NUEVO</span></div>
+      <div class="label">VELOCIDAD (min/100m)</div>
       <div class="speed-grid" id="speed-group">
-        <button class="speed-pill" data-secs="85"><div class="sp-pace">&lt; 1:30</div><div class="sp-desc">Muy rápido</div></button>
-        <button class="speed-pill" data-secs="97"><div class="sp-pace">1:30 – 1:45</div><div class="sp-desc">Rápido</div></button>
-        <button class="speed-pill" data-secs="112"><div class="sp-pace">1:45 – 2:00</div><div class="sp-desc">Moderado-rápido</div></button>
-        <button class="speed-pill active" data-secs="127"><div class="sp-pace">2:00 – 2:15</div><div class="sp-desc">Moderado</div></button>
-        <button class="speed-pill" data-secs="142"><div class="sp-pace">2:15 – 2:30</div><div class="sp-desc">Tranquilo</div></button>
-        <button class="speed-pill" data-secs="157"><div class="sp-pace">2:30 – 2:45</div><div class="sp-desc">Lento</div></button>
-        <button class="speed-pill" data-secs="172"><div class="sp-pace">2:45 – 3:00</div><div class="sp-desc">Muy lento</div></button>
+        <button class="speed-pill" data-secs="80"><div class="sp-pace">&lt; 1:30</div><div class="sp-ms">≥ 1.25 m/s</div></button>
+        <button class="speed-pill" data-secs="97"><div class="sp-pace">1:30 – 1:45</div><div class="sp-ms">~1.05 m/s</div></button>
+        <button class="speed-pill" data-secs="112"><div class="sp-pace">1:45 – 2:00</div><div class="sp-ms">~0.91 m/s</div></button>
+        <button class="speed-pill active" data-secs="127"><div class="sp-pace">2:00 – 2:15</div><div class="sp-ms">~0.80 m/s</div></button>
+        <button class="speed-pill" data-secs="142"><div class="sp-pace">2:15 – 2:30</div><div class="sp-ms">~0.71 m/s</div></button>
+        <button class="speed-pill" data-secs="157"><div class="sp-pace">2:30 – 2:45</div><div class="sp-ms">~0.64 m/s</div></button>
+        <button class="speed-pill" data-secs="172"><div class="sp-pace">2:45 – 3:00</div><div class="sp-ms">~0.58 m/s</div></button>
       </div>
 
       <div class="label" style="margin-top:16px">PROTECCIÓN</div>
@@ -234,7 +264,27 @@ input:focus{border-color:var(--accent);}
         <button class="pill" data-value="standard">Traje estándar</button>
         <button class="pill" data-value="thermal">Traje térmico</button>
       </div>
+
+      <div class="label" style="margin-top:16px">DIRECCIÓN DE NADO<span class="label-opt">OPCIONAL</span></div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:10px">Si no la ingresás, se asume 45° respecto al viento.</div>
+      <div class="compass" id="dir-group">
+        <button class="dir-btn" data-deg="315">NO</button>
+        <button class="dir-btn" data-deg="0">N</button>
+        <button class="dir-btn" data-deg="45">NE</button>
+        <button class="dir-btn" data-deg="270">O</button>
+        <button class="dir-btn center" data-deg="-1">🧭</button>
+        <button class="dir-btn" data-deg="90">E</button>
+        <button class="dir-btn" data-deg="225">SO</button>
+        <button class="dir-btn" data-deg="180">S</button>
+        <button class="dir-btn" data-deg="135">SE</button>
+      </div>
+      <div class="wind-info" id="wind-info" style="display:none">
+        <span class="wind-arrow" id="wind-arrow">↑</span>
+        <span id="wind-info-text"></span>
+      </div>
+
     </div>
+
     <button class="btn btn-green" id="btn-calculate">Calcular balance térmico</button>
     <div class="link-btn" id="link-back-loc">← Cambiar ubicación</div>
   </div>
@@ -251,7 +301,7 @@ input:focus{border-color:var(--accent);}
       <div class="card-title">DESGLOSE TÉRMICO</div>
       <div id="balance-rows"></div>
     </div>
-    <div class="card" id="time-card">
+    <div class="card" id="time-card" style="display:none">
       <div class="card-title">TIEMPO HASTA UMBRALES</div>
       <div id="time-bars"></div>
     </div>
@@ -259,7 +309,7 @@ input:focus{border-color:var(--accent);}
       <div class="card-title">SIMULADOR DE SESIÓN</div>
       <div style="font-size:11px;color:var(--text2);margin-bottom:12px">¿Cuántos minutos planificás nadar?</div>
       <div class="min-row">
-        <input type="number" id="sim-min" placeholder="minutos" min="1" max="120">
+        <input type="number" id="sim-min" placeholder="minutos" min="1" max="180">
         <button class="btn btn-primary" id="btn-sim" style="font-size:12px;letter-spacing:1px;margin-bottom:0">Simular</button>
       </div>
       <div id="sim-result"></div>
@@ -267,154 +317,120 @@ input:focus{border-color:var(--accent);}
     <button class="btn btn-ghost" id="btn-recalc">← Recalcular sesión</button>
     <div class="link-btn" id="link-new-loc">→ Nueva ubicación</div>
   </div>
-
 </div>
 
 <!-- INFO PAGE -->
 <div class="info-page" id="info-page">
   <div class="card" style="margin-top:8px">
     <div class="card-title">SOBRE OWTI</div>
-    <p class="info-p">Open Water Thermal Index (OWTI) calcula el balance térmico real de un nadador en aguas abiertas, combinando física de transferencia de calor, fisiología del ejercicio en frío y astronomía solar.</p>
-    <p class="info-p">Desarrollada en colaboración entre <strong style="color:var(--accent)">Martin Thomas</strong> y <strong style="color:var(--accent2)">Claude (Anthropic)</strong>.</p>
-    <div style="margin-top:12px">
-      <a href="https://github.com/martin1homas/Impacto-termico" target="_blank"
-        style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg0);border:1px solid var(--border2);border-radius:var(--rad-sm);font-size:12px;color:var(--accent);text-decoration:none">
-        ⚙ GitHub: martin1homas/Impacto-termico
-      </a>
-    </div>
+    <p class="ip">Open Water Thermal Index (OWTI) calcula el balance térmico real de un nadador en aguas abiertas, combinando física de transferencia de calor, fisiología del ejercicio en frío y astronomía solar.</p>
+    <p class="ip">Desarrollada en colaboración entre <strong style="color:var(--accent)">Martin Thomas</strong> y <strong style="color:var(--accent2)">Claude (Anthropic)</strong>.</p>
+    <a href="https://github.com/martin1homas/Impacto-termico" target="_blank"
+      style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg0);border:1px solid var(--border2);border-radius:var(--rad-sm);font-size:12px;color:var(--accent);text-decoration:none;margin-top:8px">
+      ⚙ GitHub: martin1homas/Impacto-termico
+    </a>
   </div>
 
   <div class="card">
     <div class="card-title">EL MODELO FÍSICO</div>
-
-    <div class="info-h2">1. ÁREA SUPERFICIAL (Du Bois, 1916)</div>
-    <div class="formula-box">A = 0.007184 × altura(cm)^0.725 × peso(kg)^0.425  [m²]
-
+    <div class="ih2">1. ÁREA SUPERFICIAL — Du Bois (1916)</div>
+    <div class="fbox">A = 0.007184 × altura(cm)^0.725 × peso(kg)^0.425  [m²]
 Distribución en crawl:
-  A_sumergida = 0.82 × A   (tronco, piernas, brazos parcial)
-  A_aérea     = 0.10 × A   (brazos en recuperación + cabeza)
-  A_solar     = 0.14 × A   (espalda + cabeza expuestas)</div>
+  A_sumergida = 0.82 × A
+  A_aérea     = 0.10 × A  (brazos recuperación + cabeza)
+  A_solar     = 0.14 × A  (espalda + cabeza)</div>
 
-    <div class="info-h2">2. COMPOSICIÓN CORPORAL (Deurenberg, 1991)</div>
-    <div class="formula-box">BF% = 1.20×BMI + 0.23×edad - 10.8×sexo - 5.4
-(sexo: hombre=1, mujer=0 | R²=0.79, n=1229)
-Si el usuario ingresa % grasa medido, reemplaza esta estimación.</div>
+    <div class="ih2">2. COMPOSICIÓN CORPORAL — Deurenberg (1991)</div>
+    <div class="fbox">BF% = 1.20×BMI + 0.23×edad - 10.8×sexo - 5.4
+Si el usuario ingresa % grasa real, reemplaza la estimación.</div>
 
-    <div class="info-h2">3. PRODUCCIÓN METABÓLICA — MODELO CORREGIDO</div>
-    <p class="info-p">Basado en costo energético del crawl (C_sw) medido directamente, no en METs genéricos. Los METs sobreestiman la producción en nadadores recreativos y no consideran la reducción de rendimiento por frío.</p>
-    <div class="formula-box">C_sw = 650 J/m  (costo energético recreativo, literatura)
-v   = 100 / seg_por_100m  [m/s]
-
+    <div class="ih2">3. PRODUCCIÓN METABÓLICA</div>
+    <div class="fbox">C_sw(v) = 300 + 180×v²  [J/m]  (costo energético crawl)
 Q_met_base = C_sw × v  [W]
-  → 3:00/100m (0.556 m/s): Q_met_base = 361 W
-  → 2:00/100m (0.833 m/s): Q_met_base = 541 W  (antes MET daba 322W)
+f_frío = 1 - max(0, (24 - T_agua) × 0.012)
+Q_NST  = 27  [W]  (termogénesis no-tiriteo)
+Q_met  = Q_met_base × f_frío + Q_NST</div>
 
-Factor frío (reducción de rendimiento muscular en agua fría):
-  f_frio = 1 - max(0, (26 - T_agua) × 0.015)
-  → a 13°C: f_frio = 0.805  (-20%)
-  → a 10°C: f_frio = 0.760  (-24%)
+    <div class="ih2">4. PÉRDIDA AL AGUA</div>
+    <div class="fbox">h_w(v) = 120 + 200×v  [W/m²°C]
+h_ef   = h_w / max(1, 1+(BF%-15)×0.006)
+R_suit: sin=0, estándar=0.05, térmico=0.10  [m²°C/W]
+T_piel = T_agua + Q_met×0.85 / (h_ef_suit×A_sub + h_air×A_air)
+Q_agua = h_ef_suit × (T_piel - T_agua) × A_sub</div>
 
-Termogénesis por frío (vasoconstricción + tiriteo subclínico):
-  Q_termo = max(0, (20 - T_agua) × 4.5)  [W]
-  → a 13°C: Q_termo = 31.5 W
+    <div class="ih2">5. PÉRDIDA AL AIRE + VIENTO — Mitchell (1974)</div>
+    <div class="fbox">Dirección viento vs dirección nado:
+  f_dir = |cos(θ)|  donde θ = ángulo entre flujo viento y nado
+  Ida y vuelta: f_avg = (|cos(θ_ida)| + |cos(θ_vuelta)|) / 2
+  Si no se ingresa dirección: f_avg = |cos(45°)| = 0.71
 
-Q_met = Q_met_base × f_frio + Q_termo</div>
+h_air = max(3.5, 8.3 × (v_viento_ms × f_avg)^0.6)  [W/m²°C]
+Q_aire = h_air × (T_piel - T_aire) × A_aérea</div>
 
-    <div class="info-h2">4. PÉRDIDA AL AGUA</div>
-    <div class="formula-box">T_piel = T_agua + 6°C  (estado estacionario, crawl activo)
-h_agua = 150 + (v/1.5) × 250  [W/m²°C]  (función de velocidad)
-  ajustado por grasa subcutánea: h_ef = h_agua / (1 + (BF%-15)×0.008)
+    <div class="ih2">6. GANANCIA SOLAR — Meeus (1998)</div>
+    <div class="fbox">Declinación, ángulo horario y elevación solar calculados
+por coordenadas geográficas, fecha y hora exacta.
+I = 1361 × 0.7^(1/sin(α)) × sin(α)  [W/m²]
+Q_solar = I × A_solar × 0.70  (absortividad piel)</div>
 
-Sin traje:        Q_agua = h_ef × (T_piel - T_agua) × A_sumergida
-Con traje:        Q_agua = ΔT / (1/h_ef + R_traje) × A_sumergida
-  R_estándar = 0.05 m²°C/W | R_térmico = 0.10 m²°C/W</div>
-
-    <div class="info-h2">5. PÉRDIDA AL AIRE + VIENTO (Mitchell, 1974)</div>
-    <div class="formula-box">h_aire = 8.3 × (v_viento_ms × 0.70)^0.6  [W/m²°C]
-  Factor 0.70: viento lateral promedio (trayecto ida/vuelta)
-  Convección natural mínima: h = 3.5 W/m²°C
-
-T_piel_aire = T_piel - 2°C  (brazos/cabeza más fríos)
-Q_aire = h_aire × (T_piel_aire - T_aire) × A_aérea</div>
-
-    <div class="info-h2">6. GANANCIA SOLAR (Meeus, 1998)</div>
-    <div class="formula-box">Declinación:  δ = 23.45 × sin(2π/365 × (día-81))
-Ec. del tiempo: eot = 9.87×sin(2B) - 7.53×cos(B) - 1.5×sin(B)
-Mediodía solar: calculado por longitud y zona horaria
-Ángulo horario: H = (hora_solar - mediodía) × 15°
-Elevación:      sin(α) = sin(lat)×sin(δ) + cos(lat)×cos(δ)×cos(H)
-Irradiancia:    I = 1361 × 0.7^(1/sin(α)) × sin(α)  [W/m²]
-Absorción:      Q_solar = I × A_solar × 0.70  (absortividad piel)</div>
-
-    <div class="info-h2">7. BALANCE Y CAPACIDAD TÉRMICA</div>
-    <div class="formula-box">Q_neta = Q_met - Q_agua - Q_aire + Q_solar  [W]
-
-masa_efectiva = masa_magra × 0.82
-c_tejido = 3470 J/kg°C
-
-Déficit acumulado(t) = |Q_neta| × t  [J]
-ΔT_núcleo(t) = déficit / (masa_efectiva × c_tejido)
-T_núcleo(t) = 37 - ΔT_núcleo(t)</div>
+    <div class="ih2">7. BALANCE Y CAPACIDAD TÉRMICA</div>
+    <div class="fbox">Q_neta = Q_met - Q_agua - Q_aire + Q_solar  [W]
+masa_ef = peso × (1-BF%/100) × 0.82  [kg]
+T_núcleo(t) = 37 - |Q_neta|×t×60 / (masa_ef × 3470)</div>
   </div>
 
   <div class="card">
-    <div class="card-title">FUENTES DE DATOS EN TIEMPO REAL</div>
-    <p class="info-p">Todos los datos ambientales se obtienen de APIs abiertas y gratuitas de Open-Meteo, que integra modelos de ECMWF, DWD, NOAA y otros servicios meteorológicos nacionales:</p>
-    <div style="margin-top:10px">
-      <div class="ref-pill">🌡 <strong>Open-Meteo Forecast API</strong> — temperatura del aire, velocidad del viento, radiación solar, código de tiempo</div>
-      <div class="ref-pill">🌊 <strong>Open-Meteo Marine API</strong> — temperatura superficial del agua de mar</div>
-      <div class="ref-pill">📍 <strong>Open-Meteo Geocoding API</strong> — búsqueda y geocodificación de ubicaciones</div>
-    </div>
-    <p class="info-p" style="margin-top:12px">Resolución temporal: 15 minutos. Cobertura: global. Licencia: CC BY 4.0.</p>
-    <a href="https://open-meteo.com" target="_blank" class="ref-pill" style="color:var(--accent);margin-top:6px;display:inline-block">→ open-meteo.com</a>
+    <div class="card-title">FUENTES DE DATOS</div>
+    <p class="ip">Datos ambientales en tiempo real y pronóstico de fuentes abiertas:</p>
+    <div class="ref-pill">🌡 <strong>Open-Meteo Forecast API</strong> — temperatura, viento, radiación, pronóstico horario</div>
+    <div class="ref-pill">🌊 <strong>Open-Meteo Marine API</strong> — temperatura superficial del agua</div>
+    <div class="ref-pill">📍 <strong>OpenStreetMap Nominatim</strong> — geocodificación (playas, ríos, ciudades)</div>
+    <a href="https://open-meteo.com" target="_blank" class="ref-pill" style="color:var(--accent);margin-top:8px;display:inline-block">→ open-meteo.com</a>
+    <a href="https://nominatim.openstreetmap.org" target="_blank" class="ref-pill" style="color:var(--accent)">→ nominatim.org</a>
   </div>
 
   <div class="card">
     <div class="card-title">REFERENCIAS CIENTÍFICAS</div>
     <div class="ref-pill">Du Bois & Du Bois (1916) — Área superficial corporal</div>
-    <div class="ref-pill">Deurenberg et al. (1991) — Estimación % grasa por BMI</div>
-    <div class="ref-pill">Mitchell (1974) — Transferencia de calor convectiva humana</div>
+    <div class="ref-pill">Deurenberg et al. (1991) — Estimación % grasa</div>
+    <div class="ref-pill">Pendergast et al. (1977) — Costo energético del crawl</div>
+    <div class="ref-pill">Mitchell (1974) — Convección cutánea humana</div>
     <div class="ref-pill">Meeus (1998) — Algoritmos astronómicos</div>
-    <div class="ref-pill">Holmer & Bergh (1974) — Respuesta metabólica y térmica en natación a diferentes temperaturas</div>
-    <div class="ref-pill">Tipton et al. (2017) — Fisiología inmersión agua fría</div>
-    <div class="ref-pill">Toussaint et al. (1992) — Biomecánica y eficiencia del crawl</div>
-    <div class="ref-pill">Pendergast et al. (1977) — Costo energético del nado (C_sw)</div>
-    <div class="ref-pill">Castellani & Young (2016) — Respuestas fisiológicas al frío</div>
+    <div class="ref-pill">Holmer & Bergh (1974) — Metabolismo en agua fría</div>
+    <div class="ref-pill">Tipton et al. (2017) — Fisiología en agua fría</div>
+    <div class="ref-pill">Castellani & Young (2016) — Respuestas al frío</div>
   </div>
 
   <div class="card">
     <div class="card-title">AVISO LEGAL</div>
     <div class="disclaimer">
       <strong>DISCLAIMER — LIMITACIÓN DE RESPONSABILIDAD INTERNACIONAL</strong><br><br>
-      Open Water Thermal Index (OWTI) es una herramienta educativa e informativa basada en modelos físicos y fisiológicos simplificados. <strong>No constituye asesoramiento médico, de seguridad acuática ni deportivo de ningún tipo.</strong><br><br>
-      Los cálculos son estimaciones teóricas que no consideran variaciones individuales, condiciones de salud preexistentes, factores ambientales no medidos, corrientes, oleaje, fatiga acumulada ni circunstancias imprevistas. Las respuestas fisiológicas al frío varían significativamente entre individuos.<br><br>
-      <strong>La natación en aguas abiertas en agua fría conlleva riesgos reales incluyendo hipotermia, shock de inmersión, arritmia cardíaca y ahogamiento.</strong> Nunca nade solo en aguas frías. Siempre informe a alguien de su actividad. Consulte a un profesional médico antes de realizar actividad física en condiciones extremas.<br><br>
-      Los autores y colaboradores <strong>no asumen responsabilidad alguna</strong> por daños directos, indirectos, incidentales o consecuentes derivados del uso o mal uso de esta herramienta, en cualquier jurisdicción del mundo.<br><br>
-      Al utilizar esta aplicación, el usuario acepta estos términos y asume plena responsabilidad por sus decisiones.<br><br>
-      <em>This disclaimer applies internationally. Use of this tool constitutes acceptance of these terms under the laws of any applicable jurisdiction.</em>
+      OWTI es una herramienta educativa basada en modelos físicos simplificados. <strong>No constituye asesoramiento médico, de seguridad acuática ni deportivo.</strong><br><br>
+      Los cálculos son estimaciones que no consideran variaciones individuales, condiciones de salud, corrientes, oleaje ni circunstancias imprevistas.<br><br>
+      <strong>La natación en aguas abiertas en agua fría conlleva riesgos reales: hipotermia, shock de inmersión, arritmia y ahogamiento.</strong> Nunca nade solo. Informe siempre a alguien de su actividad.<br><br>
+      Los autores <strong>no asumen responsabilidad alguna</strong> por daños derivados del uso de esta herramienta en cualquier jurisdicción.<br><br>
+      <em>This disclaimer applies internationally. Use constitutes acceptance of these terms.</em>
     </div>
   </div>
-
-  <div style="margin-top:20px">
-    <button class="btn btn-ghost" id="btn-close-info">← Volver a la calculadora</button>
-  </div>
-  <div class="app-footer" style="margin-top:20px;opacity:.5">OWTI v2.1 · MARTIN THOMAS × CLAUDE (ANTHROPIC) · 2025</div>
+  <div style="margin-top:20px"><button class="btn btn-ghost" id="btn-close-info">← Volver a la calculadora</button></div>
+  <div class="footer" style="margin-top:20px;opacity:.6">OWTI v4.0 · MARTIN THOMAS × CLAUDE (ANTHROPIC)</div>
 </div>
 
 <script>
-const GEO    = "https://geocoding-api.open-meteo.com/v1";
-const METEO  = "https://api.open-meteo.com/v1";
-const MARINE = "https://marine-api.open-meteo.com/v1";
-const SUIT_R = {none:0, standard:0.05, thermal:0.10};
-const C_SW   = 650; // J/m — energy cost of recreational crawl
+const NOMINATIM = "https://nominatim.openstreetmap.org";
+const METEO     = "https://api.open-meteo.com/v1";
+const MARINE    = "https://marine-api.open-meteo.com/v1";
+const SUIT_R    = {none:0, standard:0.05, thermal:0.10};
 
 let S = {
   coords:null, locName:"", weather:null,
-  suit:"none", speedSecs:127, sex:1, result:null,
-  profile: safeLoad("owti_profile"),
+  suit:"none", speedSecs:127, sex:1,
+  swimDir:null, // null = no ingresado
+  result:null,
+  profile: safeLoad("owti_profile4"),
 };
 
-// ── GPS ──────────────────────────────────────
+// ── GPS ─────────────────────────────────────────────────────────
 window.addEventListener('load', ()=>{
   loadProfile();
   if(navigator.geolocation){
@@ -429,17 +445,17 @@ window.addEventListener('load', ()=>{
   }
 });
 
-// ── Profile ───────────────────────────────────
+// ── Profile ──────────────────────────────────────────────────────
 function loadProfile(){
   if(!S.profile) return;
   const p=S.profile;
-  $('p-altura').value=p.altura||'';
-  $('p-peso').value=p.peso||'';
-  $('p-edad').value=p.edad||'';
-  $('p-grasa').value=p.grasa||'';
+  if(p.altura) $('p-altura').value=p.altura;
+  if(p.peso)   $('p-peso').value=p.peso;
+  if(p.edad)   $('p-edad').value=p.edad;
+  if(p.grasa)  $('p-grasa').value=p.grasa;
   S.sex=p.sex??1;
   activatePill('sex-group',String(S.sex));
-  showProfileSaved();
+  showProfileBar();
 }
 function saveProfile(){
   S.profile={
@@ -449,23 +465,23 @@ function saveProfile(){
     grasa:parseFloat($('p-grasa').value)||null,
     sex:S.sex,
   };
-  localStorage.setItem("owti_profile",JSON.stringify(S.profile));
+  localStorage.setItem("owti_profile4",JSON.stringify(S.profile));
 }
-function showProfileSaved(){
+function showProfileBar(){
   const p=S.profile;
-  if(!p||!p.altura||!p.peso) return;
+  if(!p||!p.altura||!p.peso||!p.edad) return;
   const bmi=(p.peso/((p.altura/100)**2)).toFixed(1);
   const bf=p.grasa?p.grasa+"%":estimateBF(bmi,p.edad,p.sex).toFixed(1)+"%*";
-  $('profile-saved').innerHTML=`<span>${p.altura}cm · ${p.peso}kg · BMI ${bmi} · Grasa ${bf}</span> <span style="color:var(--text3);cursor:pointer;float:right" onclick="editProfile()">editar</span>`;
-  $('profile-saved').style.display='block';
+  $('profile-bar-text').textContent=`${p.altura}cm · ${p.peso}kg · BMI ${bmi} · Grasa ${bf}`;
+  $('profile-bar').style.display='flex';
   $('profile-form').style.display='none';
 }
 function editProfile(){
-  $('profile-saved').style.display='none';
+  $('profile-bar').style.display='none';
   $('profile-form').style.display='block';
 }
 
-// ── Search ────────────────────────────────────
+// ── Location ─────────────────────────────────────────────────────
 on('link-search','click',()=>{ $('gps-card').style.display='none'; $('search-card').style.display='block'; });
 on('search-input','keydown',e=>{ if(e.key==='Enter') doSearch(); });
 on('btn-search','click',doSearch);
@@ -475,32 +491,36 @@ async function doSearch(){
   if(!q) return;
   setBtn('btn-search',true,'<span class="spinner"></span>Buscando...');
   hide('err-location');
+  $('search-results').style.display='none';
   try{
-    const res=await fetch(`${GEO}/search?name=${encodeURIComponent(q)}&count=6&language=es&format=json`);
+    const res=await fetch(`${NOMINATIM}/search?q=${encodeURIComponent(q)}&format=json&limit=6&addressdetails=1&accept-language=es`,
+      {headers:{'User-Agent':'OWTI-App/4.0'}});
     if(!res.ok) throw new Error("HTTP "+res.status);
     const data=await res.json();
-    renderResults(data.results||[]);
-  }catch(e){ showErr('err-location','No se pudo buscar ('+e.message+'). Verificá tu conexión.'); }
+    renderResults(data);
+  }catch(e){ showErr('err-location','Error al buscar: '+e.message); }
   setBtn('btn-search',false,'Buscar');
 }
 
 function renderResults(results){
   const box=$('search-results');
   box.innerHTML='';
-  if(!results.length){
-    box.innerHTML='<div class="sresult" style="color:var(--text2)">Sin resultados — intentá con otro nombre</div>';
+  if(!results||!results.length){
+    box.innerHTML='<div class="sresult" style="color:var(--text2)">Sin resultados — intentá "Playa Ramírez Montevideo Uruguay"</div>';
     box.style.display='block'; return;
   }
   results.forEach(r=>{
     const d=document.createElement('div');
     d.className='sresult';
-    d.textContent=`📍 ${r.name}${r.admin1?', '+r.admin1:''}, ${r.country}`;
+    const name=r.name||r.display_name.split(',')[0];
+    d.innerHTML=`<div class="sresult-name">📍 ${name}</div><div class="sresult-detail">${r.display_name}</div>`;
     d.addEventListener('click',()=>{
-      S.coords={lat:r.latitude,lon:r.longitude};
-      S.locName=`${r.name}${r.admin1?', '+r.admin1:''}, ${r.country}`;
+      S.coords={lat:parseFloat(r.lat),lon:parseFloat(r.lon)};
+      S.locName=name+' — '+r.display_name.split(',').slice(1,3).join(',').trim();
       box.style.display='none';
       const c=$('loc-confirmed');
-      c.textContent='✓ '+S.locName; c.style.display='block';
+      c.innerHTML='✓ <strong>'+name+'</strong><br><span style="font-size:10px;opacity:.7">'+r.display_name+'</span>';
+      c.style.display='block';
       $('btn-fetch-search').style.display='block';
     });
     box.appendChild(d);
@@ -508,7 +528,7 @@ function renderResults(results){
   box.style.display='block';
 }
 
-// ── Fetch weather ─────────────────────────────
+// ── Fetch weather + forecast ─────────────────────────────────────
 on('btn-fetch-gps','click',fetchWeather);
 on('btn-fetch-search','click',fetchWeather);
 
@@ -521,18 +541,26 @@ async function fetchWeather(){
   try{
     const {lat,lon}=S.coords;
     const [meteo,marine]=await Promise.all([
-      fetch(`${METEO}/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,shortwave_radiation,weather_code&timezone=auto`).then(r=>r.json()),
+      fetch(`${METEO}/forecast?latitude=${lat}&longitude=${lon}`+
+        `&current=temperature_2m,wind_speed_10m,wind_direction_10m,shortwave_radiation,weather_code`+
+        `&hourly=temperature_2m,wind_speed_10m,wind_direction_10m,weather_code,shortwave_radiation`+
+        `&forecast_days=1&timezone=auto`).then(r=>r.json()),
       fetch(`${MARINE}/marine?latitude=${lat}&longitude=${lon}&current=sea_surface_temperature&timezone=auto`).then(r=>r.json()),
     ]);
-    if(!meteo.current) throw new Error("Sin datos del servidor meteorológico");
+    if(!meteo.current) throw new Error("Sin datos meteorológicos");
     S.weather={
-      airTemp:  meteo.current.temperature_2m    ??20,
-      windSpeed:meteo.current.wind_speed_10m    ??0,
-      solarRad: meteo.current.shortwave_radiation??0,
-      weatherCode:meteo.current.weather_code    ??0,
-      waterTemp:marine.current?.sea_surface_temperature??null,
+      airTemp:    meteo.current.temperature_2m,
+      windSpeed:  meteo.current.wind_speed_10m,
+      windDir:    meteo.current.wind_direction_10m,
+      solarRad:   meteo.current.shortwave_radiation??0,
+      weatherCode:meteo.current.weather_code??0,
+      waterTemp:  marine.current?.sea_surface_temperature??null,
+      tz:         meteo.utc_offset_seconds??0,
+      hourly:     meteo.hourly,
     };
     renderWeatherGrid();
+    renderForecast();
+    updateWindInfo();
     showStep('params');
   }catch(e){ showErr('err-location','No se pudieron obtener datos: '+e.message); }
   setBtn(btnId,false,'Obtener condiciones actuales');
@@ -540,138 +568,222 @@ async function fetchWeather(){
 
 function renderWeatherGrid(){
   const w=S.weather;
+  const wdDir=windDirLabel(w.windDir);
   $('weather-grid').innerHTML=`
-    <div class="dcell"><div class="dcell-lbl">TEMP. AGUA</div><div class="dcell-val">${w.waterTemp!=null?w.waterTemp.toFixed(1)+'°C':'N/D'}</div></div>
-    <div class="dcell"><div class="dcell-lbl">TEMP. AIRE</div><div class="dcell-val">${w.airTemp.toFixed(1)}°C</div></div>
-    <div class="dcell"><div class="dcell-lbl">VIENTO</div><div class="dcell-val">${w.windSpeed.toFixed(1)} km/h</div></div>
-    <div class="dcell"><div class="dcell-lbl">CIELO</div><div class="dcell-val">${weatherDesc(w.weatherCode)}</div></div>
+    <div class="dcell"><div class="dcell-lbl">TEMP. AGUA</div>
+      <div class="dcell-val">${w.waterTemp!=null?w.waterTemp.toFixed(1)+'°C':'N/D'}</div></div>
+    <div class="dcell"><div class="dcell-lbl">TEMP. AIRE</div>
+      <div class="dcell-val">${w.airTemp.toFixed(1)}°C</div></div>
+    <div class="dcell"><div class="dcell-lbl">VIENTO</div>
+      <div class="dcell-val">${w.windSpeed.toFixed(1)} km/h</div></div>
+    <div class="dcell"><div class="dcell-lbl">DIRECCIÓN</div>
+      <div class="dcell-val">${wdDir} ${windArrow(w.windDir)}</div></div>
+    <div class="dcell" style="grid-column:span 2"><div class="dcell-lbl">CIELO</div>
+      <div class="dcell-val">${weatherDesc(w.weatherCode)}</div></div>
   `;
   $('loc-label').textContent='📍 '+S.locName;
 }
 
-// ── Option pills ──────────────────────────────
-function setupPills(groupId,key,numeric){
-  $(groupId).addEventListener('click',e=>{
-    const btn=e.target.closest('.pill');
-    if(!btn) return;
-    activatePill(groupId,btn.dataset.value);
-    S[key]=numeric?Number(btn.dataset.value):btn.dataset.value;
+function renderForecast(){
+  const w=S.weather;
+  if(!w.hourly) return;
+  const now=new Date();
+  const currentHour=now.getHours();
+  const times=w.hourly.time||[];
+  const temps=w.hourly.temperature_2m||[];
+  const winds=w.hourly.wind_speed_10m||[];
+  const wdirs=w.hourly.wind_direction_10m||[];
+  const codes=w.hourly.weather_code||[];
+
+  let html='';
+  let count=0;
+  for(let i=0;i<times.length&&count<8;i++){
+    const h=new Date(times[i]).getHours();
+    if(new Date(times[i])<now-3600000) continue;
+    const isNow=Math.abs(h-currentHour)<=1&&count===0;
+    html+=`<div class="fc-slot${isNow?' now':''}">
+      <div class="fc-time">${isNow?'AHORA':h+':00'}</div>
+      <div class="fc-icon">${weatherIcon(codes[i])}</div>
+      <div class="fc-temp">${temps[i]?.toFixed(0)||'?'}°</div>
+      <div class="fc-wind">${winds[i]?.toFixed(0)||'?'}km/h ${windArrow(wdirs[i])}</div>
+      ${w.waterTemp?`<div class="fc-water">≈${w.waterTemp.toFixed(0)}°agua</div>`:''}
+    </div>`;
+    count++;
+  }
+  if(html){
+    $('forecast-row').innerHTML=html;
+    $('forecast-card').style.display='block';
+  }
+}
+
+// ── Direction compass ─────────────────────────────────────────────
+$('dir-group').addEventListener('click',e=>{
+  const btn=e.target.closest('.dir-btn');
+  if(!btn||btn.classList.contains('center')) return;
+  const deg=Number(btn.dataset.deg);
+  if(S.swimDir===deg){
+    // toggle off
+    btn.classList.remove('active');
+    S.swimDir=null;
+  } else {
+    document.querySelectorAll('.dir-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    S.swimDir=deg;
+  }
+  updateWindInfo();
+});
+
+function updateWindInfo(){
+  if(!S.weather) return;
+  const w=S.weather;
+  const wi=$('wind-info');
+  const wdir=w.windDir??0;
+  const wflow=(wdir+180)%360;
+
+  let f_avg, desc;
+  if(S.swimDir===null){
+    f_avg=0.71;
+    desc=`Viento ${windDirLabel(wdir)} ${windArrow(wdir)} — dirección no ingresada, asumiendo 45° (f=0.71)`;
+  } else {
+    const f_ida=Math.abs(Math.cos(toRad(angleDiff(wflow,S.swimDir))));
+    const f_ret=Math.abs(Math.cos(toRad(angleDiff(wflow,(S.swimDir+180)%360))));
+    f_avg=(f_ida+f_ret)/2;
+    const pct=Math.round(f_avg*100);
+    desc=`Viento ${windDirLabel(wdir)} ${windArrow(wdir)} — exposición ${pct}% (f=${f_avg.toFixed(2)})`;
+  }
+  $('wind-arrow').textContent=windArrow(wflow);
+  $('wind-arrow').style.transform=`rotate(${wflow}deg)`;
+  $('wind-info-text').textContent=desc;
+  wi.style.display='flex';
+}
+
+// ── Pills ────────────────────────────────────────────────────────
+function setupPills(id,key,num){
+  $(id).addEventListener('click',e=>{
+    const b=e.target.closest('.pill');
+    if(!b) return;
+    activatePill(id,b.dataset.value);
+    S[key]=num?Number(b.dataset.value):b.dataset.value;
   });
 }
 setupPills('suit-group','suit',false);
 setupPills('sex-group','sex',true);
-
 $('speed-group').addEventListener('click',e=>{
-  const btn=e.target.closest('.speed-pill');
-  if(!btn) return;
-  document.querySelectorAll('.speed-pill').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  S.speedSecs=Number(btn.dataset.secs);
+  const b=e.target.closest('.speed-pill');
+  if(!b) return;
+  document.querySelectorAll('.speed-pill').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  S.speedSecs=Number(b.dataset.secs);
 });
-
-function activatePill(groupId,val){
-  document.querySelectorAll(`#${groupId} .pill`).forEach(b=>{
-    b.classList.toggle('active',b.dataset.value===String(val));
-  });
+function activatePill(id,val){
+  document.querySelectorAll(`#${id} .pill`).forEach(b=>b.classList.toggle('active',b.dataset.value===String(val)));
 }
 
-// ── PHYSICS ENGINE ────────────────────────────
-function degR(d){ return d*Math.PI/180; }
+// ── PHYSICS ──────────────────────────────────────────────────────
+function toRad(d){return d*Math.PI/180;}
+function angleDiff(a,b){const d=Math.abs(a-b)%360;return Math.min(d,360-d);}
 
-function solarElevation(lat,lon,date){
-  const start=new Date(date.getFullYear(),0,0);
-  const dayOfYear=Math.round((date-start)/864e5);
-  const decl=23.45*Math.sin(degR(360/365*(dayOfYear-81)));
-  const B=degR(360/365*(dayOfYear-81));
+function estimateBF(bmi,age,sex){
+  return Math.max(5,Math.min(45,1.20*bmi+0.23*age-10.8*sex-5.4));
+}
+
+function solarElevationSin(lat,lon,date,tzSec){
+  const start=new Date(date.getFullYear(),0,1);
+  const doy=Math.ceil((date-start)/864e5)+1;
+  const decl=23.45*Math.sin(toRad(360/365*(doy-81)));
+  const B=toRad(360/365*(doy-81));
   const eot=9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B);
-  const tzOffset=-date.getTimezoneOffset()/60;
-  const solarNoon=12-(lon-tzOffset*15)/15-eot/60;
-  const hourAngle=(date.getHours()+date.getMinutes()/60-solarNoon)*15;
-  const sinA=Math.sin(degR(lat))*Math.sin(degR(decl))
-            +Math.cos(degR(lat))*Math.cos(degR(decl))*Math.cos(degR(hourAngle));
+  const tzH=tzSec/3600;
+  const solarNoon=12-(lon-tzH*15)/15-eot/60;
+  const localH=date.getHours()+date.getMinutes()/60+date.getSeconds()/3600;
+  const H=(localH-solarNoon)*15;
+  const sinA=Math.sin(toRad(lat))*Math.sin(toRad(decl))
+            +Math.cos(toRad(lat))*Math.cos(toRad(decl))*Math.cos(toRad(H));
   return Math.max(0,sinA);
 }
 
-function estimateBF(bmi,age,sex){
-  return Math.max(5,1.20*bmi+0.23*age-10.8*sex-5.4);
-}
-
-function calcThermal(profile,session,weather,coords){
-  const {altura,peso,edad,sex}=profile;
-  const {suit,speedSecs}=session;
-  const {airTemp,windSpeed}=weather;
+function calcThermal(profile,speedSecs,suit,swimDir,weather,coords){
+  const {altura,peso,edad,sex,grasa}=profile;
+  const {airTemp,windSpeed,windDir}=weather;
   const waterTemp=weather.waterTemp??13;
 
   // Anthropometry
   const bmi=peso/((altura/100)**2);
-  const bf=(profile.grasa!=null&&profile.grasa>0)?profile.grasa:estimateBF(bmi,edad,sex);
+  const bf=(grasa!=null&&grasa>0)?grasa:estimateBF(bmi,edad,sex);
   const A=0.007184*Math.pow(altura,0.725)*Math.pow(peso,0.425);
   const A_sub=0.82*A, A_air=0.10*A, A_sol=0.14*A;
-  const leanMass=peso*(1-bf/100);
-  const effMass=leanMass*0.82;
-  const fatFactor=1+(bf-15)*0.008;
+  const effMass=peso*(1-bf/100)*0.82;
+  const fatAdj=Math.max(1,1+(bf-15)*0.006);
 
-  // Velocity
-  const v=100/speedSecs; // m/s
+  // Velocity & metabolic
+  const v=100/speedSecs;
+  const C_sw=300+180*v*v;
+  const Q_met_base=C_sw*v;
+  const f_cold=1-Math.max(0,(24-waterTemp)*0.012);
+  const Q_NST=27;
+  const Q_met=Q_met_base*f_cold+Q_NST;
 
-  // Metabolic — corrected model
-  const Q_met_base=C_SW*v;
-  const f_cold=1-Math.max(0,(26-waterTemp)*0.015);
-  const Q_termo=Math.max(0,(20-waterTemp)*4.5);
-  const Q_met=Q_met_base*f_cold+Q_termo;
-
-  // Water heat loss
-  const T_piel=waterTemp+6;
-  const h_w_base=150+(v/1.5)*250;
-  const h_w=h_w_base/Math.max(1,fatFactor);
-  const R_suit=SUIT_R[suit];
-  let Q_water;
-  if(R_suit===0){
-    Q_water=h_w*(T_piel-waterTemp)*A_sub;
+  // Wind direction factor
+  const wflow=(windDir+180)%360;
+  let f_avg;
+  if(swimDir===null){
+    f_avg=0.71; // 45° default
   } else {
-    Q_water=((T_piel-waterTemp)/(1/h_w+R_suit))*A_sub;
+    const f_ida=Math.abs(Math.cos(toRad(angleDiff(wflow,swimDir))));
+    const f_ret=Math.abs(Math.cos(toRad(angleDiff(wflow,(swimDir+180)%360))));
+    f_avg=(f_ida+f_ret)/2;
   }
 
-  // Air + wind
-  const T_piel_a=T_piel-2;
+  // Air convection
   const v_ms=windSpeed/3.6;
-  const v_eff=v_ms*0.70;
-  const h_air=v_eff>0.1?(8.3*Math.pow(v_eff,0.6)):3.5;
-  const Q_air=h_air*(T_piel_a-airTemp)*A_air;
+  const h_air=Math.max(3.5,8.3*Math.pow(v_ms*f_avg,0.6));
+
+  // Water convection
+  const h_w=(120+200*v)/fatAdj;
+  const R_suit=SUIT_R[suit];
+  const h_w_eff=R_suit>0?1/(1/h_w+R_suit):h_w;
+
+  // Skin temperature (energy balance)
+  const denom=h_w_eff*A_sub+h_air*A_air;
+  let T_piel=(Q_met*0.85+h_w_eff*A_sub*waterTemp+h_air*A_air*airTemp)/denom;
+  T_piel=Math.max(waterTemp+0.5,Math.min(waterTemp+10,T_piel));
+
+  const Q_water=h_w_eff*A_sub*(T_piel-waterTemp);
+  const Q_aire=h_air*A_air*(T_piel-airTemp);
 
   // Solar
   const now=new Date();
-  const sinAlpha=solarElevation(coords.lat,coords.lon,now);
-  const I=sinAlpha>0?1361*Math.pow(0.7,1/sinAlpha)*sinAlpha:0;
+  const sinA=solarElevationSin(coords.lat,coords.lon,now,weather.tz||0);
+  const I=sinA>0.01?1361*Math.pow(0.7,1/sinA)*sinA:0;
   const Q_solar=I*A_sol*0.70;
 
-  // Net
-  const Q_net=Q_met-Q_water-Q_air+Q_solar;
+  const Q_net=Q_met-Q_water-Q_aire+Q_solar;
   const c=3470;
-  const cap_mild=effMass*c*2.0/1000;
-  const cap_mod=effMass*c*4.0/1000;
+  const cap_mild=effMass*c*2/1000;
+  const cap_mod=effMass*c*4/1000;
 
   return {
-    Q_met,Q_met_base,Q_termo,f_cold,
-    Q_water,Q_air,Q_solar,Q_net,
+    Q_met,Q_met_base,Q_NST,f_cold,
+    Q_water,Q_aire,Q_solar,Q_net,
+    T_piel,h_w_eff,h_air,f_avg,
     effMass,c,cap_mild,cap_mod,
-    A,bf,bmi,v,sinAlpha,I,
-    waterTemp,airTemp,windSpeed,suit,speedSecs,
+    A,bf,bmi,v,sinA,I,
+    waterTemp,airTemp,windSpeed,windDir,suit,speedSecs,swimDir,
   };
 }
 
-// ── CALCULATE ─────────────────────────────────
+// ── Calculate ────────────────────────────────────────────────────
 on('btn-calculate','click',calculate);
 
 function calculate(){
   const altura=parseFloat($('p-altura').value);
   const peso=parseFloat($('p-peso').value);
   const edad=parseFloat($('p-edad').value);
-  if(!altura||!peso||!edad){ alert('Ingresá altura, peso y edad para continuar.'); return; }
+  if(!altura||!peso||!edad){alert('Ingresá altura, peso y edad para continuar.');return;}
   const grasa=parseFloat($('p-grasa').value)||null;
   const profile={altura,peso,edad,grasa,sex:S.sex};
-  saveProfile(); showProfileSaved();
-  const r=calcThermal(profile,{suit:S.suit,speedSecs:S.speedSecs},S.weather,S.coords);
+  saveProfile(); showProfileBar();
+  const r=calcThermal(profile,S.speedSecs,S.suit,S.swimDir,S.weather,S.coords);
   S.result=r;
   renderResult(r);
   showStep('result');
@@ -680,52 +792,59 @@ function calculate(){
 function renderResult(r){
   const net=r.Q_net;
   const netAbs=Math.abs(net);
-  let zBg,zAccent,zLabel;
-  if(net>50)       {zBg="#051a10";zAccent="#00e5a0";zLabel="NÚCLEO ESTABLE";}
-  else if(net>0)   {zBg="#0a1a05";zAccent="#7ed321";zLabel="EQUILIBRIO";}
-  else if(net>-80) {zBg="#1a1000";zAccent="#f5a623";zLabel="ENFRIAMIENTO LEVE";}
-  else if(net>-200){zBg="#1a0800";zAccent="#ff6b35";zLabel="ENFRIAMIENTO NOTABLE";}
-  else             {zBg="#1a0000";zAccent="#ff2244";zLabel="ENFRIAMIENTO SEVERO";}
+  let zBg,zAcc,zLbl;
+  if(net>60)       {zBg="#041a0e";zAcc="#40e8b0";zLbl="NÚCLEO ESTABLE";}
+  else if(net>10)  {zBg="#081a04";zAcc="#80d040";zLbl="EQUILIBRIO";}
+  else if(net>-60) {zBg="#1a1400";zAcc="#f8b040";zLbl="ENFRIAMIENTO LEVE";}
+  else if(net>-150){zBg="#1a0800";zAcc="#ff9040";zLbl="ENFRIAMIENTO NOTABLE";}
+  else             {zBg="#1a0000";zAcc="#ff5577";zLbl="ENFRIAMIENTO SEVERO";}
 
   const nb=$('net-block');
   nb.style.background=`linear-gradient(135deg,${zBg} 0%,var(--bg1) 100%)`;
-  nb.style.borderColor=zAccent;
-  $('net-label').style.color=zAccent;
-  $('net-value').style.color=zAccent;
+  nb.style.borderColor=zAcc;
+  $('net-label').style.color=zAcc;
+  $('net-value').style.color=zAcc;
   $('net-value').textContent=(net>=0?"+":"")+Math.round(net);
   const badge=$('net-badge');
-  badge.textContent=zLabel; badge.style.background=zAccent;
+  badge.textContent=zLbl; badge.style.background=zAcc;
 
-  // Pace label
-  const paceLabel=document.querySelector(`#speed-group .speed-pill.active .sp-pace`)?.textContent||'';
-  const solarDeg=(Math.asin(r.sinAlpha)*180/Math.PI).toFixed(1);
+  const paceLbl=document.querySelector('.speed-pill.active .sp-pace')?.textContent||'';
+  const solarDeg=(Math.asin(Math.min(1,r.sinA))*180/Math.PI).toFixed(1);
+  const dirDesc=r.swimDir===null?`45° asumido (f=${r.f_avg.toFixed(2)})`:`${dirLabel(r.swimDir)} (f=${r.f_avg.toFixed(2)})`;
 
   $('balance-rows').innerHTML=[
-    {name:`⚡ Producción metabólica (${paceLabel}/100m)`,val:r.Q_met,sign:1,
-     detail:`base ${Math.round(r.Q_met_base)}W × frío ${(r.f_cold*100).toFixed(0)}% + termo ${Math.round(r.Q_termo)}W`},
-    {name:`💧 Pérdida al agua (${r.waterTemp.toFixed(1)}°C)`,val:r.Q_water,sign:-1,detail:`${SUIT_R[r.suit]===0?'sin traje':r.suit==='standard'?'traje estándar':'traje térmico'}`},
-    {name:`💨 Pérdida al aire + viento (${r.windSpeed.toFixed(1)} km/h)`,val:r.Q_air,sign:-1,detail:`h_aire = ${(8.3*Math.pow(Math.max(0.1,r.windSpeed/3.6*0.7),0.6)).toFixed(1)} W/m²°C`},
-    {name:`☀️ Ganancia solar (elevación ${solarDeg}°)`,val:r.Q_solar,sign:1,detail:`I = ${Math.round(r.I)} W/m²`},
+    {icon:"⚡",name:`Producción metabólica (${paceLbl}/100m)`,
+     detail:`base ${Math.round(r.Q_met_base)}W × frío ×${r.f_cold.toFixed(2)} + NST ${r.Q_NST}W`,
+     val:r.Q_met,sign:1},
+    {icon:"💧",name:`Pérdida al agua (${r.waterTemp.toFixed(1)}°C · T_piel ${r.T_piel.toFixed(1)}°C)`,
+     detail:`h_ef=${r.h_w_eff.toFixed(0)} W/m²°C · ${SUIT_R[r.suit]===0?'sin traje':r.suit==='standard'?'traje estándar':'traje térmico'}`,
+     val:r.Q_water,sign:-1},
+    {icon:"💨",name:`Pérdida al aire + viento (${r.windSpeed.toFixed(1)} km/h · ${windDirLabel(r.windDir)} ${windArrow(r.windDir)})`,
+     detail:`dirección nado: ${dirDesc} · h_aire=${r.h_air.toFixed(1)} W/m²°C`,
+     val:r.Q_aire,sign:-1},
+    {icon:"☀️",name:`Ganancia solar (elevación ${solarDeg}°)`,
+     detail:`I=${Math.round(r.I)} W/m²`,
+     val:r.Q_solar,sign:1},
   ].map(row=>{
     const v=Math.round(Math.abs(row.val));
     const cls=row.sign===1?'pos':'neg';
-    const prefix=row.sign===1?'+':'-';
+    const pfx=row.sign===1?'+':'-';
     return `<div class="balance-row">
-      <div><div class="brow-name">${row.name}</div><div style="font-size:10px;color:var(--text3);margin-top:2px">${row.detail}</div></div>
-      <span class="brow-val ${cls}" style="white-space:nowrap;padding-left:12px">${prefix}${v}W</span>
+      <div><div class="brow-name">${row.icon} ${row.name}</div>
+      <div class="brow-detail">${row.detail}</div></div>
+      <span class="brow-val ${cls}">${pfx}${v}W</span>
     </div>`;
   }).join('')+
   `<div class="balance-row total">
     <span class="brow-name">BALANCE NETO</span>
-    <span class="brow-val" style="color:${zAccent}">${net>=0?"+":""}${Math.round(net)} W</span>
+    <span class="brow-val" style="color:${zAcc}">${net>=0?"+":""}${Math.round(net)}W</span>
   </div>`;
 
-  // Time bars
-  if(net<0){
+  if(net<0&&netAbs>5){
     $('time-card').style.display='block';
-    const tMild=r.cap_mild*1000/netAbs/60;
+    const tM=r.cap_mild*1000/netAbs/60;
     const tMod=r.cap_mod*1000/netAbs/60;
-    $('time-bars').innerHTML=timeBar("Hipotermia leve (35°C)",tMild,"#f5a623")+timeBar("Hipotermia moderada (33°C)",tMod,"#ff4466");
+    $('time-bars').innerHTML=timeBar("Hipotermia leve (35°C)",tM,"#f8b040")+timeBar("Hipotermia moderada (33°C)",tMod,"#ff5577");
   } else { $('time-card').style.display='none'; }
 
   $('sim-min').value=''; $('sim-result').innerHTML='';
@@ -733,42 +852,46 @@ function renderResult(r){
 
 function timeBar(label,minutes,color){
   const m=Math.round(minutes);
-  const pct=Math.min(100,m>0?(Math.min(m,120)/120*100):0);
+  const pct=Math.min(100,m/120*100);
   return `<div class="time-row">
-    <div class="time-header"><span class="time-label">${label}</span><span class="time-val">~${m} min</span></div>
+    <div class="time-header">
+      <span style="color:var(--text2);font-size:12px">${label}</span>
+      <span style="color:var(--text);font-weight:700;font-size:12px">~${m} min</span>
+    </div>
     <div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div>
   </div>`;
 }
 
-// ── SIMULATOR ─────────────────────────────────
+// ── Simulator ────────────────────────────────────────────────────
 on('btn-sim','click',runSim);
 function runSim(){
   const mins=parseFloat($('sim-min').value);
   if(!mins||mins<=0||!S.result) return;
   const r=S.result;
   const deficit=Math.abs(r.Q_net)*mins*60;
-  const deltaT=deficit/(r.effMass*r.c);
-  const Tnucleo=37-deltaT;
-  const defKJ=deficit/1000;
+  const dT=deficit/(r.effMass*r.c);
+  const Tn=37-dT;
+  const kJ=deficit/1000;
   let rc,rl,rd;
-  if(r.Q_net>=0){rc="#00e5a0";rl="Sin déficit térmico";rd="Balance positivo — núcleo estable o en ganancia.";}
-  else if(defKJ<50){rc="#00e5a0";rl="🟢 Recuperación rápida";rd="10–15 min con ropa seca y bebida tibia.";}
-  else if(defKJ<150){rc="#f5a623";rl="🟡 Recuperación moderada";rd="20–40 min: ropa seca, bebida caliente, ambiente cálido.";}
-  else if(defKJ<300){rc="#ff6b35";rl="🟠 Recuperación larga";rd="45–90 min con calor activo. Evitá re-exposición inmediata al frío.";}
-  else{rc="#ff2244";rl="🔴 Zona de riesgo";rd="Más de 90 min de recuperación. Considerar asistencia médica.";}
+  if(r.Q_net>=0){rc="#40e8b0";rl="Sin déficit térmico";rd="Balance positivo — núcleo estable o ganando calor.";}
+  else if(kJ<50){rc="#40e8b0";rl="🟢 Recuperación rápida";rd="10–15 min con ropa seca y bebida tibia.";}
+  else if(kJ<150){rc="#f8b040";rl="🟡 Recuperación moderada";rd="20–40 min: ropa seca, bebida caliente, ambiente cálido.";}
+  else if(kJ<300){rc="#ff9040";rl="🟠 Recuperación larga";rd="45–90 min con calor activo. Evitá re-exposición al frío.";}
+  else{rc="#ff5577";rl="🔴 Zona de riesgo";rd="Más de 90 min de recuperación. Considerá asistencia médica.";}
   $('sim-result').innerHTML=`
     <div class="grid2" style="margin-bottom:12px">
       <div class="dcell"><div class="dcell-lbl">T° NÚCLEO EST.</div>
-        <div class="dcell-val" style="color:${Tnucleo>36?'var(--ok)':Tnucleo>35?'var(--accent3)':'var(--danger)'}">${Tnucleo.toFixed(2)}°C</div></div>
-      <div class="dcell"><div class="dcell-lbl">DÉFICIT ACUM.</div><div class="dcell-val">${Math.round(defKJ)} kJ</div></div>
+        <div class="dcell-val" style="color:${Tn>36.2?'var(--ok)':Tn>35?'var(--accent3)':'var(--danger)'}">${Tn.toFixed(1)}°C</div></div>
+      <div class="dcell"><div class="dcell-lbl">DÉFICIT ACUM.</div>
+        <div class="dcell-val">${Math.round(kJ)} kJ</div></div>
     </div>
-    <div class="recovery-box" style="border-color:${rc};background:${rc}11">
+    <div class="recovery-box" style="border-color:${rc};background:${rc}18">
       <div class="recovery-title" style="color:${rc}">${rl}</div>
       <div class="recovery-text">${rd}</div>
     </div>`;
 }
 
-// ── NAVIGATION ────────────────────────────────
+// ── Navigation ───────────────────────────────────────────────────
 on('link-back-loc','click',()=>showStep('location'));
 on('btn-recalc','click',()=>showStep('params'));
 on('link-new-loc','click',()=>{
@@ -777,6 +900,7 @@ on('link-new-loc','click',()=>{
   $('btn-fetch-search').style.display='none';
   $('search-results').style.display='none';
   $('search-input').value='';
+  $('forecast-card').style.display='none';
   showStep('location');
 });
 on('btn-info','click',()=>{ $('main-app').style.display='none'; $('info-page').classList.add('active'); window.scrollTo(0,0); });
@@ -788,21 +912,47 @@ function showStep(name){
   window.scrollTo(0,0);
 }
 
-// ── HELPERS ───────────────────────────────────
+// ── Helpers ──────────────────────────────────────────────────────
 function $(id){return document.getElementById(id);}
 function on(id,ev,fn){$(id).addEventListener(ev,fn);}
 function hide(id){$(id).style.display='none';}
 function showErr(id,msg){const e=$(id);e.innerHTML='⚠️ '+msg;e.style.display='block';}
 function setBtn(id,dis,html){const b=$(id);b.disabled=dis;b.innerHTML=html;}
-function safeLoad(key){try{return JSON.parse(localStorage.getItem(key));}catch{return null;}}
+function safeLoad(k){try{return JSON.parse(localStorage.getItem(k));}catch{return null;}}
+
+function windDirLabel(deg){
+  if(deg==null) return '?';
+  const dirs=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSO','SO','OSO','O','ONO','NO','NNO'];
+  return dirs[Math.round(deg/22.5)%16];
+}
+function windArrow(deg){
+  if(deg==null) return '→';
+  const arrows=['↓','↙','←','↖','↑','↗','→','↘'];
+  // wind comes FROM deg, so arrow points TO opposite
+  const flow=(deg+180)%360;
+  return arrows[Math.round(flow/45)%8];
+}
+function dirLabel(deg){
+  const dirs={0:'N',45:'NE',90:'E',135:'SE',180:'S',225:'SO',270:'O',315:'NO'};
+  return dirs[deg]||deg+'°';
+}
 function weatherDesc(c){
   if(c===0) return "☀️ Despejado";
-  if(c<=3)  return "🌤 Parcial";
+  if(c<=3)  return "🌤 Parcialmente nublado";
   if(c<=49) return "🌫 Neblina";
   if(c<=67) return "🌧 Lluvia";
   if(c<=77) return "🌨 Nieve";
   if(c<=82) return "🌦 Chubascos";
   return "⛈ Tormenta";
+}
+function weatherIcon(c){
+  if(c===0) return "☀️";
+  if(c<=3)  return "🌤";
+  if(c<=49) return "🌫";
+  if(c<=67) return "🌧";
+  if(c<=77) return "🌨";
+  if(c<=82) return "🌦";
+  return "⛈";
 }
 </script>
 </body>
