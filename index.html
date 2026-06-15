@@ -34,6 +34,28 @@ body{
   background:var(--bg2);border:1px solid var(--border2);color:var(--accent);
   font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;
 }
+.lang-btn{
+  position:absolute;top:24px;right:60px;height:32px;border-radius:16px;
+  background:var(--bg2);border:1px solid var(--border2);color:var(--accent);
+  font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;
+  display:flex;align-items:center;padding:0 10px;font-family:'Courier New',monospace;
+}
+.lang-menu{
+  position:absolute;top:62px;right:56px;
+  background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rad-sm);
+  overflow:hidden;z-index:100;min-width:160px;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);display:none;
+}
+.lang-menu.open{display:block;}
+.lang-opt{
+  padding:12px 16px;font-size:12px;color:var(--text);cursor:pointer;
+  font-family:'Courier New',monospace;border-bottom:1px solid var(--border);
+  transition:background .15s;display:flex;align-items:center;gap:10px;
+}
+.lang-opt:last-child{border-bottom:none;}
+.lang-opt:active{background:var(--bg3);}
+.lang-opt.active{color:var(--accent);font-weight:700;}
+.lang-code{font-size:11px;color:var(--text3);margin-left:auto;}
 .container{width:100%;max-width:460px;padding:0 16px;}
 .card{
   background:linear-gradient(135deg,var(--bg2) 0%,var(--bg1) 100%);
@@ -159,6 +181,34 @@ input:focus{border-color:var(--accent);}
 .wind-arrow{font-size:20px;transition:transform .3s;}
 .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
 @keyframes spin{to{transform:rotate(360deg);}}
+/* Beach status */
+.beach-card{ margin-bottom:16px; }
+.beach-status{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:16px;border-radius:var(--rad-sm);border:2px solid;
+  margin-bottom:8px;
+}
+.beach-flag-icon{ font-size:32px;flex-shrink:0;line-height:1; }
+.beach-info{ flex:1; }
+.beach-name{ font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:1px; }
+.beach-safety{ font-size:12px;font-weight:700;margin-bottom:4px; }
+.beach-health{ font-size:11px;line-height:1.5;margin-bottom:4px; }
+.beach-cause{
+  font-size:11px;padding:6px 10px;border-radius:6px;
+  background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.3);
+  color:#ffb0b0;margin-top:4px;line-height:1.5;
+}
+.beach-meta{ font-size:10px;color:var(--text3);margin-top:6px; }
+.beach-updated{ font-size:10px;color:var(--text3);text-align:right;margin-top:4px; }
+.beach-list{ display:flex;flex-direction:column;gap:6px;margin-top:8px; }
+.beach-row{
+  display:flex;align-items:center;gap:10px;padding:8px 12px;
+  background:var(--bg0);border-radius:var(--rad-sm);border:1px solid var(--border);
+}
+.beach-row-flag{ font-size:16px;flex-shrink:0; }
+.beach-row-name{ font-size:12px;font-weight:700;color:var(--text);flex:1; }
+.beach-row-status{ font-size:11px;color:var(--text2); }
+.beach-row-health{ font-size:10px;color:#ffb0b0;margin-top:1px; }
 /* Info page */
 .info-page{display:none;width:100%;max-width:460px;padding:0 16px 40px;}
 .info-page.active{display:block;}
@@ -176,7 +226,15 @@ input:focus{border-color:var(--accent);}
 <div class="app-header">
   <div class="eyebrow">OPEN WATER THERMAL INDEX</div>
   <h1>🌊 OWTI</h1>
-  <div class="app-sub">Balance térmico real para nadadores en aguas abiertas</div>
+  <div class="app-sub" id="h-sub">Balance térmico real para nadadores en aguas abiertas</div>
+  <button class="lang-btn" id="btn-lang">ES</button>
+  <div class="lang-menu" id="lang-menu">
+    <div class="lang-opt" data-lang="es">Español <span class="lang-code">ES</span></div>
+    <div class="lang-opt" data-lang="en">English <span class="lang-code">EN</span></div>
+    <div class="lang-opt" data-lang="it">Italiano <span class="lang-code">IT</span></div>
+    <div class="lang-opt" data-lang="fr">Français <span class="lang-code">FR</span></div>
+    <div class="lang-opt" data-lang="pt">Português <span class="lang-code">PT</span></div>
+  </div>
   <button class="info-btn" id="btn-info">ℹ</button>
 </div>
 
@@ -185,15 +243,15 @@ input:focus{border-color:var(--accent);}
   <!-- STEP 1: LOCATION -->
   <div id="step-location" class="step active">
     <div class="card" id="gps-card" style="display:none">
-      <div class="card-title">UBICACIÓN GPS</div>
+      <div class="card-title" id="gps-card-title">GPS LOCATION</div>
       <div style="font-size:15px;margin-bottom:6px" id="gps-name">📍 Detectando...</div>
       <div style="font-size:11px;color:var(--text2);margin-bottom:20px" id="gps-coords"></div>
       <button class="btn btn-primary" id="btn-fetch-gps">Obtener condiciones actuales</button>
       <div class="link-btn" id="link-search">→ Buscar otra ubicación</div>
     </div>
     <div class="card" id="search-card">
-      <div class="card-title">BUSCAR UBICACIÓN</div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:10px">Playas, ríos, lagos, ciudades — cualquier lugar geográfico.</div>
+      <div class="card-title" id="search-card-title">SEARCH LOCATION</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:10px" id="search-hint">Beaches, rivers, lakes, cities — any geographic location.</div>
       <input type="text" id="search-input" placeholder="ej: Playa Ramírez Montevideo..." autocomplete="off"/>
       <button class="btn btn-primary" id="btn-search">Buscar</button>
       <div id="search-results" class="search-box" style="display:none"></div>
@@ -208,34 +266,41 @@ input:focus{border-color:var(--accent);}
 
     <!-- Current conditions -->
     <div class="card">
-      <div class="card-title">AHORA</div>
+      <div class="card-title" id="conditions-title">NOW</div>
       <div class="grid2" id="weather-grid"></div>
       <div style="font-size:11px;color:var(--text2);margin-top:10px" id="loc-label"></div>
     </div>
 
     <!-- Forecast -->
     <div class="card" id="forecast-card" style="display:none">
-      <div class="card-title">PRONÓSTICO HOY</div>
+      <div class="card-title" id="forecast-title">TODAY'S FORECAST</div>
       <div class="forecast-row" id="forecast-row"></div>
     </div>
 
-    <!-- Profile -->
+    <!-- Beach status Montevideo -->
+    <div class="card beach-card" id="beach-card" style="display:none">
+      <div class="card-title" id="beach-card-title">BEACH STATUS</div>
+      <div id="beach-content"></div>
+      <div class="beach-updated" id="beach-updated"></div>
+    </div>
+
+
     <div class="card">
-      <div class="card-title">PERFIL FÍSICO</div>
+      <div class="card-title" id="profile-title">PHYSICAL PROFILE</div>
       <div id="profile-bar" class="profile-bar" style="display:none">
         <span id="profile-bar-text"></span>
         <span style="color:var(--text3);cursor:pointer;font-size:11px" onclick="editProfile()">editar</span>
       </div>
       <div id="profile-form">
         <div class="grid2">
-          <div><div class="label">ALTURA (cm)</div><input type="number" id="p-altura" placeholder="ej: 175" style="margin-bottom:0"></div>
-          <div><div class="label">PESO (kg)</div><input type="number" id="p-peso" placeholder="ej: 66" style="margin-bottom:0"></div>
+          <div><div class="label" id="height-label">HEIGHT (cm)</div><input type="number" id="p-altura" placeholder="ej: 175" style="margin-bottom:0"></div>
+          <div><div class="label" id="weight-label">WEIGHT (kg)</div><input type="number" id="p-peso" placeholder="ej: 66" style="margin-bottom:0"></div>
         </div>
         <div class="grid2" style="margin-top:10px">
-          <div><div class="label">EDAD</div><input type="number" id="p-edad" placeholder="ej: 53" style="margin-bottom:0"></div>
-          <div><div class="label">% GRASA<span class="label-opt">OPCIONAL</span></div><input type="number" id="p-grasa" placeholder="estimado si vacío" style="margin-bottom:0"></div>
+          <div><div class="label" id="age-label">AGE</div><input type="number" id="p-edad" placeholder="ej: 53" style="margin-bottom:0"></div>
+          <div><div class="label" id="fat-label-wrap">% BODY FAT <span class="label-opt">OPTIONAL</span></div><input type="number" id="p-grasa" placeholder="estimado si vacío" style="margin-bottom:0"></div>
         </div>
-        <div class="label" style="margin-top:12px">SEXO</div>
+        <div class="label" id="sex-label" style="margin-top:12px">SEX</div>
         <div class="pills" id="sex-group">
           <button class="pill active" data-value="1">Masculino</button>
           <button class="pill" data-value="0">Femenino</button>
@@ -245,9 +310,9 @@ input:focus{border-color:var(--accent);}
 
     <!-- Session -->
     <div class="card">
-      <div class="card-title">PARÁMETROS DE SESIÓN</div>
+      <div class="card-title" id="session-title">SESSION PARAMETERS</div>
 
-      <div class="label">VELOCIDAD (min/100m)</div>
+      <div class="label" id="speed-label">SPEED (min/100m)</div>
       <div class="speed-grid" id="speed-group">
         <button class="speed-pill" data-secs="80"><div class="sp-pace">&lt; 1:30</div><div class="sp-ms">≥ 1.25 m/s</div></button>
         <button class="speed-pill" data-secs="97"><div class="sp-pace">1:30 – 1:45</div><div class="sp-ms">~1.05 m/s</div></button>
@@ -258,15 +323,15 @@ input:focus{border-color:var(--accent);}
         <button class="speed-pill" data-secs="172"><div class="sp-pace">2:45 – 3:00</div><div class="sp-ms">~0.58 m/s</div></button>
       </div>
 
-      <div class="label" style="margin-top:16px">PROTECCIÓN</div>
+      <div class="label" style="margin-top:16px" id="protection-label">PROTECTION</div>
       <div class="pills" id="suit-group">
         <button class="pill active" data-value="none">Sin traje</button>
         <button class="pill" data-value="standard">Traje estándar</button>
         <button class="pill" data-value="thermal">Traje térmico</button>
       </div>
 
-      <div class="label" style="margin-top:16px">DIRECCIÓN DE NADO<span class="label-opt">OPCIONAL</span></div>
-      <div style="font-size:10px;color:var(--text3);margin-bottom:10px">Si no la ingresás, se asume 45° respecto al viento.</div>
+      <div class="label" style="margin-top:16px" id="swimdir-label-wrap">SWIM DIRECTION <span class="label-opt">OPTIONAL</span></div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:10px">If not entered, 45° relative to wind is assumed.</div>
       <div class="compass" id="dir-group">
         <button class="dir-btn" data-deg="315">NO</button>
         <button class="dir-btn" data-deg="0">N</button>
@@ -298,19 +363,19 @@ input:focus{border-color:var(--accent);}
       <div class="net-badge" id="net-badge">—</div>
     </div>
     <div class="card">
-      <div class="card-title">DESGLOSE TÉRMICO</div>
+      <div class="card-title">${t("thermalBreakdown")}</div>
       <div id="balance-rows"></div>
     </div>
     <div class="card" id="time-card" style="display:none">
-      <div class="card-title">TIEMPO HASTA UMBRALES</div>
+      <div class="card-title">${t("thresholds")}</div>
       <div id="time-bars"></div>
     </div>
     <div class="card">
-      <div class="card-title">SIMULADOR DE SESIÓN</div>
-      <div style="font-size:11px;color:var(--text2);margin-bottom:12px">¿Cuántos minutos planificás nadar?</div>
+      <div class="card-title" id="sim-title">SESSION SIMULATOR</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:12px" id="sim-hint">How many minutes are you planning to swim?</div>
       <div class="min-row">
         <input type="number" id="sim-min" placeholder="minutos" min="1" max="180">
-        <button class="btn btn-primary" id="btn-sim" style="font-size:12px;letter-spacing:1px;margin-bottom:0">Simular</button>
+        <button class="btn btn-primary" id="btn-sim" style="font-size:12px;letter-spacing:1px;margin-bottom:0">Simulate</button>
       </div>
       <div id="sim-result"></div>
     </div>
@@ -425,14 +490,79 @@ const SUIT_R    = {none:0, standard:0.05, thermal:0.10};
 let S = {
   coords:null, locName:"", weather:null,
   suit:"none", speedSecs:127, sex:1,
-  swimDir:null, // null = no ingresado
+  swimDir:null,
   result:null,
   profile: safeLoad("owti_profile4"),
 };
 
+// ── I18N ─────────────────────────────────────────────────────────
+const I18N = {
+  es:{appSub:"Balance térmico real para nadadores en aguas abiertas",gpsCard:"UBICACIÓN GPS",gpsDefault:"📍 Detectando...",fetchWeather:"Obtener condiciones actuales",searchOther:"→ Buscar otra ubicación",searchCard:"BUSCAR UBICACIÓN",searchHint:"Playas, ríos, lagos, ciudades — cualquier lugar geográfico.",searchPlaceholder:"ej: Playa Ramírez Montevideo...",searchBtn:"Buscar",searching:"Buscando...",noResults:"Sin resultados — intentá ser más específico",fetchingData:"Obteniendo datos...",currentConditions:"AHORA",forecastTitle:"PRONÓSTICO HOY",forecastNow:"AHORA",profileTitle:"PERFIL FÍSICO",heightLabel:"ALTURA (cm)",weightLabel:"PESO (kg)",ageLabel:"EDAD",fatLabel:"% GRASA",optionalLabel:"OPCIONAL",sexLabel:"SEXO",male:"Masculino",female:"Femenino",sessionTitle:"PARÁMETROS DE SESIÓN",speedLabel:"VELOCIDAD (min/100m)",protectionLabel:"PROTECCIÓN",noSuit:"Sin traje",stdSuit:"Traje estándar",thermalSuit:"Traje térmico",swimDirLabel:"DIRECCIÓN DE NADO",swimDirHint:"If not entered, 45° relative to wind is assumed.",calcBtn:"Calcular balance térmico",changeLocation:"← Cambiar ubicación",balanceNet:"BALANCE NETO",watts:"Watts",stableCore:"NÚCLEO ESTABLE",equilibrium:"EQUILIBRIO",mildCooling:"ENFRIAMIENTO LEVE",notableCooling:"ENFRIAMIENTO NOTABLE",severeCooling:"ENFRIAMIENTO SEVERO",thermalBreakdown:"DESGLOSE TÉRMICO",thresholds:"TIEMPO HASTA UMBRALES",mildHypothermia:"Hipotermia leve (35°C)",modHypothermia:"Hipotermia moderada (33°C)",simulatorTitle:"SIMULADOR DE SESIÓN",simulatorHint:"¿Cuántos minutos planificás nadar?",simBtn:"Simular",recalc:"← Recalcular sesión",newLocation:"→ Nueva ubicación",metabolic:"Producción metabólica",waterLoss:"Pérdida al agua",airLoss:"Pérdida al aire + viento",solarGain:"Ganancia solar",netBalance:"BALANCE NETO",noDeficit:"Sin déficit térmico",noDeficitDesc:"Balance positivo — núcleo estable o ganando calor.",fastRecovery:"🟢 Recuperación rápida",fastRecoveryDesc:"10–15 min con ropa seca y bebida tibia.",modRecovery:"🟡 Recuperación moderada",modRecoveryDesc:"20–40 min: ropa seca, bebida caliente, ambiente cálido.",longRecovery:"🟠 Recuperación larga",longRecoveryDesc:"45–90 min con calor activo. Evitá re-exposición al frío.",dangerZone:"🔴 Zona de riesgo",dangerZoneDesc:"Más de 90 min de recuperación. Considerá asistencia médica.",coreTemp:"T° NÚCLEO EST.",accumDeficit:"DÉFICIT ACUM.",waterTemp:"TEMP. AGUA",airTemp:"TEMP. AIRE",wind:"VIENTO",sky:"CIELO",direction:"DIRECCIÓN",beachTitle:"ESTADO DE PLAYAS",beachEnabled:"HABILITADO",beachCaution:"PRECAUCIÓN",beachClosed:"NO HABILITADO",beachHealth:"ALERTA SANITARIA",noHealthAlert:"${t('noHealthAlert')}",beachUpdated:"Actualizado:",beachStationsTitle:"CASILLAS DE GUARDAVIDAS",noApiDept:"El estado sanitario de las playas de",noApiDept2:"no está disponible vía API. Consultá directamente en el sitio oficial:",profileEdit:"editar",validUntil:"Válido hasta:",windDirAssumed:"dirección no ingresada, asumiendo 45°",profileAlert:"Ingresá altura, peso y edad para continuar.",aboutTitle:"SOBRE OWTI",aboutDesc:"Open Water Thermal Index (OWTI) calcula el balance térmico real de un nadador en aguas abiertas.",dataSourcesTitle:"FUENTES DE DATOS",disclaimer:"AVISO LEGAL",backToApp:"← Volver a la calculadora",wClear:"☀️ Despejado",wPartly:"🌤 Parcialmente nublado",wFog:"🌫 Neblina",wRain:"🌧 Lluvia",wSnow:"🌨 Nieve",wShowers:"🌦 Chubascos",wStorm:"⛈ Tormenta"},
+  en:{appSub:"Real thermal balance for open water swimmers",gpsCard:"GPS LOCATION",gpsDefault:"📍 Detecting...",fetchWeather:"Get current conditions",searchOther:"→ Search another location",searchCard:"SEARCH LOCATION",searchHint:"Beaches, rivers, lakes, cities — any geographic location.",searchPlaceholder:"e.g.: Brighton Beach, Dover...",searchBtn:"Search",searching:"Searching...",noResults:"No results — try being more specific",fetchingData:"Getting data...",currentConditions:"NOW",forecastTitle:"TODAY'S FORECAST",forecastNow:"NOW",profileTitle:"PHYSICAL PROFILE",heightLabel:"HEIGHT (cm)",weightLabel:"WEIGHT (kg)",ageLabel:"AGE",fatLabel:"% BODY FAT",optionalLabel:"OPTIONAL",sexLabel:"SEX",male:"Male",female:"Female",sessionTitle:"SESSION PARAMETERS",speedLabel:"SPEED (min/100m)",protectionLabel:"PROTECTION",noSuit:"No wetsuit",stdSuit:"Standard wetsuit",thermalSuit:"Thermal wetsuit",swimDirLabel:"SWIM DIRECTION",swimDirHint:"If not entered, 45° relative to wind is assumed.",calcBtn:"Calculate thermal balance",changeLocation:"← Change location",balanceNet:"NET BALANCE",watts:"Watts",stableCore:"STABLE CORE",equilibrium:"EQUILIBRIUM",mildCooling:"MILD COOLING",notableCooling:"NOTABLE COOLING",severeCooling:"SEVERE COOLING",thermalBreakdown:"THERMAL BREAKDOWN",thresholds:"TIME TO THRESHOLDS",mildHypothermia:"Mild hypothermia (35°C)",modHypothermia:"Moderate hypothermia (33°C)",simulatorTitle:"SESSION SIMULATOR",simulatorHint:"How many minutes are you planning to swim?",simBtn:"Simulate",recalc:"← Recalculate session",newLocation:"→ New location",metabolic:"Metabolic production",waterLoss:"Water heat loss",airLoss:"Air + wind heat loss",solarGain:"Solar gain",netBalance:"NET BALANCE",noDeficit:"No thermal deficit",noDeficitDesc:"Positive balance — core stable or gaining heat.",fastRecovery:"🟢 Fast recovery",fastRecoveryDesc:"10–15 min with dry clothes and warm drink.",modRecovery:"🟡 Moderate recovery",modRecoveryDesc:"20–40 min: dry clothes, hot drink, warm environment.",longRecovery:"🟠 Long recovery",longRecoveryDesc:"45–90 min with active heat. Avoid re-exposure to cold.",dangerZone:"🔴 Danger zone",dangerZoneDesc:"More than 90 min recovery. Consider medical assistance.",coreTemp:"EST. CORE TEMP.",accumDeficit:"ACCUM. DEFICIT",waterTemp:"WATER TEMP",airTemp:"AIR TEMP",wind:"WIND",sky:"SKY",direction:"DIRECTION",beachTitle:"BEACH STATUS",beachEnabled:"OPEN",beachCaution:"CAUTION",beachClosed:"CLOSED",beachHealth:"HEALTH ALERT",noHealthAlert:"✅ No health alerts",beachUpdated:"Updated:",beachStationsTitle:"LIFEGUARD STATIONS",noApiDept:"The beach health status for",noApiDept2:"is not available via API. Check directly at the official site:",profileEdit:"edit",validUntil:"Valid until:",windDirAssumed:"direction not entered, assuming 45°",profileAlert:"Please enter height, weight and age to continue.",aboutTitle:"ABOUT OWTI",aboutDesc:"Open Water Thermal Index (OWTI) calculates the real thermal balance of an open water swimmer.",dataSourcesTitle:"DATA SOURCES",disclaimer:"DISCLAIMER",backToApp:"← Back to calculator",wClear:"☀️ Clear",wPartly:"🌤 Partly cloudy",wFog:"🌫 Fog",wRain:"🌧 Rain",wSnow:"🌨 Snow",wShowers:"🌦 Showers",wStorm:"⛈ Thunderstorm"},
+  it:{appSub:"Bilancio termico reale per nuotatori in acque libere",gpsCard:"POSIZIONE GPS",gpsDefault:"📍 Rilevamento...",fetchWeather:"Ottieni condizioni attuali",searchOther:"→ Cerca un'altra posizione",searchCard:"CERCA POSIZIONE",searchHint:"Spiagge, fiumi, laghi, città — qualsiasi luogo geografico.",searchPlaceholder:"es: Spiaggia di Ostia, Roma...",searchBtn:"Cerca",searching:"Cercando...",noResults:"Nessun risultato — prova a essere più specifico",fetchingData:"Recupero dati...",currentConditions:"ORA",forecastTitle:"PREVISIONI OGGI",forecastNow:"ORA",profileTitle:"PROFILO FISICO",heightLabel:"ALTEZZA (cm)",weightLabel:"PESO (kg)",ageLabel:"ETÀ",fatLabel:"% GRASSO",optionalLabel:"OPZIONALE",sexLabel:"SESSO",male:"Maschio",female:"Femmina",sessionTitle:"PARAMETRI DI SESSIONE",speedLabel:"VELOCITÀ (min/100m)",protectionLabel:"PROTEZIONE",noSuit:"Senza muta",stdSuit:"Muta standard",thermalSuit:"Muta termica",swimDirLabel:"DIREZIONE DI NUOTO",swimDirHint:"Se non inserita, si assume 45° rispetto al vento.",calcBtn:"Calcola bilancio termico",changeLocation:"← Cambia posizione",balanceNet:"BILANCIO NETTO",watts:"Watt",stableCore:"NUCLEO STABILE",equilibrium:"EQUILIBRIO",mildCooling:"RAFFREDDAMENTO LIEVE",notableCooling:"RAFFREDDAMENTO NOTEVOLE",severeCooling:"RAFFREDDAMENTO GRAVE",thermalBreakdown:"ANALISI TERMICA",thresholds:"TEMPO AI LIMITI",mildHypothermia:"Ipotermia lieve (35°C)",modHypothermia:"Ipotermia moderata (33°C)",simulatorTitle:"SIMULATORE DI SESSIONE",simulatorHint:"Quanti minuti pianifichi di nuotare?",simBtn:"Simula",recalc:"← Ricalcola sessione",newLocation:"→ Nuova posizione",metabolic:"Produzione metabolica",waterLoss:"Perdita in acqua",airLoss:"Perdita in aria + vento",solarGain:"Guadagno solare",netBalance:"BILANCIO NETTO",noDeficit:"Nessun deficit termico",noDeficitDesc:"Bilancio positivo — nucleo stabile o in guadagno.",fastRecovery:"🟢 Recupero rapido",fastRecoveryDesc:"10–15 min con vestiti asciutti e bevanda calda.",modRecovery:"🟡 Recupero moderato",modRecoveryDesc:"20–40 min: vestiti asciutti, bevanda calda, ambiente caldo.",longRecovery:"🟠 Recupero lungo",longRecoveryDesc:"45–90 min con calore attivo. Evitare la ri-esposizione al freddo.",dangerZone:"🔴 Zona di pericolo",dangerZoneDesc:"Più di 90 min di recupero. Considerare assistenza medica.",coreTemp:"TEMP. NUCLEO ST.",accumDeficit:"DEFICIT ACCUM.",waterTemp:"TEMP. ACQUA",airTemp:"TEMP. ARIA",wind:"VENTO",sky:"CIELO",direction:"DIREZIONE",beachTitle:"STATO DELLE SPIAGGE",beachEnabled:"ABILITATO",beachCaution:"ATTENZIONE",beachClosed:"NON ABILITATO",beachHealth:"ALLERTA SANITARIA",noHealthAlert:"✅ Nessuna allerta sanitaria",beachUpdated:"Aggiornato:",beachStationsTitle:"POSTAZIONI BAGNINI",noApiDept:"Lo stato sanitario delle spiagge di",noApiDept2:"non è disponibile via API. Consultare il sito ufficiale:",profileEdit:"modifica",validUntil:"Valido fino a:",windDirAssumed:"direzione non inserita, assunto 45°",profileAlert:"Inserisci altezza, peso ed età per continuare.",aboutTitle:"INFORMAZIONI SU OWTI",aboutDesc:"Open Water Thermal Index (OWTI) calcola il bilancio termico reale di un nuotatore in acque libere.",dataSourcesTitle:"FONTI DEI DATI",disclaimer:"AVVISO LEGALE",backToApp:"← Torna alla calcolatrice",wClear:"☀️ Sereno",wPartly:"🌤 Parzialmente nuvoloso",wFog:"🌫 Nebbia",wRain:"🌧 Pioggia",wSnow:"🌨 Neve",wShowers:"🌦 Rovesci",wStorm:"⛈ Temporale"},
+  fr:{appSub:"Bilan thermique réel pour les nageurs en eaux libres",gpsCard:"POSITION GPS",gpsDefault:"📍 Détection...",fetchWeather:"Obtenir les conditions actuelles",searchOther:"→ Chercher un autre lieu",searchCard:"RECHERCHER UN LIEU",searchHint:"Plages, rivières, lacs, villes — tout lieu géographique.",searchPlaceholder:"ex: Plage de Nice, Côte d'Azur...",searchBtn:"Chercher",searching:"Recherche...",noResults:"Aucun résultat — essayez d'être plus précis",fetchingData:"Récupération des données...",currentConditions:"MAINTENANT",forecastTitle:"PRÉVISIONS AUJOURD'HUI",forecastNow:"MAINT.",profileTitle:"PROFIL PHYSIQUE",heightLabel:"TAILLE (cm)",weightLabel:"POIDS (kg)",ageLabel:"ÂGE",fatLabel:"% GRAISSE",optionalLabel:"OPTIONNEL",sexLabel:"SEXE",male:"Masculin",female:"Féminin",sessionTitle:"PARAMÈTRES DE SESSION",speedLabel:"VITESSE (min/100m)",protectionLabel:"PROTECTION",noSuit:"Sans combinaison",stdSuit:"Combinaison standard",thermalSuit:"Combinaison thermique",swimDirLabel:"DIRECTION DE NAGE",swimDirHint:"Si non renseignée, 45° par rapport au vent est supposé.",calcBtn:"Calculer le bilan thermique",changeLocation:"← Changer de lieu",balanceNet:"BILAN NET",watts:"Watts",stableCore:"NOYAU STABLE",equilibrium:"ÉQUILIBRE",mildCooling:"REFROIDISSEMENT LÉGER",notableCooling:"REFROIDISSEMENT NOTABLE",severeCooling:"REFROIDISSEMENT SÉVÈRE",thermalBreakdown:"BILAN THERMIQUE DÉTAILLÉ",thresholds:"TEMPS AVANT SEUILS",mildHypothermia:"Hypothermie légère (35°C)",modHypothermia:"Hypothermie modérée (33°C)",simulatorTitle:"SIMULATEUR DE SESSION",simulatorHint:"Combien de minutes prévoyez-vous de nager?",simBtn:"Simuler",recalc:"← Recalculer la session",newLocation:"→ Nouveau lieu",metabolic:"Production métabolique",waterLoss:"Perte dans l'eau",airLoss:"Perte air + vent",solarGain:"Apport solaire",netBalance:"BILAN NET",noDeficit:"Pas de déficit thermique",noDeficitDesc:"Bilan positif — noyau stable ou en gain de chaleur.",fastRecovery:"🟢 Récupération rapide",fastRecoveryDesc:"10–15 min avec des vêtements secs et une boisson chaude.",modRecovery:"🟡 Récupération modérée",modRecoveryDesc:"20–40 min: vêtements secs, boisson chaude, environnement chaud.",longRecovery:"🟠 Longue récupération",longRecoveryDesc:"45–90 min avec chaleur active. Évitez la ré-exposition au froid.",dangerZone:"🔴 Zone de danger",dangerZoneDesc:"Plus de 90 min de récupération. Envisager une assistance médicale.",coreTemp:"TEMP. NOYAU EST.",accumDeficit:"DÉFICIT ACCUM.",waterTemp:"TEMP. EAU",airTemp:"TEMP. AIR",wind:"VENT",sky:"CIEL",direction:"DIRECTION",beachTitle:"ÉTAT DES PLAGES",beachEnabled:"AUTORISÉ",beachCaution:"ATTENTION",beachClosed:"FERMÉ",beachHealth:"ALERTE SANITAIRE",noHealthAlert:"✅ Aucune alerte sanitaire",beachUpdated:"Mis à jour:",beachStationsTitle:"POSTES DE SAUVETAGE",noApiDept:"L'état sanitaire des plages de",noApiDept2:"n'est pas disponible via API. Consultez le site officiel:",profileEdit:"modifier",validUntil:"Valable jusqu'au:",windDirAssumed:"direction non renseignée, 45° supposé",profileAlert:"Veuillez entrer taille, poids et âge pour continuer.",aboutTitle:"À PROPOS D'OWTI",aboutDesc:"Open Water Thermal Index (OWTI) calcule le bilan thermique réel d'un nageur en eaux libres.",dataSourcesTitle:"SOURCES DE DONNÉES",disclaimer:"AVIS LÉGAL",backToApp:"← Retour à la calculatrice",wClear:"☀️ Dégagé",wPartly:"🌤 Partiellement nuageux",wFog:"🌫 Brouillard",wRain:"🌧 Pluie",wSnow:"🌨 Neige",wShowers:"🌦 Averses",wStorm:"⛈ Orage"},
+  pt:{appSub:"Balanço térmico real para nadadores em águas abertas",gpsCard:"LOCALIZAÇÃO GPS",gpsDefault:"📍 Detectando...",fetchWeather:"Obter condições atuais",searchOther:"→ Procurar outro local",searchCard:"PESQUISAR LOCALIZAÇÃO",searchHint:"Praias, rios, lagos, cidades — qualquer lugar geográfico.",searchPlaceholder:"ex: Praia de Copacabana, Rio...",searchBtn:"Pesquisar",searching:"Pesquisando...",noResults:"Sem resultados — tente ser mais específico",fetchingData:"Obtendo dados...",currentConditions:"AGORA",forecastTitle:"PREVISÃO HOJE",forecastNow:"AGORA",profileTitle:"PERFIL FÍSICO",heightLabel:"ALTURA (cm)",weightLabel:"PESO (kg)",ageLabel:"IDADE",fatLabel:"% GORDURA",optionalLabel:"OPCIONAL",sexLabel:"SEXO",male:"Masculino",female:"Feminino",sessionTitle:"PARÂMETROS DE SESSÃO",speedLabel:"VELOCIDADE (min/100m)",protectionLabel:"PROTEÇÃO",noSuit:"Sem fato",stdSuit:"Fato padrão",thermalSuit:"Fato térmico",swimDirLabel:"DIREÇÃO DE NADO",swimDirHint:"Se não inserida, assume-se 45° em relação ao vento.",calcBtn:"Calcular balanço térmico",changeLocation:"← Alterar localização",balanceNet:"BALANÇO LÍQUIDO",watts:"Watts",stableCore:"NÚCLEO ESTÁVEL",equilibrium:"EQUILÍBRIO",mildCooling:"ARREFECIMENTO LEVE",notableCooling:"ARREFECIMENTO NOTÁVEL",severeCooling:"ARREFECIMENTO SEVERO",thermalBreakdown:"ANÁLISE TÉRMICA",thresholds:"TEMPO ATÉ LIMIARES",mildHypothermia:"Hipotermia leve (35°C)",modHypothermia:"Hipotermia moderada (33°C)",simulatorTitle:"SIMULADOR DE SESSÃO",simulatorHint:"Quantos minutos planeja nadar?",simBtn:"Simular",recalc:"← Recalcular sessão",newLocation:"→ Nova localização",metabolic:"Produção metabólica",waterLoss:"Perda para a água",airLoss:"Perda ar + vento",solarGain:"Ganho solar",netBalance:"BALANÇO LÍQUIDO",noDeficit:"Sem déficit térmico",noDeficitDesc:"Balanço positivo — núcleo estável ou ganhando calor.",fastRecovery:"🟢 Recuperação rápida",fastRecoveryDesc:"10–15 min com roupas secas e bebida morna.",modRecovery:"🟡 Recuperação moderada",modRecoveryDesc:"20–40 min: roupas secas, bebida quente, ambiente aquecido.",longRecovery:"🟠 Recuperação longa",longRecoveryDesc:"45–90 min com calor ativo. Evite re-exposição ao frio.",dangerZone:"🔴 Zona de risco",dangerZoneDesc:"Mais de 90 min de recuperação. Considere assistência médica.",coreTemp:"TEMP. NÚCLEO EST.",accumDeficit:"DÉFICIT ACUM.",waterTemp:"TEMP. ÁGUA",airTemp:"TEMP. AR",wind:"VENTO",sky:"CÉU",direction:"DIREÇÃO",beachTitle:"ESTADO DAS PRAIAS",beachEnabled:"HABILITADO",beachCaution:"PRECAUÇÃO",beachClosed:"NÃO HABILITADO",beachHealth:"ALERTA SANITÁRIA",noHealthAlert:"✅ Sem alertas sanitárias",beachUpdated:"Atualizado:",beachStationsTitle:"POSTOS DE SALVA-VIDAS",noApiDept:"O estado sanitário das praias de",noApiDept2:"não está disponível via API. Consulte o site oficial:",profileEdit:"editar",validUntil:"Válido até:",windDirAssumed:"direção não inserida, assumindo 45°",profileAlert:"Insira altura, peso e idade para continuar.",aboutTitle:"SOBRE O OWTI",aboutDesc:"Open Water Thermal Index (OWTI) calcula o balanço térmico real de um nadador em águas abertas.",dataSourcesTitle:"FONTES DE DADOS",disclaimer:"AVISO LEGAL",backToApp:"← Voltar à calculadora",wClear:"☀️ Limpo",wPartly:"🌤 Parcialmente nublado",wFog:"🌫 Névoa",wRain:"🌧 Chuva",wSnow:"🌨 Neve",wShowers:"🌦 Aguaceiros",wStorm:"⛈ Trovoada"},
+};
+
+const SUPPORTED_LANGS=['es','en','it','fr','pt'];
+function detectLang(){
+  const saved=safeLoad('owti_lang');
+  if(saved&&SUPPORTED_LANGS.includes(saved)) return saved;
+  const browser=(navigator.language||'en').split('-')[0].toLowerCase();
+  return SUPPORTED_LANGS.includes(browser)?browser:'en';
+}
+let LANG=detectLang();
+function t(key){return I18N[LANG]?.[key]||I18N['en']?.[key]||key;}
+
+function applyLang(){
+  $('h-sub').textContent=t('appSub');
+  $('btn-lang').textContent=LANG.toUpperCase();
+  document.querySelectorAll('.lang-opt').forEach(o=>o.classList.toggle('active',o.dataset.lang===LANG));
+  const ids={
+    'gps-card-title':t('gpsCard'),'search-card-title':t('searchCard'),
+    'search-hint':t('searchHint'),'btn-search':t('searchBtn'),
+    'btn-fetch-gps':t('fetchWeather'),'btn-fetch-search':t('fetchWeather'),
+    'link-search':t('searchOther'),'conditions-title':t('currentConditions'),
+    'forecast-title':t('forecastTitle'),'profile-title':t('profileTitle'),
+    'height-label':t('heightLabel'),'weight-label':t('weightLabel'),
+    'age-label':t('ageLabel'),'sex-label':t('sexLabel'),
+    'session-title':t('sessionTitle'),'speed-label':t('speedLabel'),
+    'protection-label':t('protectionLabel'),'swimdir-hint':t('swimDirHint'),
+    'btn-calculate':t('calcBtn'),'link-back-loc':t('changeLocation'),
+    'btn-recalc':t('recalc'),'link-new-loc':t('newLocation'),
+    'sim-hint':t('simulatorHint'),'sim-title':t('simulatorTitle'),
+    'btn-sim':t('simBtn'),'beach-card-title':t('beachTitle'),
+    'btn-close-info':t('backToApp'),
+  };
+  Object.entries(ids).forEach(([id,txt])=>{const e=$(id);if(e)e.textContent=txt;});
+  // Dynamic labels with spans
+  setHTML('fat-label-wrap',`${t('fatLabel')} <span class="label-opt">${t('optionalLabel')}</span>`);
+  setHTML('swimdir-label-wrap',`${t('swimDirLabel')} <span class="label-opt">${t('optionalLabel')}</span>`);
+  $('search-input').placeholder=t('searchPlaceholder');
+  // Pills
+  const sp={'#suit-group .pill[data-value="none"]':t('noSuit'),'#suit-group .pill[data-value="standard"]':t('stdSuit'),'#suit-group .pill[data-value="thermal"]':t('thermalSuit'),'#sex-group .pill[data-value="1"]':t('male'),'#sex-group .pill[data-value="0"]':t('female')};
+  Object.entries(sp).forEach(([sel,txt])=>{const e=document.querySelector(sel);if(e)e.textContent=txt;});
+  // Re-render if data loaded
+  if(S.weather) renderWeatherGrid();
+  if(S.result)  renderResult(S.result);
+}
+function setHTML(id,html){const e=$(id);if(e)e.innerHTML=html;}
+
+on('btn-lang','click',e=>{e.stopPropagation();$('lang-menu').classList.toggle('open');});
+document.addEventListener('click',()=>$('lang-menu').classList.remove('open'));
+$('lang-menu').addEventListener('click',e=>{
+  const opt=e.target.closest('.lang-opt');
+  if(!opt) return;
+  LANG=opt.dataset.lang;
+  localStorage.setItem('owti_lang',LANG);
+  $('lang-menu').classList.remove('open');
+  applyLang();
+});
+
 // ── GPS ─────────────────────────────────────────────────────────
 window.addEventListener('load', ()=>{
   loadProfile();
+  applyLang();
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(pos=>{
       S.coords={lat:pos.coords.latitude, lon:pos.coords.longitude};
@@ -561,6 +691,7 @@ async function fetchWeather(){
     renderWeatherGrid();
     renderForecast();
     updateWindInfo();
+    loadBeachStatus();
     showStep('params');
   }catch(e){ showErr('err-location','No se pudieron obtener datos: '+e.message); }
   setBtn(btnId,false,'Obtener condiciones actuales');
@@ -570,15 +701,15 @@ function renderWeatherGrid(){
   const w=S.weather;
   const wdDir=windDirLabel(w.windDir);
   $('weather-grid').innerHTML=`
-    <div class="dcell"><div class="dcell-lbl">TEMP. AGUA</div>
+    <div class="dcell"><div class="dcell-lbl">${t("waterTemp")}</div>
       <div class="dcell-val">${w.waterTemp!=null?w.waterTemp.toFixed(1)+'°C':'N/D'}</div></div>
-    <div class="dcell"><div class="dcell-lbl">TEMP. AIRE</div>
+    <div class="dcell"><div class="dcell-lbl">${t("airTemp")}</div>
       <div class="dcell-val">${w.airTemp.toFixed(1)}°C</div></div>
-    <div class="dcell"><div class="dcell-lbl">VIENTO</div>
+    <div class="dcell"><div class="dcell-lbl">${t("wind")}</div>
       <div class="dcell-val">${w.windSpeed.toFixed(1)} km/h</div></div>
-    <div class="dcell"><div class="dcell-lbl">DIRECCIÓN</div>
+    <div class="dcell"><div class="dcell-lbl">${t("direction")}</div>
       <div class="dcell-val">${wdDir} ${windArrow(w.windDir)}</div></div>
-    <div class="dcell" style="grid-column:span 2"><div class="dcell-lbl">CIELO</div>
+    <div class="dcell" style="grid-column:span 2"><div class="dcell-lbl">${t("sky")}</div>
       <div class="dcell-val">${weatherDesc(w.weatherCode)}</div></div>
   `;
   $('loc-label').textContent='📍 '+S.locName;
@@ -677,6 +808,231 @@ $('speed-group').addEventListener('click',e=>{
 });
 function activatePill(id,val){
   document.querySelectorAll(`#${id} .pill`).forEach(b=>b.classList.toggle('active',b.dataset.value===String(val)));
+}
+
+// ── BEACH STATUS ─────────────────────────────────────────────────
+const BEACHES_URL = 'https://martin1homas.github.io/Impacto-termico/beaches.json';
+
+const MVD_BEACHES = ['ramírez','ramirez','pocitos','buceo','malvín','malvin','brava',
+  'carrasco','honda','ingleses','verde','mulata','pajas blancas','punta espinillo',
+  'zabala','cilindros','punta yeguas','santa catalina','nacional','cerro','colorada'];
+
+const DEPT_INFO = {
+  montevideo: {
+    name: 'Montevideo',
+    beaches: MVD_BEACHES,
+    keywords: ['montevideo'],
+    hasAPI: true,
+  },
+  canelones: {
+    name: 'Canelones',
+    beaches: ['atlántida','atlantida','la floresta','floresta','piriápolis', 'salinas',
+      'ciudad de la costa','shangrilá','shangrila','el pinar','pinar','lagomar',
+      'solymar','costa azul','parque carrasco','neptunia','guazuvirá','guazuvira',
+      'las vegas','libertad','sauce','santa lucía','santa lucia'],
+    keywords: ['canelones','ciudad de la costa','atlántida','atlantida'],
+    hasAPI: false,
+    url: 'https://www.imcanelones.gub.uy/simas',
+    urlLabel: 'SIMAS Canelones',
+    icon: '🏖️',
+  },
+  maldonado: {
+    name: 'Maldonado',
+    beaches: ['punta del este','piriápolis','piriapolis','josé ignacio','jose ignacio',
+      'la barra','manantiales','solanas','punta colorada','rinconada','portezuelo',
+      'el chorro','bikini','el emir','roosevelt','playa grande','mansa'],
+    keywords: ['maldonado','punta del este','piriápolis','piriapolis','josé ignacio'],
+    hasAPI: false,
+    url: 'https://maldonado.gub.uy/playas',
+    urlLabel: 'Info Playas Maldonado',
+    icon: '🏖️',
+  },
+  rocha: {
+    name: 'Rocha',
+    beaches: ['la paloma','paloma','la pedrera','pedrera','cabo polonio','polonio',
+      'punta del diablo','diablo','aguas dulces','valizas','barra del chuy','chuy',
+      'la coronilla','coronilla','santa teresa'],
+    keywords: ['rocha','la paloma','cabo polonio','punta del diablo'],
+    hasAPI: false,
+    url: 'https://www.rocha.gub.uy/playas',
+    urlLabel: 'Playas Seguras Rocha',
+    icon: '🏖️',
+  },
+};
+
+function detectDepartment(locName){
+  const n = locName.toLowerCase();
+  for(const [key, dept] of Object.entries(DEPT_INFO)){
+    if(dept.keywords.some(k=>n.includes(k))) return key;
+    if(dept.beaches.some(b=>n.includes(b))) return key;
+  }
+  // Check by coordinates proximity to Uruguay coast (lat -30 to -35, lon -53 to -58)
+  if(S.coords){
+    const {lat,lon}=S.coords;
+    if(lat<-30&&lat>-35&&lon<-53&&lon>-59) return 'uruguay_coast';
+  }
+  return null;
+}
+
+function detectBeach(locName, deptKey){
+  const n = locName.toLowerCase();
+  const beaches = DEPT_INFO[deptKey]?.beaches || MVD_BEACHES;
+  return beaches.find(b=>n.includes(b))||null;
+}
+
+async function loadBeachStatus(){
+  const deptKey = detectDepartment(S.locName);
+
+  if(!deptKey){
+    $('beach-card').style.display='none';
+    return;
+  }
+
+  // Non-Montevideo departments — show link fallback
+  if(deptKey !== 'montevideo'){
+    const dept = DEPT_INFO[deptKey];
+    if(dept){
+      $('beach-content').innerHTML=`
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">
+          El estado sanitario de las playas de <strong style="color:var(--text)">${dept.name}</strong>
+          no está disponible vía API. Consultá directamente en el sitio oficial:
+        </div>
+        <a href="${dept.url}" target="_blank" style="
+          display:flex;align-items:center;gap:10px;padding:14px;
+          background:var(--bg0);border:1px solid var(--border2);border-radius:var(--rad-sm);
+          text-decoration:none;color:var(--accent);font-size:13px;font-weight:700;
+          letter-spacing:1px;transition:border-color .2s">
+          ${dept.icon} ${dept.urlLabel} →
+        </a>`;
+      $('beach-updated').textContent='';
+      $('beach-card').style.display='block';
+    }
+    return;
+  }
+
+  // Montevideo — fetch API data
+  try{
+    const res=await fetch(BEACHES_URL+'?t='+Date.now());
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data=await res.json();
+    renderBeachStatus(data);
+  }catch(e){
+    console.log('Beach status unavailable:',e.message);
+    // Fallback to web link
+    $('beach-content').innerHTML=`
+      <a href="https://montevideo.gub.uy/playas" target="_blank" style="
+        display:flex;align-items:center;gap:10px;padding:14px;
+        background:var(--bg0);border:1px solid var(--border2);border-radius:var(--rad-sm);
+        text-decoration:none;color:var(--accent);font-size:13px;font-weight:700">
+        🏖️ Ver estado de playas Montevideo →
+      </a>`;
+    $('beach-updated').textContent='';
+    $('beach-card').style.display='block';
+  }
+}
+
+function renderBeachStatus(data){
+  const stations=data.beaches||[];
+  if(!stations.length){ $('beach-card').style.display='none'; return; }
+
+  const detectedBeach=detectBeach(S.locName, 'montevideo');
+  let html='';
+
+  if(detectedBeach){
+    // Show specific beach prominently
+    const relevant=stations.filter(s=>
+      s.beach&&s.beach.toLowerCase().includes(detectedBeach));
+
+    if(relevant.length){
+      // Aggregate status for this beach
+      const hasHealth=relevant.some(s=>s.healthFlag==='true');
+      const safetyFlags=relevant.map(s=>s.safetyFlag);
+      const worstSafety=safetyFlags.includes('red')?'red':safetyFlags.includes('yellow')?'yellow':'green';
+      const healthDesc=relevant.find(s=>s.healthFlag==='true')?.healthFlagCauseDesc||'';
+      const expiry=relevant[0]?.safetyFlagExpiration;
+
+      const {icon,color,label,bg}=flagStyle(worstSafety,hasHealth);
+
+      html+=`<div class="beach-status" style="border-color:${color};background:${bg}">
+        <div class="beach-flag-icon">${icon}</div>
+        <div class="beach-info">
+          <div class="beach-name">PLAYA ${relevant[0].beach.toUpperCase()}</div>
+          <div class="beach-safety" style="color:${color}">${label}</div>
+          ${hasHealth?`<div class="beach-cause">⚠️ ALERTA SANITARIA${healthDesc?': '+healthDesc:''}</div>`:'<div class="beach-health" style="color:var(--ok)">${t('noHealthAlert')}</div>'}
+          ${expiry?`<div class="beach-meta">Válido hasta: ${formatExpiry(expiry)}</div>`:''}
+        </div>
+      </div>`;
+
+      // If multiple stations show each
+      if(relevant.length>1){
+        html+=`<div style="font-size:10px;color:var(--text3);margin-bottom:6px;letter-spacing:1px">CASILLAS DE GUARDAVIDAS</div>
+        <div class="beach-list">`;
+        relevant.forEach(s=>{
+          const {icon:si,color:sc,label:sl}=flagStyle(s.safetyFlag,s.healthFlag==='true');
+          html+=`<div class="beach-row">
+            <span class="beach-row-flag">${si}</span>
+            <div style="flex:1">
+              <div class="beach-row-name">${s.name}</div>
+              ${s.healthFlag==='true'&&s.healthFlagCauseDesc?`<div class="beach-row-health">⚠️ ${s.healthFlagCauseDesc}</div>`:''}
+            </div>
+            <span class="beach-row-status" style="color:${sc}">${sl}</span>
+          </div>`;
+        });
+        html+='</div>';
+      }
+    }
+  } else {
+    // Show all beaches summary
+    // Group by beach name
+    const byBeach={};
+    stations.forEach(s=>{
+      if(!s.beach) return;
+      if(!byBeach[s.beach]) byBeach[s.beach]={stations:[],hasHealth:false,worstSafety:'green',healthDesc:''};
+      byBeach[s.beach].stations.push(s);
+      if(s.healthFlag==='true'){
+        byBeach[s.beach].hasHealth=true;
+        byBeach[s.beach].healthDesc=s.healthFlagCauseDesc||'';
+      }
+      const f=s.safetyFlag;
+      if(f==='red'||(f==='yellow'&&byBeach[s.beach].worstSafety!=='red'))
+        byBeach[s.beach].worstSafety=f;
+    });
+
+    html+=`<div class="beach-list">`;
+    Object.entries(byBeach).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([beach,info])=>{
+      const {icon,color,label}=flagStyle(info.worstSafety,info.hasHealth);
+      html+=`<div class="beach-row">
+        <span class="beach-row-flag">${icon}</span>
+        <div style="flex:1">
+          <div class="beach-row-name">${beach}</div>
+          ${info.hasHealth&&info.healthDesc?`<div class="beach-row-health">⚠️ ${info.healthDesc}</div>`:''}
+        </div>
+        <span class="beach-row-status" style="color:${color}">${label}</span>
+      </div>`;
+    });
+    html+='</div>';
+  }
+
+  $('beach-content').innerHTML=html;
+  $('beach-updated').textContent=data.updated?
+    'Actualizado: '+new Date(data.updated).toLocaleTimeString('es-UY',{hour:'2-digit',minute:'2-digit'}):'';
+  $('beach-card').style.display='block';
+}
+
+function flagStyle(safetyFlag,hasHealth){
+  if(hasHealth) return {icon:'🚩',color:'#ff5577',label:t('beachHealth'),bg:'rgba(255,85,119,.08)'};
+  switch(safetyFlag){
+    case 'red':    return {icon:'🔴',color:'#ff5577',label:t('beachClosed'),bg:'rgba(255,85,119,.06)'};
+    case 'yellow': return {icon:'🟡',color:'#f8b040',label:t('beachCaution'),bg:'rgba(248,176,64,.06)'};
+    case 'green':  return {icon:'🟢',color:'#40e8b0',label:t('beachEnabled'),bg:'rgba(64,232,176,.06)'};
+    default:       return {icon:'⚪',color:'var(--text3)',label:t('beachEnabled')+'?',bg:'transparent'};
+  }
+}
+
+function formatExpiry(iso){
+  try{
+    return new Date(iso).toLocaleDateString('es-UY',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  }catch{return iso;}
 }
 
 // ── PHYSICS ──────────────────────────────────────────────────────
@@ -779,7 +1135,7 @@ function calculate(){
   const altura=parseFloat($('p-altura').value);
   const peso=parseFloat($('p-peso').value);
   const edad=parseFloat($('p-edad').value);
-  if(!altura||!peso||!edad){alert('Ingresá altura, peso y edad para continuar.');return;}
+  if(!altura||!peso||!edad){alert(t('profileAlert'));return;}
   const grasa=parseFloat($('p-grasa').value)||null;
   const profile={altura,peso,edad,grasa,sex:S.sex};
   saveProfile(); showProfileBar();
@@ -793,11 +1149,11 @@ function renderResult(r){
   const net=r.Q_net;
   const netAbs=Math.abs(net);
   let zBg,zAcc,zLbl;
-  if(net>60)       {zBg="#041a0e";zAcc="#40e8b0";zLbl="NÚCLEO ESTABLE";}
-  else if(net>10)  {zBg="#081a04";zAcc="#80d040";zLbl="EQUILIBRIO";}
-  else if(net>-60) {zBg="#1a1400";zAcc="#f8b040";zLbl="ENFRIAMIENTO LEVE";}
-  else if(net>-150){zBg="#1a0800";zAcc="#ff9040";zLbl="ENFRIAMIENTO NOTABLE";}
-  else             {zBg="#1a0000";zAcc="#ff5577";zLbl="ENFRIAMIENTO SEVERO";}
+  if(net>60)       {zBg="#041a0e";zAcc="#40e8b0";zLbl=t("stableCore");}
+  else if(net>10)  {zBg="#081a04";zAcc="#80d040";zLbl=t("equilibrium");}
+  else if(net>-60) {zBg="#1a1400";zAcc="#f8b040";zLbl=t("mildCooling");}
+  else if(net>-150){zBg="#1a0800";zAcc="#ff9040";zLbl=t("notableCooling");}
+  else             {zBg="#1a0000";zAcc="#ff5577";zLbl=t("severeCooling");}
 
   const nb=$('net-block');
   nb.style.background=`linear-gradient(135deg,${zBg} 0%,var(--bg1) 100%)`;
@@ -813,16 +1169,16 @@ function renderResult(r){
   const dirDesc=r.swimDir===null?`45° asumido (f=${r.f_avg.toFixed(2)})`:`${dirLabel(r.swimDir)} (f=${r.f_avg.toFixed(2)})`;
 
   $('balance-rows').innerHTML=[
-    {icon:"⚡",name:`Producción metabólica (${paceLbl}/100m)`,
+    {icon:"⚡",name:`${t('metabolic')} (${paceLbl}/100m)`,
      detail:`base ${Math.round(r.Q_met_base)}W × frío ×${r.f_cold.toFixed(2)} + NST ${r.Q_NST}W`,
      val:r.Q_met,sign:1},
-    {icon:"💧",name:`Pérdida al agua (${r.waterTemp.toFixed(1)}°C · T_piel ${r.T_piel.toFixed(1)}°C)`,
+    {icon:"💧",name:`${t('waterLoss')} (${r.waterTemp.toFixed(1)}°C · T_piel ${r.T_piel.toFixed(1)}°C)`,
      detail:`h_ef=${r.h_w_eff.toFixed(0)} W/m²°C · ${SUIT_R[r.suit]===0?'sin traje':r.suit==='standard'?'traje estándar':'traje térmico'}`,
      val:r.Q_water,sign:-1},
     {icon:"💨",name:`Pérdida al aire + viento (${r.windSpeed.toFixed(1)} km/h · ${windDirLabel(r.windDir)} ${windArrow(r.windDir)})`,
      detail:`dirección nado: ${dirDesc} · h_aire=${r.h_air.toFixed(1)} W/m²°C`,
      val:r.Q_aire,sign:-1},
-    {icon:"☀️",name:`Ganancia solar (elevación ${solarDeg}°)`,
+    {icon:"☀️",name:`${t('solarGain')} (elevación ${solarDeg}°)`,
      detail:`I=${Math.round(r.I)} W/m²`,
      val:r.Q_solar,sign:1},
   ].map(row=>{
@@ -836,7 +1192,7 @@ function renderResult(r){
     </div>`;
   }).join('')+
   `<div class="balance-row total">
-    <span class="brow-name">BALANCE NETO</span>
+    <span class="brow-name">'${t('netBalance')}'</span>
     <span class="brow-val" style="color:${zAcc}">${net>=0?"+":""}${Math.round(net)}W</span>
   </div>`;
 
@@ -873,16 +1229,16 @@ function runSim(){
   const Tn=37-dT;
   const kJ=deficit/1000;
   let rc,rl,rd;
-  if(r.Q_net>=0){rc="#40e8b0";rl="Sin déficit térmico";rd="Balance positivo — núcleo estable o ganando calor.";}
-  else if(kJ<50){rc="#40e8b0";rl="🟢 Recuperación rápida";rd="10–15 min con ropa seca y bebida tibia.";}
-  else if(kJ<150){rc="#f8b040";rl="🟡 Recuperación moderada";rd="20–40 min: ropa seca, bebida caliente, ambiente cálido.";}
-  else if(kJ<300){rc="#ff9040";rl="🟠 Recuperación larga";rd="45–90 min con calor activo. Evitá re-exposición al frío.";}
-  else{rc="#ff5577";rl="🔴 Zona de riesgo";rd="Más de 90 min de recuperación. Considerá asistencia médica.";}
+  if(r.Q_net>=0){rc="#40e8b0";rl=t('noDeficit');rd=t('noDeficitDesc');}
+  else if(kJ<50){rc="#40e8b0";rl=t('fastRecovery');rd=t('fastRecoveryDesc');}
+  else if(kJ<150){rc="#f8b040";rl=t('modRecovery');rd=t('modRecoveryDesc');}
+  else if(kJ<300){rc="#ff9040";rl=t('longRecovery');rd=t('longRecoveryDesc');}
+  else{rc="#ff5577";rl=t('dangerZone');rd=t('dangerZoneDesc');}
   $('sim-result').innerHTML=`
     <div class="grid2" style="margin-bottom:12px">
-      <div class="dcell"><div class="dcell-lbl">T° NÚCLEO EST.</div>
+      <div class="dcell"><div class="dcell-lbl">${t('coreTemp')}</div>
         <div class="dcell-val" style="color:${Tn>36.2?'var(--ok)':Tn>35?'var(--accent3)':'var(--danger)'}">${Tn.toFixed(1)}°C</div></div>
-      <div class="dcell"><div class="dcell-lbl">DÉFICIT ACUM.</div>
+      <div class="dcell"><div class="dcell-lbl">${t('accumDeficit')}</div>
         <div class="dcell-val">${Math.round(kJ)} kJ</div></div>
     </div>
     <div class="recovery-box" style="border-color:${rc};background:${rc}18">
@@ -901,6 +1257,7 @@ on('link-new-loc','click',()=>{
   $('search-results').style.display='none';
   $('search-input').value='';
   $('forecast-card').style.display='none';
+  $('beach-card').style.display='none';
   showStep('location');
 });
 on('btn-info','click',()=>{ $('main-app').style.display='none'; $('info-page').classList.add('active'); window.scrollTo(0,0); });
@@ -937,13 +1294,13 @@ function dirLabel(deg){
   return dirs[deg]||deg+'°';
 }
 function weatherDesc(c){
-  if(c===0) return "☀️ Despejado";
-  if(c<=3)  return "🌤 Parcialmente nublado";
-  if(c<=49) return "🌫 Neblina";
-  if(c<=67) return "🌧 Lluvia";
-  if(c<=77) return "🌨 Nieve";
-  if(c<=82) return "🌦 Chubascos";
-  return "⛈ Tormenta";
+  if(c===0) return t('wClear');
+  if(c<=3)  return t('wPartly');
+  if(c<=49) return t('wFog');
+  if(c<=67) return t('wRain');
+  if(c<=77) return t('wSnow');
+  if(c<=82) return t('wShowers');
+  return t('wStorm');
 }
 function weatherIcon(c){
   if(c===0) return "☀️";
