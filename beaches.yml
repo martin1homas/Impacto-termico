@@ -15,46 +15,61 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Get token and fetch beaches
+      - name: Debug token endpoint
         env:
           CLIENT_ID: ${{ secrets.MVDAPI_CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.MVDAPI_CLIENT_SECRET }}
         run: |
-          echo "Getting token..."
-          TOKEN=$(curl -s -X POST \
+          echo "=== Testing token endpoint ==="
+          echo "Client ID length: ${#CLIENT_ID}"
+          echo "Client Secret length: ${#CLIENT_SECRET}"
+
+          BODY=$(curl -s -X POST \
             "https://mvdapi-auth.montevideo.gub.uy/auth/realms/pci/protocol/openid-connect/token" \
             -H "Content-Type: application/x-www-form-urlencoded" \
-            -d "grant_type=client_credentials&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}" \
-            | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['access_token'])")
-          
-          if [ -z "$TOKEN" ]; then
-            echo "ERROR: empty token"
-            exit 1
+            -d "grant_type=client_credentials&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}")
+
+          echo "Body length: ${#BODY}"
+          echo "Body: ${BODY:0:300}"
+
+          if echo "$BODY" | grep -q "access_token"; then
+            echo "Token found!"
+            TOKEN=$(echo "$BODY" | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+            echo "Token length: ${#TOKEN}"
+
+            curl -s \
+              "https://api.montevideo.gub.uy/api/beaches/lifeguardstations" \
+              -H "Authorization: Bearer ${TOKEN}" \
+              -H "Accept: application/json" \
+              -o beaches_raw.json
+
+            python3 << 'PYEOF'
+import json
+from datetime import datetime, timezone
+with open('beaches_raw.json') as f:
+    data = json.load(f)
+out = {
+    "updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+    "beaches": data
+}
+with open('beaches.json', 'w') as f:
+    json.dump(out, f, ensure_ascii=False, indent=2)
+print(f"OK: {len(data)} stations saved")
+PYEOF
+          else
+            echo "No access_token found"
+            echo "Full response: $BODY"
           fi
-          echo "Token OK (${#TOKEN} chars)"
-          
-          echo "Fetching beaches..."
-          curl -s \
-            "https://api.montevideo.gub.uy/api/beaches/lifeguardstations" \
-            -H "Authorization: Bearer ${TOKEN}" \
-            -H "Accept: application/json" \
-            -o beaches_raw.json
-          
-          python3 - << 'PYEOF'
-          import json
-          from datetime import datetime, timezone
-          with open('beaches_raw.json') as f:
-              data = json.load(f)
-          out = {"updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "beaches": data}
-          with open('beaches.json', 'w') as f:
-              json.dump(out, f, ensure_ascii=False, indent=2)
-          print(f"OK: {len(data)} stations")
-          PYEOF
 
       - name: Commit and push
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add beaches.json
-          git diff --staged --quiet || git commit -m "Beach status $(date -u '+%Y-%m-%d %H:%M UTC')"
-          git push
+          if [ -f beaches.json ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add beaches.json
+            git diff --staged --quiet || git commit -m "Beach status $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git push
+            echo "Committed"
+          else
+            echo "No beaches.json to commit"
+          fi
