@@ -1,0 +1,95 @@
+name: Update Beach Status
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # cada hora
+  workflow_dispatch:      # correr manualmente
+
+jobs:
+  fetch-beaches:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Get OAuth2 token and fetch beaches
+        env:
+          CLIENT_ID: ${{ secrets.MVDAPI_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.MVDAPI_CLIENT_SECRET }}
+        run: |
+          echo "=== Getting OAuth2 token ==="
+          
+          # Get token — send all params in one -d string to avoid issues
+          TOKEN_RESPONSE=$(curl -s -X POST \
+            "https://mvdapi-auth.montevideo.gub.uy/auth/realms/pci/protocol/openid-connect/token" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            --data-urlencode "grant_type=client_credentials" \
+            --data-urlencode "client_id=${CLIENT_ID}" \
+            --data-urlencode "client_secret=${CLIENT_SECRET}")
+          
+          echo "Token response length: ${#TOKEN_RESPONSE}"
+          
+          # Extract token
+          ACCESS_TOKEN=$(echo "$TOKEN_RESPONSE" | python3 -c "
+          import sys, json
+          try:
+              d = json.load(sys.stdin)
+              print(d.get('access_token', ''))
+          except Exception as e:
+              print('ERROR:', e, file=sys.stderr)
+              sys.exit(1)
+          ")
+          
+          if [ -z "$ACCESS_TOKEN" ]; then
+            echo "ERROR: Failed to get access token"
+            echo "Response: $TOKEN_RESPONSE"
+            exit 1
+          fi
+          
+          echo "✅ Token obtained (length: ${#ACCESS_TOKEN})"
+          
+          echo "=== Fetching beach status ==="
+          HTTP_CODE=$(curl -s -o beaches_raw.json -w "%{http_code}" \
+            "https://api.montevideo.gub.uy/api/beaches/lifeguardstations" \
+            -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+            -H "Accept: application/json")
+          
+          echo "HTTP status: $HTTP_CODE"
+          
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "ERROR: API returned HTTP $HTTP_CODE"
+            cat beaches_raw.json
+            exit 1
+          fi
+          
+          echo "=== Processing JSON ==="
+          python3 << 'PYEOF'
+          import json
+          from datetime import datetime, timezone
+          
+          with open('beaches_raw.json') as f:
+              data = json.load(f)
+          
+          output = {
+              "updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+              "beaches": data
+          }
+          
+          with open('beaches.json', 'w') as f:
+              json.dump(output, f, ensure_ascii=False, indent=2)
+          
+          print(f"✅ {len(data)} casillas procesadas")
+          for b in data[:3]:
+              print(f"  - {b.get('beach','?')}: safety={b.get('safetyFlag','?')} health={b.get('healthFlag','?')}")
+          PYEOF
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add beaches.json
+          git diff --staged --quiet || git commit -m "🏖️ Beach status $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push
