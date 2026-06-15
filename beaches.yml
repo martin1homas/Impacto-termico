@@ -2,8 +2,8 @@ name: Update Beach Status
 
 on:
   schedule:
-    - cron: '0 * * * *'  # cada hora
-  workflow_dispatch:      # correr manualmente
+    - cron: '0 * * * *'
+  workflow_dispatch:
 
 jobs:
   fetch-beaches:
@@ -15,75 +15,40 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Get OAuth2 token and fetch beaches
+      - name: Get token and fetch beaches
         env:
           CLIENT_ID: ${{ secrets.MVDAPI_CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.MVDAPI_CLIENT_SECRET }}
         run: |
-          echo "=== Getting OAuth2 token ==="
-          
-          # Get token — send all params in one -d string to avoid issues
-          TOKEN_RESPONSE=$(curl -s -X POST \
+          echo "Getting token..."
+          TOKEN=$(curl -s -X POST \
             "https://mvdapi-auth.montevideo.gub.uy/auth/realms/pci/protocol/openid-connect/token" \
             -H "Content-Type: application/x-www-form-urlencoded" \
-            --data-urlencode "grant_type=client_credentials" \
-            --data-urlencode "client_id=${CLIENT_ID}" \
-            --data-urlencode "client_secret=${CLIENT_SECRET}")
+            -d "grant_type=client_credentials&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}" \
+            | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['access_token'])")
           
-          echo "Token response length: ${#TOKEN_RESPONSE}"
-          
-          # Extract token
-          ACCESS_TOKEN=$(echo "$TOKEN_RESPONSE" | python3 -c "
-          import sys, json
-          try:
-              d = json.load(sys.stdin)
-              print(d.get('access_token', ''))
-          except Exception as e:
-              print('ERROR:', e, file=sys.stderr)
-              sys.exit(1)
-          ")
-          
-          if [ -z "$ACCESS_TOKEN" ]; then
-            echo "ERROR: Failed to get access token"
-            echo "Response: $TOKEN_RESPONSE"
+          if [ -z "$TOKEN" ]; then
+            echo "ERROR: empty token"
             exit 1
           fi
+          echo "Token OK (${#TOKEN} chars)"
           
-          echo "✅ Token obtained (length: ${#ACCESS_TOKEN})"
-          
-          echo "=== Fetching beach status ==="
-          HTTP_CODE=$(curl -s -o beaches_raw.json -w "%{http_code}" \
+          echo "Fetching beaches..."
+          curl -s \
             "https://api.montevideo.gub.uy/api/beaches/lifeguardstations" \
-            -H "Authorization: Bearer ${ACCESS_TOKEN}" \
-            -H "Accept: application/json")
+            -H "Authorization: Bearer ${TOKEN}" \
+            -H "Accept: application/json" \
+            -o beaches_raw.json
           
-          echo "HTTP status: $HTTP_CODE"
-          
-          if [ "$HTTP_CODE" != "200" ]; then
-            echo "ERROR: API returned HTTP $HTTP_CODE"
-            cat beaches_raw.json
-            exit 1
-          fi
-          
-          echo "=== Processing JSON ==="
-          python3 << 'PYEOF'
+          python3 - << 'PYEOF'
           import json
           from datetime import datetime, timezone
-          
           with open('beaches_raw.json') as f:
               data = json.load(f)
-          
-          output = {
-              "updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-              "beaches": data
-          }
-          
+          out = {"updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "beaches": data}
           with open('beaches.json', 'w') as f:
-              json.dump(output, f, ensure_ascii=False, indent=2)
-          
-          print(f"✅ {len(data)} casillas procesadas")
-          for b in data[:3]:
-              print(f"  - {b.get('beach','?')}: safety={b.get('safetyFlag','?')} health={b.get('healthFlag','?')}")
+              json.dump(out, f, ensure_ascii=False, indent=2)
+          print(f"OK: {len(data)} stations")
           PYEOF
 
       - name: Commit and push
@@ -91,5 +56,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add beaches.json
-          git diff --staged --quiet || git commit -m "🏖️ Beach status $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git diff --staged --quiet || git commit -m "Beach status $(date -u '+%Y-%m-%d %H:%M UTC')"
           git push
