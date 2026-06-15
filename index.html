@@ -1212,28 +1212,34 @@ async function doSearch() {
 
   let results = [];
 
-  // Primary: Open-Meteo Geocoding (no CORS issues)
+  // Primary: Nominatim — better for specific place names, beaches, local geography
   try {
-    const res = await fetch(`${GEO}/search?name=${encodeURIComponent(q)}&count=8&language=${LANG}&format=json`);
+    const res = await fetch(
+      `${NOM}/search?q=${encodeURIComponent(q)}&format=json&limit=8&addressdetails=1&accept-language=${LANG}`,
+      { signal: AbortSignal.timeout(6000) }
+    );
     if (res.ok) {
       const data = await res.json();
-      if (data.results?.length) {
-        results = data.results.map(r => ({
-          lat: r.latitude, lon: r.longitude,
-          name: r.name,
-          display_name: [r.name, r.admin1, r.admin2, r.country].filter(Boolean).join(', '),
-        }));
-      }
+      if (data?.length) results = data;
     }
-  } catch (e) { /* fallthrough */ }
+  } catch (e) { /* timeout or network error — try fallback */ }
 
-  // Fallback: Nominatim
+  // Fallback: Open-Meteo Geocoding (no CORS issues, good for cities)
   if (!results.length) {
     try {
-      const res = await fetch(`${NOM}/search?q=${encodeURIComponent(q)}&format=json&limit=6&accept-language=${LANG}`);
+      const res = await fetch(
+        `${GEO}/search?name=${encodeURIComponent(q)}&count=8&language=${LANG}&format=json`,
+        { signal: AbortSignal.timeout(6000) }
+      );
       if (res.ok) {
         const data = await res.json();
-        if (data?.length) results = data;
+        if (data.results?.length) {
+          results = data.results.map(r => ({
+            lat: r.latitude, lon: r.longitude,
+            name: r.name,
+            display_name: [r.name, r.admin1, r.admin2, r.country].filter(Boolean).join(', '),
+          }));
+        }
       }
     } catch (e) { /* both failed */ }
   }
@@ -1924,9 +1930,22 @@ const DEPTS = {
 
 function detectDept(name) {
   const n = name.toLowerCase();
+  // Text-based detection
   for (const [key, d] of Object.entries(DEPTS)) {
     if (d.keywords?.some(k => n.includes(k))) return key;
     if (d.beaches?.some(b => n.includes(b)))  return key;
+  }
+  // Coordinate-based detection — covers GPS use case
+  if (S.coords) {
+    const { lat, lon } = S.coords;
+    // Montevideo coast
+    if (lat >= -35.0 && lat <= -34.8 && lon >= -56.4 && lon <= -55.9) return 'montevideo';
+    // Canelones coast
+    if (lat >= -34.8 && lat <= -34.5 && lon >= -56.4 && lon <= -55.6) return 'canelones';
+    // Maldonado/Punta del Este
+    if (lat >= -34.95 && lat <= -34.7 && lon >= -55.4 && lon <= -54.8) return 'maldonado';
+    // Rocha
+    if (lat >= -34.5 && lat <= -33.8 && lon >= -54.5 && lon <= -53.4) return 'rocha';
   }
   return null;
 }
@@ -1951,12 +1970,32 @@ async function loadBeachStatus() {
   }
 
   try {
-    const res = await fetch(BEACHES + '?t=' + Date.now());
-    if (!res.ok) throw new Error();
+    const res = await fetch(BEACHES + '?t=' + Date.now(), { signal: AbortSignal.timeout(5000) });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    renderBeaches(data);
-  } catch {
-    $('beach-card').style.display = 'none';
+    if (data.beaches?.length) {
+      renderBeaches(data);
+    } else {
+      // beaches.json exists but empty — workflow may not have run yet
+      $('beach-content').innerHTML = `
+        <a href="https://montevideo.gub.uy/playas" target="_blank"
+          style="display:flex;align-items:center;gap:10px;padding:14px;
+          background:var(--shallow);border:1.5px solid var(--border);border-radius:var(--rad-sm);
+          text-decoration:none;color:var(--water);font-size:13px;font-weight:700">
+          🏖 Ver estado de playas Montevideo →</a>`;
+      $('beach-updated').textContent = '';
+      $('beach-card').style.display = 'block';
+    }
+  } catch (e) {
+    // beaches.json not available yet — show direct link
+    $('beach-content').innerHTML = `
+      <a href="https://montevideo.gub.uy/playas" target="_blank"
+        style="display:flex;align-items:center;gap:10px;padding:14px;
+        background:var(--shallow);border:1.5px solid var(--border);border-radius:var(--rad-sm);
+        text-decoration:none;color:var(--water);font-size:13px;font-weight:700">
+        🏖 Ver estado de playas Montevideo →</a>`;
+    $('beach-updated').textContent = '';
+    $('beach-card').style.display = 'block';
   }
 }
 
