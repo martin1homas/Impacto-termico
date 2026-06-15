@@ -1,0 +1,61 @@
+name: Update Beach Status
+ 
+on:
+  schedule:
+    - cron: '0 * * * *'  # cada hora
+  workflow_dispatch:      # permite correrlo manualmente
+ 
+jobs:
+  fetch-beaches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+ 
+      - name: Get OAuth2 token
+        id: token
+        run: |
+          RESPONSE=$(curl -s -X POST \
+            "https://mvdapi-auth.montevideo.gub.uy/auth/realms/pci/protocol/openid-connect/token" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "grant_type=client_credentials" \
+            -d "client_id=${{ secrets.MVDAPI_CLIENT_ID }}" \
+            -d "client_secret=${{ secrets.MVDAPI_CLIENT_SECRET }}")
+          TOKEN=$(echo $RESPONSE | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+          echo "token=$TOKEN" >> $GITHUB_OUTPUT
+ 
+      - name: Fetch beach status
+        run: |
+          curl -s \
+            "https://api.montevideo.gub.uy/api/beaches/lifeguardstations" \
+            -H "Authorization: Bearer ${{ steps.token.outputs.token }}" \
+            -H "Accept: application/json" \
+            -o beaches_raw.json
+ 
+          # Agregar timestamp de actualización
+          python3 << 'PYEOF'
+          import json
+          from datetime import datetime, timezone
+ 
+          with open('beaches_raw.json') as f:
+              data = json.load(f)
+ 
+          output = {
+              "updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+              "beaches": data
+          }
+ 
+          with open('beaches.json', 'w') as f:
+              json.dump(output, f, ensure_ascii=False, indent=2)
+ 
+          print(f"✅ {len(data)} casillas de guardavidas procesadas")
+          PYEOF
+ 
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add beaches.json
+          git diff --staged --quiet || git commit -m "🏖️ Update beach status $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push
+ 
