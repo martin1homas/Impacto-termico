@@ -1,0 +1,67 @@
+name: Update Beach Status
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+jobs:
+  fetch-beaches:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch beaches
+        env:
+          CID: ${{ secrets.MVDAPI_CLIENT_ID }}
+          CSC: ${{ secrets.MVDAPI_CLIENT_SECRET }}
+        run: |
+          python3 << 'PYEOF'
+import os, json, urllib.request, urllib.parse
+from datetime import datetime, timezone
+
+cid = os.environ['CID']
+csc = os.environ['CSC']
+
+print(f"CID length: {len(cid)}, CSC length: {len(csc)}")
+
+# Get token
+token_url = "https://mvdapi-auth.montevideo.gub.uy/auth/realms/pci/protocol/openid-connect/token"
+token_data = urllib.parse.urlencode({
+    "grant_type": "client_credentials",
+    "client_id": cid,
+    "client_secret": csc,
+}).encode()
+
+req = urllib.request.Request(token_url, data=token_data,
+    headers={"Content-Type": "application/x-www-form-urlencoded"})
+with urllib.request.urlopen(req) as r:
+    token_resp = json.loads(r.read())
+
+token = token_resp["access_token"]
+print(f"Token OK, length: {len(token)}")
+
+# Fetch beaches
+beaches_url = "https://api.montevideo.gub.uy/api/beaches/lifeguardstations"
+req2 = urllib.request.Request(beaches_url,
+    headers={"Authorization": f"Bearer {token}", "Accept": "application/json"})
+with urllib.request.urlopen(req2) as r:
+    beaches = json.loads(r.read())
+
+print(f"Beaches: {len(beaches)} stations")
+
+out = {
+    "updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+    "beaches": beaches
+}
+with open("beaches.json", "w") as f:
+    json.dump(out, f, ensure_ascii=False, indent=2)
+print("Done")
+PYEOF
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add beaches.json
+          git diff --staged --quiet || git commit -m "Beach status $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push
