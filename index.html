@@ -11,11 +11,11 @@
   --foam:    #D4E9F2;
   --shallow: #E8F2F8;
   --deep:    #1A4A6B;
-  --water:   #0092B8;
+  --water:   #00637D;
   --water2:  #006B94;
   --text:    #1A4A6B;
   --text2:   #3A6A8B;
-  --text3:   #7AAABB;
+  --text3:   #356088;
   --border:  #C8DDE8;
   --ok:      #0A7A4A;
   --warn:    #C07000;
@@ -54,16 +54,17 @@ body {
   text-align: center;
 }
 .eyebrow {
-  font-size: 9px;
-  letter-spacing: 5px;
+  font-size:11px;
+  letter-spacing: 3px;
   color: var(--foam);
-  opacity: .6;
+  opacity: .65;
   margin-bottom: 6px;
   font-family: 'Courier New', monospace;
+  padding: 0 70px;
 }
 .app-title {
   font-family: Georgia, serif;
-  font-size: 36px;
+  font-size:36px;
   font-weight: 900;
   color: #fff;
   letter-spacing: 6px;
@@ -71,7 +72,7 @@ body {
   margin-bottom: 4px;
 }
 .app-tagline {
-  font-size: 11px;
+  font-size:16px;
   color: var(--foam);
   opacity: .8;
   letter-spacing: 1px;
@@ -108,7 +109,7 @@ body {
   border: 1px solid rgba(255,255,255,.25);
   border-radius: 16px;
   color: #fff;
-  font-size: 11px;
+  font-size:16px;
   font-weight: 700;
   letter-spacing: 1px;
   cursor: pointer;
@@ -120,7 +121,7 @@ body {
   transition: background .2s;
 }
 .hdr-btn:active { background: rgba(255,255,255,.25); }
-.hdr-btn.icon { width: 32px; padding: 0; font-size: 14px; }
+.hdr-btn.icon { width: 32px; padding: 0; font-size:20px; }
 
 /* Lang menu */
 .lang-menu {
@@ -138,7 +139,7 @@ body {
 .lang-menu.open { display: block; }
 .lang-opt {
   padding: 12px 16px;
-  font-size: 13px;
+  font-size:18px;
   color: var(--text);
   cursor: pointer;
   border-bottom: 1px solid var(--border);
@@ -150,7 +151,7 @@ body {
 .lang-opt:last-child { border-bottom: none; }
 .lang-opt:active, .lang-opt:hover { background: var(--shallow); }
 .lang-opt.active { color: var(--water); font-weight: 700; }
-.lang-code { font-size: 10px; color: var(--text3); font-family: 'Courier New', monospace; }
+.lang-code { font-size:15px; color: var(--text3); font-family: 'Courier New', monospace; }
 
 /* ── LAYOUT ──────────────────────────────────────────────── */
 .container { width: 100%; max-width: 460px; padding: 0 16px; }
@@ -165,7 +166,7 @@ body {
   box-shadow: 0 2px 8px rgba(26,74,107,.06);
 }
 .card-title {
-  font-size: 9px;
+  font-size:14px;
   letter-spacing: 4px;
   color: var(--water);
   margin-bottom: 16px;
@@ -185,7 +186,7 @@ input[type=text], input[type=number] {
   border: 1.5px solid var(--border);
   border-radius: var(--rad-sm);
   color: var(--text);
-  font-size: 15px;
+  font-size:20px;
   margin-bottom: 12px;
   outline: none;
   transition: border-color .2s;
@@ -200,7 +201,7 @@ input:focus { border-color: var(--water); background: #fff; }
   padding: 15px;
   border: none;
   border-radius: var(--rad-sm);
-  font-size: 13px;
+  font-size:18px;
   font-weight: 700;
   letter-spacing: 1.5px;
   cursor: pointer;
@@ -229,7 +230,7 @@ input:focus { border-color: var(--water); background: #fff; }
   color: var(--text2);
   border: 1.5px solid var(--border);
   border-radius: 20px;
-  font-size: 12px;
+  font-size:17px;
   cursor: pointer;
   transition: all .15s;
   font-weight: 500;
@@ -243,7 +244,7 @@ input:focus { border-color: var(--water); background: #fff; }
 
 /* ── LABELS ──────────────────────────────────────────────── */
 .lbl {
-  font-size: 10px;
+  font-size:15px;
   color: var(--text2);
   letter-spacing: 2px;
   margin: 16px 0 8px;
@@ -252,7 +253,7 @@ input:focus { border-color: var(--water); background: #fff; }
 }
 .lbl:first-child { margin-top: 0; }
 .lbl-opt {
-  font-size: 9px;
+  font-size:14px;
   color: var(--text3);
   margin-left: 6px;
   letter-spacing: 1px;
@@ -271,14 +272,15 @@ input:focus { border-color: var(--water); background: #fff; }
   border: 1px solid var(--foam);
 }
 .dcell-lbl {
-  font-size: 9px;
+  font-weight: 600;
+  font-size:14px;
   color: var(--text3);
   letter-spacing: 1.5px;
   margin-bottom: 5px;
   font-family: 'Courier New', monospace;
 }
 .dcell-val {
-  font-size: 17px;
+  font-size:22px;
   font-weight: 700;
   color: var(--deep);
   font-family: Georgia, serif;
@@ -292,7 +294,7 @@ input:focus { border-color: var(--water); background: #fff; }
   color: var(--text2);
   border: 1.5px solid var(--border);
   border-radius: var(--rad-sm);
-  font-size: 11px;
+  font-size:16px;
   cursor: pointer;
   text-align: center;
   line-height: 1.4;
@@ -304,8 +306,8 @@ input:focus { border-color: var(--water); background: #fff; }
   border-color: var(--water);
   font-weight: 700;
 }
-.sp-pace { font-size: 13px; font-weight: 700; font-family: Georgia, serif; }
-.sp-ms { font-size: 9px; opacity: .6; margin-top: 2px; font-family: 'Courier New', monospace; }
+.sp-pace { font-size:18px; font-weight: 700; font-family: Georgia, serif; }
+.sp-ms { font-size:14px; opacity: .6; margin-top: 2px; font-family: 'Courier New', monospace; }
 
 /* ── COMPASS ─────────────────────────────────────────────── */
 .compass { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; max-width: 200px; margin: 0 auto; }
@@ -315,14 +317,14 @@ input:focus { border-color: var(--water); background: #fff; }
   color: var(--text2);
   border: 1.5px solid var(--border);
   border-radius: var(--rad-sm);
-  font-size: 12px;
+  font-size:17px;
   cursor: pointer;
   text-align: center;
   transition: all .15s;
   font-weight: 700;
 }
 .dir-btn.active { background: var(--water); color: #fff; border-color: var(--water); }
-.dir-btn.center { background: transparent; border: none; color: var(--text3); font-size: 16px; cursor: default; }
+.dir-btn.center { background: transparent; border: none; color: var(--text3); font-size:22px; cursor: default; }
 
 /* ── SEARCH RESULTS ──────────────────────────────────────── */
 .search-box {
@@ -336,7 +338,7 @@ input:focus { border-color: var(--water); background: #fff; }
 }
 .sresult {
   padding: 13px 16px;
-  font-size: 12px;
+  font-size:17px;
   color: var(--text);
   cursor: pointer;
   border-bottom: 1px solid var(--foam);
@@ -345,14 +347,14 @@ input:focus { border-color: var(--water); background: #fff; }
 }
 .sresult:last-child { border-bottom: none; }
 .sresult:active, .sresult:hover { background: var(--shallow); }
-.sresult-name { font-weight: 700; color: var(--water2); font-size: 13px; }
-.sresult-detail { font-size: 10px; color: var(--text3); margin-top: 2px; }
+.sresult-name { font-weight: 700; color: var(--water2); font-size:18px; }
+.sresult-detail { font-size:15px; color: var(--text3); margin-top: 2px; }
 
 /* ── ALERTS ──────────────────────────────────────────────── */
 .alert {
   padding: 12px 14px;
   border-radius: var(--rad-sm);
-  font-size: 12px;
+  font-size:17px;
   margin-top: 10px;
   line-height: 1.5;
   display: none;
@@ -379,11 +381,11 @@ input:focus { border-color: var(--water); background: #fff; }
   min-width: 72px;
 }
 .fc-slot.now { border-color: var(--water); background: #fff; }
-.fc-time { font-size: 9px; color: var(--text3); margin-bottom: 5px; font-family: 'Courier New', monospace; }
-.fc-icon { font-size: 18px; margin-bottom: 4px; }
-.fc-temp { font-size: 15px; font-weight: 700; color: var(--deep); font-family: Georgia, serif; }
-.fc-wind { font-size: 10px; color: var(--text2); margin-top: 3px; }
-.fc-water { font-size: 10px; color: var(--water); margin-top: 2px; font-weight: 600; }
+.fc-time { font-weight: 600; font-size:14px; color: var(--text3); margin-bottom: 5px; font-family: 'Courier New', monospace; }
+.fc-icon { font-size:24px; margin-bottom: 4px; }
+.fc-temp { font-size:20px; font-weight: 700; color: var(--deep); font-family: Georgia, serif; }
+.fc-wind { font-size:15px; color: var(--text2); margin-top: 3px; }
+.fc-water { font-size:15px; color: var(--water); margin-top: 2px; font-weight: 600; }
 
 /* ── WIND INFO ───────────────────────────────────────────── */
 .wind-info {
@@ -391,14 +393,14 @@ input:focus { border-color: var(--water); background: #fff; }
   border: 1.5px solid var(--foam);
   border-radius: var(--rad-sm);
   padding: 10px 14px;
-  font-size: 11px;
+  font-size:16px;
   color: var(--text2);
   margin-top: 8px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.wind-arrow { font-size: 20px; transition: transform .3s; }
+.wind-arrow { font-size:26px; transition: transform .3s; }
 
 /* ── WAVE BOX ────────────────────────────────────────────── */
 .wave-box {
@@ -409,7 +411,7 @@ input:focus { border-color: var(--water); background: #fff; }
   border-left: 3px solid var(--water);
 }
 .wave-box-title {
-  font-size: 9px;
+  font-size:14px;
   color: var(--text3);
   letter-spacing: 2px;
   margin-bottom: 8px;
@@ -424,10 +426,10 @@ input:focus { border-color: var(--water); background: #fff; }
   border: 2px solid;
   text-align: center;
 }
-.net-label { font-size: 9px; letter-spacing: 4px; margin-bottom: 10px; font-family: 'Courier New', monospace; font-weight: 700; }
-.net-value { font-size: 72px; font-weight: 900; line-height: 1; margin-bottom: 4px; font-family: Georgia, serif; }
-.net-unit  { font-size: 12px; opacity: .5; margin-bottom: 16px; font-family: 'Courier New', monospace; }
-.net-badge { display: inline-block; padding: 6px 20px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #fff; }
+.net-label { font-size:14px; letter-spacing: 4px; margin-bottom: 10px; font-family: 'Courier New', monospace; font-weight: 700; }
+.net-value { font-size:72px; font-weight: 900; line-height: 1; margin-bottom: 4px; font-family: Georgia, serif; }
+.net-unit  { font-size:17px; opacity: .5; margin-bottom: 16px; font-family: 'Courier New', monospace; }
+.net-badge { display: inline-block; padding: 6px 20px; border-radius: 20px; font-size:16px; font-weight: 700; letter-spacing: 2px; color: #fff; }
 
 /* ── BALANCE ROWS ────────────────────────────────────────── */
 .brow {
@@ -439,15 +441,15 @@ input:focus { border-color: var(--water); background: #fff; }
 }
 .brow:last-child { border-bottom: none; }
 .brow.total { margin-top: 6px; padding-top: 14px; border-top: 2px solid var(--border); align-items: center; }
-.brow-name   { color: var(--text2); font-size: 12px; }
-.brow-detail { font-size: 10px; color: var(--text3); margin-top: 2px; font-family: 'Courier New', monospace; }
-.brow-val    { font-weight: 700; font-size: 15px; white-space: nowrap; padding-left: 12px; flex-shrink: 0; font-family: Georgia, serif; }
+.brow-name   { color: var(--text2); font-size:17px; }
+.brow-detail { font-weight: 500; font-size:15px; color: var(--text3); margin-top: 2px; font-family: 'Courier New', monospace; }
+.brow-val    { font-weight: 700; font-size:20px; white-space: nowrap; padding-left: 12px; flex-shrink: 0; font-family: Georgia, serif; }
 .pos { color: var(--ok); }
 .neg { color: var(--warn); }
 
 /* ── TIME BARS ───────────────────────────────────────────── */
 .tbar { margin-bottom: 14px; }
-.tbar-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
+.tbar-header { display: flex; justify-content: space-between; font-size:17px; margin-bottom: 6px; }
 .tbar-bg { background: var(--shallow); border-radius: 4px; height: 8px; overflow: hidden; border: 1px solid var(--foam); }
 .tbar-fill { height: 100%; border-radius: 4px; transition: width .8s ease; }
 
@@ -458,8 +460,8 @@ input:focus { border-color: var(--water); background: #fff; }
   border: 1.5px solid;
   margin-top: 10px;
 }
-.rec-title { font-size: 11px; letter-spacing: 2px; margin-bottom: 6px; font-weight: 700; font-family: 'Courier New', monospace; }
-.rec-text  { font-size: 13px; line-height: 1.5; color: var(--text2); }
+.rec-title { font-size:16px; letter-spacing: 2px; margin-bottom: 6px; font-weight: 700; font-family: 'Courier New', monospace; }
+.rec-text  { font-size:18px; line-height: 1.5; color: var(--text2); }
 
 /* ── BEACH STATUS ────────────────────────────────────────── */
 .beach-status {
@@ -471,12 +473,12 @@ input:focus { border-color: var(--water); background: #fff; }
   border: 2px solid;
   margin-bottom: 8px;
 }
-.beach-flag-icon { font-size: 32px; flex-shrink: 0; line-height: 1; }
+.beach-flag-icon { font-size:32px; flex-shrink: 0; line-height: 1; }
 .beach-info { flex: 1; }
-.beach-name { font-size: 11px; font-weight: 700; color: var(--deep); margin-bottom: 4px; letter-spacing: 2px; font-family: 'Courier New', monospace; }
-.beach-safety-lbl { font-size: 13px; font-weight: 700; margin-bottom: 4px; font-family: Georgia, serif; }
+.beach-name { font-size:16px; font-weight: 700; color: var(--deep); margin-bottom: 4px; letter-spacing: 2px; font-family: 'Courier New', monospace; }
+.beach-safety-lbl { font-size:18px; font-weight: 700; margin-bottom: 4px; font-family: Georgia, serif; }
 .beach-cause {
-  font-size: 11px;
+  font-size:16px;
   padding: 6px 10px;
   border-radius: 6px;
   background: #FFF0F0;
@@ -485,7 +487,7 @@ input:focus { border-color: var(--water); background: #fff; }
   margin-top: 4px;
   line-height: 1.5;
 }
-.beach-meta { font-size: 10px; color: var(--text3); margin-top: 6px; }
+.beach-meta { font-size:15px; color: var(--text3); margin-top: 6px; }
 .beach-row {
   display: flex;
   align-items: center;
@@ -496,11 +498,11 @@ input:focus { border-color: var(--water); background: #fff; }
   border: 1px solid var(--foam);
   margin-bottom: 6px;
 }
-.beach-row-flag { font-size: 16px; flex-shrink: 0; }
-.beach-row-name { font-size: 12px; font-weight: 700; color: var(--deep); flex: 1; }
-.beach-row-status { font-size: 11px; font-weight: 600; }
-.beach-row-health { font-size: 10px; color: #802020; margin-top: 2px; }
-.beach-updated { font-size: 10px; color: var(--text3); text-align: right; margin-top: 4px; font-family: 'Courier New', monospace; }
+.beach-row-flag { font-size:22px; flex-shrink: 0; }
+.beach-row-name { font-size:17px; font-weight: 700; color: var(--deep); flex: 1; }
+.beach-row-status { font-size:16px; font-weight: 600; }
+.beach-row-health { font-size:15px; color: #802020; margin-top: 2px; }
+.beach-updated { font-size:15px; color: var(--text3); text-align: right; margin-top: 4px; font-family: 'Courier New', monospace; }
 
 /* ── PROFILE BAR ─────────────────────────────────────────── */
 .profile-bar {
@@ -508,7 +510,7 @@ input:focus { border-color: var(--water); background: #fff; }
   background: var(--shallow);
   border: 1px solid var(--foam);
   border-radius: var(--rad-sm);
-  font-size: 12px;
+  font-size:17px;
   color: var(--text2);
   margin-bottom: 12px;
   display: flex;
@@ -520,7 +522,7 @@ input:focus { border-color: var(--water); background: #fff; }
 .link-btn {
   text-align: center;
   margin-top: 12px;
-  font-size: 12px;
+  font-size:17px;
   color: var(--water);
   cursor: pointer;
   letter-spacing: 1px;
@@ -528,10 +530,10 @@ input:focus { border-color: var(--water); background: #fff; }
 .sep { height: 1px; background: var(--foam); margin: 16px 0; }
 .step { display: none; }
 .step.active { display: block; }
-.loc-label { font-size: 11px; color: var(--text2); margin-top: 10px; }
+.loc-label { font-size:16px; color: var(--text2); margin-top: 10px; }
 .min-row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
 .min-row input { margin-bottom: 0; flex: 1; }
-.min-row .btn { width: auto; padding: 13px 20px; flex-shrink: 0; margin-bottom: 0; font-size: 12px; }
+.min-row .btn { width: auto; padding: 13px 20px; flex-shrink: 0; margin-bottom: 0; font-size:17px; }
 .spinner {
   display: inline-block;
   width: 12px; height: 12px;
@@ -547,14 +549,14 @@ input:focus { border-color: var(--water); background: #fff; }
 /* ── INFO PAGE ───────────────────────────────────────────── */
 .info-page { display: none; width: 100%; max-width: 460px; padding: 0 16px 40px; }
 .info-page.active { display: block; }
-.ih2 { font-size: 10px; color: var(--water); letter-spacing: 3px; margin: 16px 0 8px; padding-bottom: 6px; border-bottom: 1px solid var(--foam); font-family: 'Courier New', monospace; font-weight: 700; }
-.ip { font-size: 12px; color: var(--text2); line-height: 1.7; margin-bottom: 8px; }
+.ih2 { font-size:15px; color: var(--water); letter-spacing: 3px; margin: 16px 0 8px; padding-bottom: 6px; border-bottom: 1px solid var(--foam); font-family: 'Courier New', monospace; font-weight: 700; }
+.ip { font-size:17px; color: var(--text2); line-height: 1.7; margin-bottom: 8px; }
 .fbox {
   background: var(--deep);
   color: #C8E8F8;
   border-radius: var(--rad-sm);
   padding: 14px 16px;
-  font-size: 11px;
+  font-size:16px;
   font-family: 'Courier New', monospace;
   margin: 8px 0;
   line-height: 1.7;
@@ -566,7 +568,7 @@ input:focus { border-color: var(--water); background: #fff; }
   background: var(--shallow);
   border: 1px solid var(--border);
   border-radius: 12px;
-  font-size: 11px;
+  font-size:16px;
   color: var(--text2);
   margin: 3px 3px 3px 0;
 }
@@ -575,13 +577,13 @@ input:focus { border-color: var(--water); background: #fff; }
   border: 1.5px solid #C0A020;
   border-radius: var(--rad);
   padding: 16px;
-  font-size: 11px;
+  font-size:16px;
   color: #604000;
   line-height: 1.7;
 }
 .footer {
   margin-top: 32px;
-  font-size: 9px;
+  font-size:14px;
   color: var(--text3);
   text-align: center;
   letter-spacing: 3px;
@@ -630,15 +632,15 @@ input:focus { border-color: var(--water); background: #fff; }
     <!-- GPS card - hidden until permission granted -->
     <div class="card" id="gps-card" style="display:none">
       <div class="card-title" id="t-gps-title">UBICACIÓN GPS</div>
-      <div style="font-size:15px;font-weight:700;color:var(--deep);margin-bottom:4px" id="gps-name">📍 Detectando...</div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:20px;font-family:'Courier New',monospace" id="gps-coords"></div>
+      <div style="font-size:20px;font-weight:700;color:var(--deep);margin-bottom:4px" id="gps-name">📍 Detectando...</div>
+      <div style="font-size:16px;color:var(--text3);margin-bottom:20px;font-family:'Courier New',monospace" id="gps-coords"></div>
       <button class="btn btn-primary" id="btn-fetch-gps">Obtener condiciones actuales</button>
       <div class="link-btn" id="link-search">→ Buscar otra ubicación</div>
     </div>
     <!-- Search card - default view -->
     <div class="card" id="search-card">
       <div class="card-title" id="t-search-title">BUSCAR UBICACIÓN</div>
-      <div style="font-size:12px;color:var(--text3);margin-bottom:12px" id="t-search-hint">Playas, ríos, lagos, ciudades — cualquier lugar geográfico.</div>
+      <div style="font-size:17px;color:var(--text3);margin-bottom:12px" id="t-search-hint">Playas, ríos, lagos, ciudades — cualquier lugar geográfico.</div>
       <input type="text" id="search-input" placeholder="ej: Playa Ramírez Montevideo..." autocomplete="off"/>
       <button class="btn btn-primary" id="btn-search">Buscar</button>
       <div id="search-results" class="search-box" style="display:none"></div>
@@ -677,7 +679,7 @@ input:focus { border-color: var(--water); background: #fff; }
       <div class="card-title" id="t-profile-title">PERFIL FÍSICO</div>
       <div id="profile-bar" class="profile-bar" style="display:none">
         <span id="profile-bar-text"></span>
-        <span style="color:var(--water);cursor:pointer;font-size:11px;font-weight:600" onclick="editProfile()" id="t-edit">Editar</span>
+        <span style="color:var(--water);cursor:pointer;font-size:16px;font-weight:600" onclick="editProfile()" id="t-edit">Editar</span>
       </div>
       <div id="profile-form">
         <div class="grid2">
@@ -716,7 +718,7 @@ input:focus { border-color: var(--water); background: #fff; }
         <button class="pill" data-value="thermal" id="t-thermal-suit">Traje térmico</button>
       </div>
       <div class="lbl" id="t-dir-lbl" style="margin-top:16px">DIRECCIÓN DE NADO <span class="lbl-opt" id="t-optional2">OPCIONAL</span></div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:10px" id="t-dir-hint">Si no la ingresás, se asume 45° respecto al viento.</div>
+      <div style="font-size:16px;color:var(--text3);margin-bottom:10px" id="t-dir-hint">Si no la ingresás, se asume 45° respecto al viento.</div>
       <div class="compass" id="dir-group">
         <button class="dir-btn" data-deg="315">NO</button>
         <button class="dir-btn" data-deg="0">N</button>
@@ -730,7 +732,7 @@ input:focus { border-color: var(--water); background: #fff; }
       </div>
       <div class="wind-info" id="wind-info" style="display:none">
         <span class="wind-arrow" id="wind-arrow">↑</span>
-        <span id="wind-info-text" style="font-size:11px;color:var(--text2)"></span>
+        <span id="wind-info-text" style="font-size:16px;color:var(--text2)"></span>
       </div>
     </div>
 
@@ -756,7 +758,7 @@ input:focus { border-color: var(--water); background: #fff; }
     </div>
     <div class="card">
       <div class="card-title" id="t-sim-title">SIMULADOR DE SESIÓN</div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:12px" id="t-sim-hint">¿Cuántos minutos planificás nadar?</div>
+      <div style="font-size:17px;color:var(--text2);margin-bottom:12px" id="t-sim-hint">¿Cuántos minutos planificás nadar?</div>
       <div class="min-row">
         <input type="number" id="sim-min" placeholder="min" min="1" max="180">
         <button class="btn btn-primary" id="btn-sim">Simular</button>
@@ -774,7 +776,7 @@ input:focus { border-color: var(--water); background: #fff; }
     <div class="card-title">NAUTA</div>
     <p class="ip" id="t-about-desc">Open Water Thermal Intelligence — calcula el balance térmico real de un nadador en aguas abiertas, combinando física de transferencia de calor, fisiología del ejercicio en frío y astronomía solar.</p>
     <p class="ip">Desarrollada por <strong style="color:var(--deep)">Martin Thomas</strong> × <strong style="color:var(--water)">Claude (Anthropic)</strong></p>
-    <a href="https://github.com/martin1homas/Impacto-termico" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:var(--shallow);border:1px solid var(--border);border-radius:var(--rad-sm);font-size:12px;color:var(--water);text-decoration:none;margin-top:8px">⚙ GitHub: martin1homas/Impacto-termico</a>
+    <a href="https://github.com/martin1homas/Impacto-termico" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:var(--shallow);border:1px solid var(--border);border-radius:var(--rad-sm);font-size:17px;color:var(--water);text-decoration:none;margin-top:8px">⚙ GitHub: martin1homas/Impacto-termico</a>
   </div>
   <div class="card">
     <div class="card-title">EL MODELO FÍSICO</div>
@@ -927,7 +929,7 @@ const T = {
     waterT:'TEMP. AGUA', airT:'TEMP. AIRE', wind:'VIENTO', sky:'CIELO', dir:'DIRECCIÓN',
     beachTitle:'ESTADO DE PLAYAS', beachOpen:'HABILITADO', beachCaution:'PRECAUCIÓN',
     beachClosed:'NO HABILITADO', beachHealth:'ALERTA SANITARIA', noHealthAlert:'✅ Sin alertas sanitarias',
-    beachUpdated:'Actualizado:', stationsTitle:'CASILLAS DE GUARDAVIDAS', validUntil:'Válido hasta:',
+    beachUpdated:'Actualizado:', stationsTitle:'CASILLAS DE GUARDAVIDAS',nearestBeaches:'PLAYAS CERCANAS',seeAllBeaches:'Ver todas las playas', validUntil:'Válido hasta:',
     noApiDept:'Estado de playas de', noApiDept2:'— consultá el sitio oficial:',
     assumedDir:'dirección no ingresada, asumiendo 45°', profileAlert:'Ingresá altura, peso y edad.',
     aboutDesc:'Open Water Thermal Intelligence — calcula el balance térmico real de un nadador en aguas abiertas.',
@@ -980,7 +982,7 @@ const T = {
     waterT:'WATER TEMP', airT:'AIR TEMP', wind:'WIND', sky:'SKY', dir:'DIRECTION',
     beachTitle:'BEACH STATUS', beachOpen:'OPEN', beachCaution:'CAUTION',
     beachClosed:'CLOSED', beachHealth:'HEALTH ALERT', noHealthAlert:'✅ No health alerts',
-    beachUpdated:'Updated:', stationsTitle:'LIFEGUARD STATIONS', validUntil:'Valid until:',
+    beachUpdated:'Updated:', stationsTitle:'LIFEGUARD STATIONS',nearestBeaches:'NEARBY BEACHES',seeAllBeaches:'See all beaches', validUntil:'Valid until:',
     noApiDept:'Beach status for', noApiDept2:'— check the official site:',
     assumedDir:'direction not entered, assuming 45°', profileAlert:'Please enter height, weight and age.',
     aboutDesc:'Open Water Thermal Intelligence — calculates real thermal balance for open water swimmers.',
@@ -1033,7 +1035,7 @@ const T = {
     waterT:'TEMP. ACQUA', airT:'TEMP. ARIA', wind:'VENTO', sky:'CIELO', dir:'DIREZIONE',
     beachTitle:'STATO DELLE SPIAGGE', beachOpen:'ABILITATO', beachCaution:'ATTENZIONE',
     beachClosed:'NON ABILITATO', beachHealth:'ALLERTA SANITARIA', noHealthAlert:'✅ Nessuna allerta sanitaria',
-    beachUpdated:'Aggiornato:', stationsTitle:'POSTAZIONI BAGNINI', validUntil:'Valido fino a:',
+    beachUpdated:'Aggiornato:', stationsTitle:'POSTAZIONI BAGNINI',nearestBeaches:'SPIAGGE VICINE',seeAllBeaches:'Vedi tutte le spiagge', validUntil:'Valido fino a:',
     noApiDept:'Stato spiagge di', noApiDept2:'— consulta il sito ufficiale:',
     assumedDir:'direzione non inserita, assunto 45°', profileAlert:'Inserisci altezza, peso ed età.',
     aboutDesc:'Open Water Thermal Intelligence — calcola il bilancio termico reale per nuotatori in acque libere.',
@@ -1086,7 +1088,7 @@ const T = {
     waterT:'TEMP. EAU', airT:'TEMP. AIR', wind:'VENT', sky:'CIEL', dir:'DIRECTION',
     beachTitle:'ÉTAT DES PLAGES', beachOpen:'AUTORISÉ', beachCaution:'ATTENTION',
     beachClosed:'FERMÉ', beachHealth:'ALERTE SANITAIRE', noHealthAlert:'✅ Aucune alerte sanitaire',
-    beachUpdated:'Mis à jour:', stationsTitle:'POSTES DE SAUVETAGE', validUntil:'Valable jusqu\'au:',
+    beachUpdated:'Mis à jour:', stationsTitle:'POSTES DE SAUVETAGE',nearestBeaches:'PLAGES PROCHES',seeAllBeaches:'Voir toutes les plages', validUntil:'Valable jusqu\'au:',
     noApiDept:'État des plages de', noApiDept2:'— consultez le site officiel:',
     assumedDir:'direction non renseignée, 45° supposé', profileAlert:'Veuillez entrer taille, poids et âge.',
     aboutDesc:'Open Water Thermal Intelligence — calcule le bilan thermique réel pour les nageurs en eaux libres.',
@@ -1139,7 +1141,7 @@ const T = {
     waterT:'TEMP. ÁGUA', airT:'TEMP. AR', wind:'VENTO', sky:'CÉU', dir:'DIREÇÃO',
     beachTitle:'ESTADO DAS PRAIAS', beachOpen:'HABILITADO', beachCaution:'PRECAUÇÃO',
     beachClosed:'NÃO HABILITADO', beachHealth:'ALERTA SANITÁRIA', noHealthAlert:'✅ Sem alertas sanitárias',
-    beachUpdated:'Atualizado:', stationsTitle:'POSTOS DE SALVA-VIDAS', validUntil:'Válido até:',
+    beachUpdated:'Atualizado:', stationsTitle:'POSTOS DE SALVA-VIDAS',nearestBeaches:'PRAIAS PRÓXIMAS',seeAllBeaches:'Ver todas as praias', validUntil:'Válido até:',
     noApiDept:'Estado das praias de', noApiDept2:'— consulte o site oficial:',
     assumedDir:'direção não inserida, assumindo 45°', profileAlert:'Insira altura, peso e idade.',
     aboutDesc:'Open Water Thermal Intelligence — calcula o balanço térmico real para nadadores em águas abertas.',
@@ -1322,7 +1324,7 @@ function renderResults(results) {
       S.locName = name + (detail ? ' — ' + detail.split(',').slice(1, 3).join(',').trim() : '');
       box.style.display = 'none';
       const c = $('loc-confirmed');
-      c.innerHTML = `✓ <strong>${name}</strong><br><span style="font-size:10px;opacity:.7">${detail}</span>`;
+      c.innerHTML = `✓ <strong>${name}</strong><br><span style="font-size:15px;opacity:.7">${detail}</span>`;
       c.style.display = 'block';
       $('btn-fetch-search').style.display = 'block';
     });
@@ -1396,15 +1398,15 @@ function renderWeatherGrid() {
     wi.innerHTML = `<div class="wave-box">
       <div class="wave-box-title">${t('waveCond')}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-        <div><div style="font-size:9px;color:var(--text3);font-family:'Courier New',monospace">${t('waveH')}</div>
-          <div style="font-size:20px;font-weight:700;color:${wc};font-family:Georgia,serif">${w.waveH.toFixed(1)}m</div>
-          <div style="font-size:10px;color:${wc};font-weight:600">${wl}</div></div>
-        ${w.wavePer ? `<div><div style="font-size:9px;color:var(--text3);font-family:'Courier New',monospace">${t('wavePer')}</div>
-          <div style="font-size:20px;font-weight:700;color:var(--deep);font-family:Georgia,serif">${w.wavePer.toFixed(0)}s</div></div>` : ''}
-        ${w.currentV ? `<div><div style="font-size:9px;color:var(--text3);font-family:'Courier New',monospace">${t('waveCurr')}</div>
-          <div style="font-size:16px;font-weight:700;color:var(--deep);font-family:Georgia,serif">${(w.currentV * 3.6).toFixed(1)}<span style="font-size:10px"> km/h</span></div></div>` : ''}
+        <div><div style="font-size:14px;color:var(--text3);font-family:'Courier New',monospace">${t('waveH')}</div>
+          <div style="font-size:26px;font-weight:700;color:${wc};font-family:Georgia,serif">${w.waveH.toFixed(1)}m</div>
+          <div style="font-size:15px;color:${wc};font-weight:600">${wl}</div></div>
+        ${w.wavePer ? `<div><div style="font-size:14px;color:var(--text3);font-family:'Courier New',monospace">${t('wavePer')}</div>
+          <div style="font-size:26px;font-weight:700;color:var(--deep);font-family:Georgia,serif">${w.wavePer.toFixed(0)}s</div></div>` : ''}
+        ${w.currentV ? `<div><div style="font-size:14px;color:var(--text3);font-family:'Courier New',monospace">${t('waveCurr')}</div>
+          <div style="font-size:22px;font-weight:700;color:var(--deep);font-family:Georgia,serif">${(w.currentV * 3.6).toFixed(1)}<span style="font-size:15px"> km/h</span></div></div>` : ''}
       </div>
-      ${w.swellH > 0.2 ? `<div style="margin-top:8px;font-size:11px;color:var(--text2)">🌊 ${t('swellH')}: ${w.swellH.toFixed(1)}m ${w.waveDir != null ? wArrow(w.waveDir) : ''}</div>` : ''}
+      ${w.swellH > 0.2 ? `<div style="margin-top:8px;font-size:16px;color:var(--text2)">🌊 ${t('swellH')}: ${w.swellH.toFixed(1)}m ${w.waveDir != null ? wArrow(w.waveDir) : ''}</div>` : ''}
     </div>`;
   } else {
     wi.innerHTML = '';
@@ -1807,8 +1809,8 @@ function tBar(label, minutes, color) {
   const pct = Math.min(100, m / 120 * 100);
   return `<div class="tbar">
     <div class="tbar-header">
-      <span style="font-size:12px;color:var(--text2)">${label}</span>
-      <span style="font-size:13px;font-weight:700;color:var(--deep);font-family:Georgia,serif">~${m} min</span>
+      <span style="font-size:17px;color:var(--text2)">${label}</span>
+      <span style="font-size:18px;font-weight:700;color:var(--deep);font-family:Georgia,serif">~${m} min</span>
     </div>
     <div class="tbar-bg"><div class="tbar-fill" style="width:${pct}%;background:${color}"></div></div>
   </div>`;
@@ -1863,7 +1865,7 @@ function renderODEResult(durationMin) {
       <div class="rec-text">${rd}</div>
     </div>
 
-    <div style="margin-top:12px;padding:10px 14px;background:#FFFBF0;border:1px solid #C0A020;border-radius:8px;font-size:10px;color:#604000;line-height:1.6">
+    <div style="margin-top:12px;padding:10px 14px;background:#FFFBF0;border:1px solid #C0A020;border-radius:8px;font-size:15px;color:#604000;line-height:1.6">
       ⚠️ ${t('odeDisclaimer')}
     </div>
   `;
@@ -1908,7 +1910,7 @@ function buildThermalCurve(curve, durationMin) {
   ).join('');
 
   return `<div style="margin:12px 0;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 8px 4px;overflow:hidden">
-    <div style="font-size:9px;color:var(--text3);letter-spacing:2px;font-family:'Courier New',monospace;margin-bottom:4px">T° NÚCLEO ESTIMADA — MODELO DIFERENCIAL</div>
+    <div style="font-size:14px;color:var(--text3);letter-spacing:2px;font-family:'Courier New',monospace;margin-bottom:4px">T° NÚCLEO ESTIMADA — MODELO DIFERENCIAL</div>
     <svg width="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
       ${yTicksSVG}
       ${xTicksSVG}
@@ -1942,26 +1944,40 @@ function getExitRec(r, waterTemp, durationMin) {
                   waterTemp <= 10 ? '#C05000' : '#C07000';
 
   return `<div style="margin-top:10px;padding:12px 14px;background:${warnCol}08;border:1.5px solid ${warnCol}33;border-radius:8px">
-    <div style="font-size:9px;color:${warnCol};letter-spacing:2px;font-weight:700;font-family:'Courier New',monospace;margin-bottom:8px">
+    <div style="font-size:14px;color:${warnCol};letter-spacing:2px;font-weight:700;font-family:'Courier New',monospace;margin-bottom:8px">
       ${t('exitRecTitle')}
     </div>
-    <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px">
+    <div style="font-size:17px;color:var(--text2);line-height:1.6;margin-bottom:8px">
       ${t('exitRecBody')}
     </div>
-    <ul style="font-size:11px;color:var(--text2);line-height:1.7;padding-left:16px">
+    <ul style="font-size:16px;color:var(--text2);line-height:1.7;padding-left:16px">
       <li>${t('exitCue1')}</li>
       <li>${t('exitCue2')}</li>
       <li>${t('exitCue3')}</li>
       <li>${t('exitCue4')}</li>
     </ul>
-    ${signs.length ? `<div style="margin-top:8px;font-size:11px;color:${warnCol};font-weight:600">⚠️ ${signs.join(' · ')}</div>` : ''}
-    <div style="margin-top:8px;font-size:9px;color:var(--text3)">
+    ${signs.length ? `<div style="margin-top:8px;font-size:16px;color:${warnCol};font-weight:600">⚠️ ${signs.join(' · ')}</div>` : ''}
+    <div style="margin-top:8px;font-size:14px;color:var(--text3)">
       Tipton et al. (2017) · Castellani & Young (2016) · JSAMS OWS Review (2024)
     </div>
   </div>`;
 }
 
 // ── BEACH STATUS ──────────────────────────────────────────────────
+// Normalize text: lowercase + strip accents, for robust beach name matching
+function normalize(s) {
+  return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+// Haversine distance in meters — used to find nearest lifeguard station
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
 const MVD_BEACHES = ['ramírez','ramirez','pocitos','buceo','malvín','malvin','brava','carrasco',
   'honda','ingleses','verde','mulata','pajas blancas','punta espinillo','zabala','cilindros',
   'punta yeguas','santa catalina','nacional','cerro','colorada'];
@@ -2008,12 +2024,12 @@ async function loadBeachStatus() {
   const d = DEPTS[dept];
   if (!d.api) {
     $('beach-content').innerHTML = `
-      <p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">
+      <p style="font-size:17px;color:var(--text2);margin-bottom:12px;line-height:1.6">
         ${t('noApiDept')} <strong>${dept.charAt(0).toUpperCase()+dept.slice(1)}</strong> ${t('noApiDept2')}
       </p>
       <a href="${d.url}" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px;
         background:var(--shallow);border:1.5px solid var(--border);border-radius:var(--rad-sm);
-        text-decoration:none;color:var(--water);font-size:13px;font-weight:700">
+        text-decoration:none;color:var(--water);font-size:18px;font-weight:700">
         🏖 ${d.label} →</a>`;
     $('beach-updated').textContent = '';
     $('beach-card').style.display = 'block';
@@ -2032,7 +2048,7 @@ async function loadBeachStatus() {
         <a href="https://montevideo.gub.uy/playas" target="_blank"
           style="display:flex;align-items:center;gap:10px;padding:14px;
           background:var(--shallow);border:1.5px solid var(--border);border-radius:var(--rad-sm);
-          text-decoration:none;color:var(--water);font-size:13px;font-weight:700">
+          text-decoration:none;color:var(--water);font-size:18px;font-weight:700">
           🏖 Ver estado de playas Montevideo →</a>`;
       $('beach-updated').textContent = '';
       $('beach-card').style.display = 'block';
@@ -2043,7 +2059,7 @@ async function loadBeachStatus() {
       <a href="https://montevideo.gub.uy/playas" target="_blank"
         style="display:flex;align-items:center;gap:10px;padding:14px;
         background:var(--shallow);border:1.5px solid var(--border);border-radius:var(--rad-sm);
-        text-decoration:none;color:var(--water);font-size:13px;font-weight:700">
+        text-decoration:none;color:var(--water);font-size:18px;font-weight:700">
         🏖 Ver estado de playas Montevideo →</a>`;
     $('beach-updated').textContent = '';
     $('beach-card').style.display = 'block';
@@ -2054,65 +2070,69 @@ function renderBeaches(data) {
   const stations = data.beaches || [];
   if (!stations.length) { $('beach-card').style.display = 'none'; return; }
 
-  const locLower = S.locName.toLowerCase();
-  const targetBeach = MVD_BEACHES.find(b => locLower.includes(b));
+  // Group stations by beach, computing nearest-station distance per beach
+  const byBeach = {};
+  stations.forEach(s => {
+    if (!s.beach) return;
+    if (!byBeach[s.beach]) {
+      byBeach[s.beach] = { stations: [], hasHealth: false, worst: 'green', healthDesc: '', minDist: Infinity };
+    }
+    const b = byBeach[s.beach];
+    b.stations.push(s);
+    if (s.healthFlag === 'true') { b.hasHealth = true; b.healthDesc = s.healthFlagCauseDesc || ''; }
+    if (s.safetyFlag === 'red' || (s.safetyFlag === 'yellow' && b.worst !== 'red')) b.worst = s.safetyFlag;
+
+    if (S.coords) {
+      const coords = s.location?.coordinates;
+      if (coords?.length >= 2) {
+        const [slon, slat] = coords;
+        const d = haversine(S.coords.lat, S.coords.lon, slat, slon);
+        if (d < b.minDist) b.minDist = d;
+      }
+    }
+  });
+
+  let beachList = Object.entries(byBeach).map(([name, info]) => ({ name, ...info }));
+
+  // Sort by distance if we have coords, otherwise alphabetically
+  if (S.coords && beachList.some(b => b.minDist < Infinity)) {
+    beachList.sort((a, b) => a.minDist - b.minDist);
+  } else {
+    beachList.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  const nearest3 = beachList.slice(0, 3);
+  const rest = beachList.slice(3);
+
+  function beachRowHTML(b) {
+    const { icon, color, label } = flagStyle(b.worst, b.hasHealth);
+    const distLabel = b.minDist < Infinity ? `<span style="font-size:14px;color:var(--text3);margin-left:6px">${(b.minDist/1000).toFixed(1)}km</span>` : '';
+    return `<div class="beach-row">
+      <span class="beach-row-flag">${icon}</span>
+      <div style="flex:1">
+        <div class="beach-row-name">${b.name.toUpperCase()}${distLabel}</div>
+        ${b.hasHealth && b.healthDesc ? `<div class="beach-row-health">⚠️ ${b.healthDesc}</div>` : ''}
+      </div>
+      <span class="beach-row-status" style="color:${color}">${label}</span></div>`;
+  }
+
   let html = '';
 
-  if (targetBeach) {
-    const rel = stations.filter(s => s.beach?.toLowerCase().includes(targetBeach));
-    if (!rel.length) { $('beach-card').style.display = 'none'; return; }
-    const hasHealth = rel.some(s => s.healthFlag === 'true');
-    const worst = rel.map(s => s.safetyFlag).includes('red') ? 'red' :
-                  rel.map(s => s.safetyFlag).includes('yellow') ? 'yellow' : 'green';
-    const healthDesc = rel.find(s => s.healthFlag === 'true')?.healthFlagCauseDesc || '';
-    const expiry = rel[0]?.safetyFlagExpiration;
-    const { icon, color, label } = flagStyle(worst, hasHealth);
+  // Header: nearest beach highlighted, or just label
+  if (S.coords && nearest3[0]?.minDist < Infinity) {
+    html += `<div style="font-size:14px;color:var(--text3);letter-spacing:2px;margin-bottom:8px;font-family:'Courier New',monospace">${t('nearestBeaches')}</div>`;
+  }
 
-    html = `<div class="beach-status" style="border-color:${color}22;background:${color}08">
-      <div class="beach-flag-icon">${icon}</div>
-      <div class="beach-info">
-        <div class="beach-name">PLAYA ${rel[0].beach?.toUpperCase()}</div>
-        <div class="beach-safety-lbl" style="color:${color}">${label}</div>
-        ${hasHealth
-          ? `<div class="beach-cause">⚠️ ${t('beachHealth')}${healthDesc ? ': ' + healthDesc : ''}</div>`
-          : `<div style="font-size:12px;color:var(--ok);margin-top:4px">${t('noHealthAlert')}</div>`}
-        ${expiry ? `<div class="beach-meta">${t('validUntil')} ${fmtDate(expiry)}</div>` : ''}
-      </div></div>`;
+  nearest3.forEach(b => { html += beachRowHTML(b); });
 
-    if (rel.length > 1) {
-      html += `<div style="font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:8px;font-family:'Courier New',monospace">${t('stationsTitle')}</div>`;
-      rel.forEach(s => {
-        const { icon: si, color: sc, label: sl } = flagStyle(s.safetyFlag, s.healthFlag === 'true');
-        html += `<div class="beach-row">
-          <span class="beach-row-flag">${si}</span>
-          <div style="flex:1">
-            <div class="beach-row-name">${s.name}</div>
-            ${s.healthFlag === 'true' && s.healthFlagCauseDesc
-              ? `<div class="beach-row-health">⚠️ ${s.healthFlagCauseDesc}</div>` : ''}
-          </div>
-          <span class="beach-row-status" style="color:${sc}">${sl}</span></div>`;
-      });
-    }
-  } else {
-    // All beaches summary
-    const byBeach = {};
-    stations.forEach(s => {
-      if (!s.beach) return;
-      if (!byBeach[s.beach]) byBeach[s.beach] = { hasHealth: false, worst: 'green', desc: '' };
-      if (s.healthFlag === 'true') { byBeach[s.beach].hasHealth = true; byBeach[s.beach].desc = s.healthFlagCauseDesc || ''; }
-      if (s.safetyFlag === 'red' || (s.safetyFlag === 'yellow' && byBeach[s.beach].worst !== 'red'))
-        byBeach[s.beach].worst = s.safetyFlag;
-    });
-    Object.entries(byBeach).sort((a, b) => a[0].localeCompare(b[0])).forEach(([beach, info]) => {
-      const { icon, color, label } = flagStyle(info.worst, info.hasHealth);
-      html += `<div class="beach-row">
-        <span class="beach-row-flag">${icon}</span>
-        <div style="flex:1">
-          <div class="beach-row-name">${beach}</div>
-          ${info.hasHealth && info.desc ? `<div class="beach-row-health">⚠️ ${info.desc}</div>` : ''}
-        </div>
-        <span class="beach-row-status" style="color:${color}">${label}</span></div>`;
-    });
+  if (rest.length) {
+    html += `<button id="btn-expand-beaches" style="width:100%;padding:10px;margin-top:8px;
+      background:var(--shallow);border:1.5px dashed var(--border);border-radius:8px;
+      color:var(--water);font-size:16px;font-weight:700;letter-spacing:1px;cursor:pointer">
+      ${t('seeAllBeaches')} (${rest.length}) ▾</button>
+      <div id="beach-rest" style="display:none;margin-top:6px">
+        ${rest.map(beachRowHTML).join('')}
+      </div>`;
   }
 
   $('beach-content').innerHTML = html;
@@ -2120,6 +2140,16 @@ function renderBeaches(data) {
     ? t('beachUpdated') + ' ' + new Date(data.updated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     : '';
   $('beach-card').style.display = 'block';
+
+  const expandBtn = $('btn-expand-beaches');
+  if (expandBtn) {
+    expandBtn.addEventListener('click', () => {
+      const restDiv = $('beach-rest');
+      const isOpen = restDiv.style.display !== 'none';
+      restDiv.style.display = isOpen ? 'none' : 'block';
+      expandBtn.innerHTML = `${t('seeAllBeaches')} (${rest.length}) ${isOpen ? '▾' : '▴'}`;
+    });
+  }
 }
 
 function flagStyle(safety, health) {
