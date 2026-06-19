@@ -22,7 +22,6 @@ jobs:
 
           print(f"CID length: {len(cid)}, CSC length: {len(csc)}")
 
-          # Get token
           token_url = "https://mvdapi-auth.montevideo.gub.uy/auth/realms/pci/protocol/openid-connect/token"
           token_data = urllib.parse.urlencode({
               "grant_type": "client_credentials",
@@ -38,67 +37,28 @@ jobs:
           token = token_resp["access_token"]
           print(f"Token length: {len(token)}")
 
-          beaches_base = "https://api.montevideo.gub.uy/api/beaches/lifeguardstations"
+          # CORRECT endpoint — includes /environment/
+          beaches_url = "https://api.montevideo.gub.uy/api/environment/beaches/lifeguardstations"
 
-          # ── ATTEMPT 1: Authorization Bearer header (standard) ──
-          def try_request(label, url, headers):
-              print(f"\n--- {label} ---")
-              print(f"URL: {url}")
-              print(f"Headers: { {k: (v[:20]+'...' if k=='Authorization' else v) for k,v in headers.items()} }")
-              req = urllib.request.Request(url, headers=headers)
-              try:
-                  with urllib.request.urlopen(req) as r:
-                      data = json.loads(r.read())
-                  print(f"SUCCESS: {len(data)} items")
-                  return data
-              except urllib.error.HTTPError as e:
-                  body = e.read().decode()
-                  print(f"FAILED: HTTP {e.code} - {body[:300]}")
-                  return None
+          req2 = urllib.request.Request(beaches_url,
+              headers={"Authorization": f"Bearer {token}", "Accept": "application/json"})
 
-          # Attempt 1: Authorization: Bearer
-          result = try_request(
-              "Attempt 1: Authorization Bearer",
-              beaches_base,
-              {"Authorization": f"Bearer {token}", "Accept": "application/json"}
-          )
-
-          # Attempt 2: access_token as query param
-          if result is None:
-              url2 = f"{beaches_base}?access_token={token}"
-              result = try_request(
-                  "Attempt 2: access_token query param",
-                  url2,
-                  {"Accept": "application/json"}
-              )
-
-          # Attempt 3: apikey header
-          if result is None:
-              result = try_request(
-                  "Attempt 3: apikey header",
-                  beaches_base,
-                  {"apikey": token, "Accept": "application/json"}
-              )
-
-          # Attempt 4: X-Api-Key header
-          if result is None:
-              result = try_request(
-                  "Attempt 4: X-Api-Key header",
-                  beaches_base,
-                  {"X-Api-Key": token, "Accept": "application/json"}
-              )
-
-          if result is None:
-              print("\n❌ ALL ATTEMPTS FAILED")
-              raise SystemExit(1)
+          try:
+              with urllib.request.urlopen(req2) as r:
+                  beaches = json.loads(r.read())
+              print(f"SUCCESS: {len(beaches)} stations")
+          except urllib.error.HTTPError as e:
+              body = e.read().decode()
+              print(f"FAILED: HTTP {e.code} - {body[:300]}")
+              raise
 
           out = {
               "updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-              "beaches": result
+              "beaches": beaches
           }
           with open("beaches.json", "w") as f:
               json.dump(out, f, ensure_ascii=False, indent=2)
-          print(f"\n✅ beaches.json written: {len(result)} stations")
+          print(f"beaches.json written: {len(beaches)} stations")
           SCRIPT_EOF
 
       - name: Run fetch script
