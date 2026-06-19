@@ -1795,27 +1795,27 @@ function renderODEResult(durationMin) {
   // Build SVG curve
   const svgCurve = buildThermalCurve(r.curve, durationMin);
 
-  $('sim-result').innerHTML = \`
+  $('sim-result').innerHTML = `
     <div class="grid2" style="margin-bottom:12px">
-      <div class="dcell"><div class="dcell-lbl">\${t('coreTemp')}</div>
-        <div class="dcell-val" style="color:\${tempCol}">\${Tn.toFixed(1)}°C</div></div>
-      <div class="dcell"><div class="dcell-lbl">\${t('accumDef')}</div>
-        <div class="dcell-val">\${deficit.toFixed(0)} kJ</div></div>
+      <div class="dcell"><div class="dcell-lbl">${t('coreTemp')}</div>
+        <div class="dcell-val" style="color:${tempCol}">${Tn.toFixed(1)}°C</div></div>
+      <div class="dcell"><div class="dcell-lbl">${t('accumDef')}</div>
+        <div class="dcell-val">${deficit.toFixed(0)} kJ</div></div>
     </div>
 
-    \${svgCurve}
+    ${svgCurve}
 
-    \${exitRec}
+    ${exitRec}
 
-    <div class="rec-box" style="border-color:\${col};background:\${col}12;margin-top:10px">
-      <div class="rec-title" style="color:\${col}">\${rl}</div>
-      <div class="rec-text">\${rd}</div>
+    <div class="rec-box" style="border-color:${col};background:${col}12;margin-top:10px">
+      <div class="rec-title" style="color:${col}">${rl}</div>
+      <div class="rec-text">${rd}</div>
     </div>
 
     <div style="margin-top:12px;padding:10px 14px;background:#FFFBF0;border:1px solid #C0A020;border-radius:8px;font-size:10px;color:#604000;line-height:1.6">
-      ⚠️ \${t('odeDisclaimer')}
+      ⚠️ ${t('odeDisclaimer')}
     </div>
-  \`;
+  `;
 }
 
 function buildThermalCurve(curve, durationMin) {
@@ -1844,8 +1844,8 @@ function buildThermalCurve(curve, durationMin) {
   // Y axis labels
   const yTicks = [33, 34, 35, 36, 37].filter(v => v >= tMin && v <= tMax);
   const yTicksSVG = yTicks.map(v =>
-    \`<text x="\${PAD.l - 4}" y="\${yScale(v).toFixed(1)}" text-anchor="end" font-size="8" fill="#7AAABB" dominant-baseline="middle">\${v}°</text>
-     <line x1="\${PAD.l}" y1="\${yScale(v).toFixed(1)}" x2="\${W - PAD.r}" y2="\${yScale(v).toFixed(1)}" stroke="#D4E9F2" stroke-width="0.5"/>\`
+    `<text x="${PAD.l - 4}" y="${yScale(v).toFixed(1)}" text-anchor="end" font-size="8" fill="#7AAABB" dominant-baseline="middle">${v}°</text>
+     <line x1="${PAD.l}" y1="${yScale(v).toFixed(1)}" x2="${W - PAD.r}" y2="${yScale(v).toFixed(1)}" stroke="#D4E9F2" stroke-width="0.5"/>`
   ).join('');
 
   // X axis labels
@@ -1853,22 +1853,22 @@ function buildThermalCurve(curve, durationMin) {
   const xTicks = [];
   for (let x = 0; x <= durationMin; x += xStep) xTicks.push(x);
   const xTicksSVG = xTicks.map(v =>
-    \`<text x="\${xScale(v).toFixed(1)}" y="\${H - 6}" text-anchor="middle" font-size="8" fill="#7AAABB">\${v}'</text>\`
+    `<text x="${xScale(v).toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="8" fill="#7AAABB">${v}'</text>`
   ).join('');
 
-  return \`<div style="margin:12px 0;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 8px 4px;overflow:hidden">
+  return `<div style="margin:12px 0;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 8px 4px;overflow:hidden">
     <div style="font-size:9px;color:var(--text3);letter-spacing:2px;font-family:'Courier New',monospace;margin-bottom:4px">T° NÚCLEO ESTIMADA — MODELO DIFERENCIAL</div>
-    <svg width="100%" viewBox="0 0 \${W} \${H}" xmlns="http://www.w3.org/2000/svg">
-      \${yTicksSVG}
-      \${xTicksSVG}
-      \${35 >= tMin ? \`<line x1="\${PAD.l}" y1="\${y35}" x2="\${W-PAD.r}" y2="\${y35}" stroke="#C05000" stroke-width="1" stroke-dasharray="3,2"/>
-        <text x="\${W-PAD.r+2}" y="\${y35}" font-size="7" fill="#C05000" dominant-baseline="middle">35°</text>\` : ''}
-      \${36.5 >= tMin ? \`<line x1="\${PAD.l}" y1="\${y36}" x2="\${W-PAD.r}" y2="\${y36}" stroke="#C07000" stroke-width="0.8" stroke-dasharray="2,2"/>
-        <text x="\${W-PAD.r+2}" y="\${y36}" font-size="7" fill="#C07000" dominant-baseline="middle">36.5°</text>\` : ''}
-      <path d="\${path}" fill="none" stroke="#0092B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <circle cx="\${xScale(curve[curve.length-1].t).toFixed(1)}" cy="\${yScale(curve[curve.length-1].Tc).toFixed(1)}" r="3" fill="#0092B8"/>
+    <svg width="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+      ${yTicksSVG}
+      ${xTicksSVG}
+      ${35 >= tMin ? `<line x1="${PAD.l}" y1="${y35}" x2="${W-PAD.r}" y2="${y35}" stroke="#C05000" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="${W-PAD.r+2}" y="${y35}" font-size="7" fill="#C05000" dominant-baseline="middle">35°</text>` : ''}
+      ${36.5 >= tMin ? `<line x1="${PAD.l}" y1="${y36}" x2="${W-PAD.r}" y2="${y36}" stroke="#C07000" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <text x="${W-PAD.r+2}" y="${y36}" font-size="7" fill="#C07000" dominant-baseline="middle">36.5°</text>` : ''}
+      <path d="${path}" fill="none" stroke="#0092B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="${xScale(curve[curve.length-1].t).toFixed(1)}" cy="${yScale(curve[curve.length-1].Tc).toFixed(1)}" r="3" fill="#0092B8"/>
     </svg>
-  </div>\`;
+  </div>`;
 }
 
 function getExitRec(r, waterTemp, durationMin) {
@@ -1881,7 +1881,7 @@ function getExitRec(r, waterTemp, durationMin) {
     signs.push(t('exitSign1'));  // High cardiac demand
   }
   if (r.t_mild !== null && r.t_mild < durationMin) {
-    signs.push(\`\${t('exitSign2')} ~\${Math.round(r.t_mild)} min\`);
+    signs.push(`${t('exitSign2')} ~${Math.round(r.t_mild)} min`);
   }
   if (waterTemp < 16 && durationMin > 20) {
     signs.push(t('exitSign3'));  // OWS threshold
@@ -1890,24 +1890,24 @@ function getExitRec(r, waterTemp, durationMin) {
   const warnCol = r.t_mild !== null && r.t_mild < durationMin ? '#B02020' :
                   waterTemp <= 10 ? '#C05000' : '#C07000';
 
-  return \`<div style="margin-top:10px;padding:12px 14px;background:\${warnCol}08;border:1.5px solid \${warnCol}33;border-radius:8px">
-    <div style="font-size:9px;color:\${warnCol};letter-spacing:2px;font-weight:700;font-family:'Courier New',monospace;margin-bottom:8px">
-      \${t('exitRecTitle')}
+  return `<div style="margin-top:10px;padding:12px 14px;background:${warnCol}08;border:1.5px solid ${warnCol}33;border-radius:8px">
+    <div style="font-size:9px;color:${warnCol};letter-spacing:2px;font-weight:700;font-family:'Courier New',monospace;margin-bottom:8px">
+      ${t('exitRecTitle')}
     </div>
     <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px">
-      \${t('exitRecBody')}
+      ${t('exitRecBody')}
     </div>
     <ul style="font-size:11px;color:var(--text2);line-height:1.7;padding-left:16px">
-      <li>\${t('exitCue1')}</li>
-      <li>\${t('exitCue2')}</li>
-      <li>\${t('exitCue3')}</li>
-      <li>\${t('exitCue4')}</li>
+      <li>${t('exitCue1')}</li>
+      <li>${t('exitCue2')}</li>
+      <li>${t('exitCue3')}</li>
+      <li>${t('exitCue4')}</li>
     </ul>
-    \${signs.length ? \`<div style="margin-top:8px;font-size:11px;color:\${warnCol};font-weight:600">⚠️ \${signs.join(' · ')}</div>\` : ''}
+    ${signs.length ? `<div style="margin-top:8px;font-size:11px;color:${warnCol};font-weight:600">⚠️ ${signs.join(' · ')}</div>` : ''}
     <div style="margin-top:8px;font-size:9px;color:var(--text3)">
       Tipton et al. (2017) · Castellani & Young (2016) · JSAMS OWS Review (2024)
     </div>
-  </div>\`;
+  </div>`;
 }
 
 // ── BEACH STATUS ──────────────────────────────────────────────────
