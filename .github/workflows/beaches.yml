@@ -1,88 +1,81 @@
 name: Update Beach Status
-
 on:
   schedule:
     - cron: '0 * * * *'
   workflow_dispatch:
-
 jobs:
   fetch-beaches:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Debug token endpoint
-        env:
-          CLIENT_ID: ${{ secrets.MVDAPI_CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.MVDAPI_CLIENT_SECRET }}
+      - name: Create fetch script
         run: |
-          echo "=== Testing token endpoint ==="
-          echo "Client ID length: ${#CLIENT_ID}"
-          echo "Client Secret length: ${#CLIENT_SECRET}"
-          
-          # Try with all params in one -d string
-          echo "--- Attempt 1: single -d string ---"
-          RESP1=$(curl -sv -X POST \
-            "https://mvdapi-auth.montevideo.gub.uy/auth/realms/pci/protocol/openid-connect/token" \
-            -H "Content-Type: application/x-www-form-urlencoded" \
-            -d "grant_type=client_credentials&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}" \
-            2>&1)
-          echo "Response: $RESP1" | head -50
-          
-          # Extract just the body
-          BODY1=$(curl -s -X POST \
-            "https://mvdapi-auth.montevideo.gub.uy/auth/realms/pci/protocol/openid-connect/token" \
-            -H "Content-Type: application/x-www-form-urlencoded" \
-            -d "grant_type=client_credentials&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}")
-          echo "Body length: ${#BODY1}"
-          echo "Body (first 200 chars): ${BODY1:0:200}"
-          
-          # Check if it contains access_token
-          if echo "$BODY1" | grep -q "access_token"; then
-            echo "✅ Token found!"
-            TOKEN=$(echo "$BODY1" | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
-            echo "Token length: ${#TOKEN}"
-            
-            echo "=== Fetching beaches ==="
-            curl -s \
-              "https://api.montevideo.gub.uy/api/beaches/lifeguardstations" \
-              -H "Authorization: Bearer ${TOKEN}" \
-              -H "Accept: application/json" \
-              -o beaches_raw.json
-            
-            cat beaches_raw.json | head -c 500
-            
-            python3 << 'PYEOF'
-import json
-from datetime import datetime, timezone
-with open('beaches_raw.json') as f:
-    data = json.load(f)
-out = {
-    "updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-    "beaches": data
-}
-with open('beaches.json', 'w') as f:
-    json.dump(out, f, ensure_ascii=False, indent=2)
-print(f"✅ {len(data)} stations saved")
-PYEOF
-          else
-            echo "❌ No access_token in response"
-            echo "Full response: $BODY1"
-          fi
+          cat > fetch_beaches.py << 'SCRIPT_EOF'
+          import os, json, urllib.request, urllib.parse
+          from datetime import datetime, timezone
+
+          cid = os.environ['CID']
+          csc = os.environ['CSC']
+
+          print(f"CID length: {len(cid)}, CSC length: {len(csc)}")
+
+          token_url = "https://mvdapi-auth.montevideo.gub.uy/auth/realms/pci/protocol/openid-connect/token"
+          token_data = urllib.parse.urlencode({
+              "grant_type": "client_credentials",
+              "client_id": cid,
+              "client_secret": csc,
+          }).encode()
+
+          req = urllib.request.Request(token_url, data=token_data,
+              headers={"Content-Type": "application/x-www-form-urlencoded"})
+
+          try:
+              with urllib.request.urlopen(req) as r:
+                  token_resp = json.loads(r.read())
+              print("Token request OK")
+          except urllib.error.HTTPError as e:
+              print(f"Token request FAILED: HTTP {e.code}")
+              print(e.read().decode())
+              raise
+
+          token = token_resp["access_token"]
+          print(f"Token length: {len(token)}")
+
+          beaches_url = "https://api.montevideo.gub.uy/api/beaches/lifeguardstations"
+          req2 = urllib.request.Request(beaches_url,
+              headers={"Authorization": f"Bearer {token}", "Accept": "application/json"})
+
+          try:
+              with urllib.request.urlopen(req2) as r:
+                  beaches = json.loads(r.read())
+              print(f"Beaches OK: {len(beaches)} stations")
+          except urllib.error.HTTPError as e:
+              print(f"Beaches request FAILED: HTTP {e.code}")
+              print(e.read().decode())
+              raise
+
+          out = {
+              "updated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+              "beaches": beaches
+          }
+          with open("beaches.json", "w") as f:
+              json.dump(out, f, ensure_ascii=False, indent=2)
+          print("beaches.json written")
+          SCRIPT_EOF
+
+      - name: Run fetch script
+        env:
+          CID: ${{ secrets.MVDAPI_CLIENT_ID }}
+          CSC: ${{ secrets.MVDAPI_CLIENT_SECRET }}
+        run: python3 fetch_beaches.py
 
       - name: Commit and push
         run: |
-          if [ -f beaches.json ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add beaches.json
-            git diff --staged --quiet || git commit -m "Beach status $(date -u '+%Y-%m-%d %H:%M UTC')"
-            git push
-            echo "✅ Committed"
-          else
-            echo "⚠️ No beaches.json to commit"
-          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add beaches.json
+          git diff --staged --quiet || git commit -m "Beach status update"
+          git push
