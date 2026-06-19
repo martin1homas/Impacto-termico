@@ -834,6 +834,57 @@ T_núcleo(t) = 37 − |Q_neta|×t×60 / (m_ef×3470)</div>
 
 <script>
 'use strict';
+
+// ── HELPERS ───────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const hide = id => { const e = $(id); if (e) e.style.display = 'none'; };
+const showErr = (id, msg) => { const e = $(id); e.innerHTML = '⚠️ ' + msg; e.style.display = 'block'; };
+const setBtn = (id, dis, html) => { const b = $(id); b.disabled = dis; b.innerHTML = html; };
+
+function safeGet(k) {
+  try { return JSON.parse(localStorage.getItem(k)); } catch { return null; }
+}
+function safeSet(k, v) {
+  try { localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v)); } catch {}
+}
+
+function wLabel(deg) {
+  const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSO','SO','OSO','O','ONO','NO','NNO'];
+  return dirs[Math.round((deg ?? 0) / 22.5) % 16];
+}
+function wArrow(deg) {
+  const flow = ((deg ?? 0) + 180) % 360;
+  return ['↓','↙','←','↖','↑','↗','→','↘'][Math.round(flow / 45) % 8];
+}
+function dirLabel(deg) {
+  return { 0:'N',45:'NE',90:'E',135:'SE',180:'S',225:'SO',270:'O',315:'NO' }[deg] || deg + '°';
+}
+function suit2label(s) {
+  return { none: t('noSuit'), standard: t('stdSuit'), thermal: t('thermalSuit') }[s] || s;
+}
+function wDesc(c) {
+  if (c === 0)  return t('wClear');
+  if (c <= 3)   return t('wPartly');
+  if (c <= 49)  return t('wFog');
+  if (c <= 67)  return t('wRain');
+  if (c <= 77)  return t('wSnow');
+  if (c <= 82)  return t('wShowers');
+  return t('wStorm');
+}
+function wIcon(c) {
+  if (c === 0)  return '☀️';
+  if (c <= 3)   return '🌤';
+  if (c <= 49)  return '🌫';
+  if (c <= 67)  return '🌧';
+  if (c <= 77)  return '🌨';
+  if (c <= 82)  return '🌦';
+  return '⛈';
+}
+function fmtDate(iso) {
+  try { return new Date(iso).toLocaleDateString([], { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }); }
+  catch { return iso; }
+}
+
 // ── CONSTANTS ─────────────────────────────────────────────────────
 const METEO   = 'https://api.open-meteo.com/v1';
 const MARINE  = 'https://marine-api.open-meteo.com/v1';
@@ -2109,55 +2160,6 @@ function showStep(name) {
   window.scrollTo(0, 0);
 }
 
-// ── HELPERS ───────────────────────────────────────────────────────
-const $ = id => document.getElementById(id);
-const hide = id => { const e = $(id); if (e) e.style.display = 'none'; };
-const showErr = (id, msg) => { const e = $(id); e.innerHTML = '⚠️ ' + msg; e.style.display = 'block'; };
-const setBtn = (id, dis, html) => { const b = $(id); b.disabled = dis; b.innerHTML = html; };
-
-function safeGet(k) {
-  try { return JSON.parse(localStorage.getItem(k)); } catch { return null; }
-}
-function safeSet(k, v) {
-  try { localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v)); } catch {}
-}
-
-function wLabel(deg) {
-  const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSO','SO','OSO','O','ONO','NO','NNO'];
-  return dirs[Math.round((deg ?? 0) / 22.5) % 16];
-}
-function wArrow(deg) {
-  const flow = ((deg ?? 0) + 180) % 360;
-  return ['↓','↙','←','↖','↑','↗','→','↘'][Math.round(flow / 45) % 8];
-}
-function dirLabel(deg) {
-  return { 0:'N',45:'NE',90:'E',135:'SE',180:'S',225:'SO',270:'O',315:'NO' }[deg] || deg + '°';
-}
-function suit2label(s) {
-  return { none: t('noSuit'), standard: t('stdSuit'), thermal: t('thermalSuit') }[s] || s;
-}
-function wDesc(c) {
-  if (c === 0)  return t('wClear');
-  if (c <= 3)   return t('wPartly');
-  if (c <= 49)  return t('wFog');
-  if (c <= 67)  return t('wRain');
-  if (c <= 77)  return t('wSnow');
-  if (c <= 82)  return t('wShowers');
-  return t('wStorm');
-}
-function wIcon(c) {
-  if (c === 0)  return '☀️';
-  if (c <= 3)   return '🌤';
-  if (c <= 49)  return '🌫';
-  if (c <= 67)  return '🌧';
-  if (c <= 77)  return '🌨';
-  if (c <= 82)  return '🌦';
-  return '⛈';
-}
-function fmtDate(iso) {
-  try { return new Date(iso).toLocaleDateString([], { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }); }
-  catch { return iso; }
-}
 </script>
 </body>
 </html>
