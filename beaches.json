@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-24T17:09:42Z",
+  "updated": "2026-06-24T19:55:32Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -67,9 +67,9 @@
         ]
       },
       "beach": "Ramirez",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -337,9 +337,9 @@
         ]
       },
       "beach": "del nacional",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
