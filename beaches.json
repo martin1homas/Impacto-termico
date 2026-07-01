@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-01T16:30:27Z",
+  "updated": "2026-07-01T19:01:47Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -211,9 +211,9 @@
         ]
       },
       "beach": "Verde",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -391,9 +391,9 @@
         ]
       },
       "beach": "Verde",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
