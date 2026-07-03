@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#1A4A6B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NAUTA">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>NAUTA — Open Water Thermal Intelligence</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 /* ── TOKENS ───────────────────────────────────────────────── */
 :root {
@@ -528,6 +535,83 @@ input:focus { border-color: var(--water); background: #fff; }
   letter-spacing: 1px;
 }
 .sep { height: 1px; background: var(--foam); margin: 16px 0; }
+/* ── REPORTS ─────────────────────────────────────────────── */
+.report-btn {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 16px; background: var(--water); color: #fff; border: none;
+  border-radius: var(--rad-sm); font-size: 15px; font-weight: 700;
+  letter-spacing: 1px; cursor: pointer; margin-bottom: 10px; transition: background .15s;
+}
+.report-btn:active { background: var(--water2); }
+.report-categories { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.report-cat {
+  padding: 14px 10px; background: var(--shallow); border: 2px solid var(--border);
+  border-radius: var(--rad-sm); text-align: center; cursor: pointer; transition: all .15s;
+}
+.report-cat.selected { border-color: var(--water); background: #fff; }
+.report-cat-icon { font-size: 28px; margin-bottom: 6px; }
+.report-cat-label { font-size: 13px; font-weight: 600; color: var(--text2); }
+.swim-question {
+  padding: 16px; background: var(--shallow); border-radius: var(--rad-sm);
+  margin-bottom: 14px; border: 1px solid var(--foam);
+}
+.swim-q-label { font-size: 15px; font-weight: 700; color: var(--deep); margin-bottom: 12px; }
+.swim-pills { display: flex; gap: 10px; }
+.swim-pill {
+  flex: 1; padding: 12px; text-align: center; background: #fff;
+  border: 2px solid var(--border); border-radius: var(--rad-sm);
+  font-size: 14px; font-weight: 600; cursor: pointer; transition: all .15s; color: var(--text2);
+}
+.swim-pill.yes.selected { border-color: var(--ok); background: #F0FFF8; color: var(--ok); }
+.swim-pill.no.selected  { border-color: var(--text3); background: var(--shallow); color: var(--text3); }
+.community-summary {
+  background: var(--shallow); border-radius: var(--rad-sm);
+  padding: 12px 14px; margin-bottom: 10px; border-left: 3px solid var(--water);
+}
+.community-swimmers { font-size: 17px; font-weight: 700; color: var(--deep); margin-bottom: 6px; font-family: Georgia, serif; }
+.community-reports { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.community-tag {
+  padding: 5px 10px; background: #fff; border: 1px solid var(--border);
+  border-radius: 12px; font-size: 13px; color: var(--text2); font-weight: 500;
+}
+.community-tag.alert { border-color: var(--danger); color: var(--danger); background: #FFF0F0; }
+.camera-link {
+  display: flex; align-items: center; gap: 10px; padding: 13px 16px;
+  background: var(--shallow); border: 1.5px solid var(--border); border-radius: var(--rad-sm);
+  text-decoration: none; color: var(--water); font-size: 14px; font-weight: 700;
+  margin-top: 8px; transition: background .15s;
+}
+.camera-link:active { background: #fff; }
+/* ── AUTH ────────────────────────────────────────────────── */
+.auth-modal {
+  position: fixed; inset: 0; background: rgba(26,74,107,.7);
+  backdrop-filter: blur(4px); z-index: 200;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.auth-box {
+  background: #fff; border-radius: var(--rad); padding: 32px 24px;
+  width: 100%; max-width: 360px; box-shadow: 0 20px 60px rgba(26,74,107,.3);
+}
+.auth-title { font-family: Georgia, serif; font-size: 24px; font-weight: 900; color: var(--deep); margin-bottom: 6px; letter-spacing: 2px; }
+.auth-sub { font-size: 14px; color: var(--text2); margin-bottom: 24px; line-height: 1.5; }
+.btn-google {
+  width: 100%; padding: 14px; background: #fff; border: 2px solid var(--border);
+  border-radius: var(--rad-sm); font-size: 14px; font-weight: 700; color: var(--text);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  gap: 10px; margin-bottom: 10px; transition: border-color .15s;
+}
+.btn-google:active { border-color: var(--water); }
+.user-badge {
+  display: flex; align-items: center; gap: 8px; padding: 6px 12px;
+  background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+  border-radius: 20px; color: #fff; font-size: 13px; cursor: pointer;
+}
+.user-avatar {
+  width: 24px; height: 24px; border-radius: 50%; background: var(--foam);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--deep); font-weight: 700;
+}
+/* ── STEP ────────────────────────────────────────────────── */
 .step { display: none; }
 .step.active { display: block; }
 .loc-label { font-size:16px; color: var(--text2); margin-top: 10px; }
@@ -611,8 +695,24 @@ input:focus { border-color: var(--water); background: #fff; }
   </div>
   <!-- Controls -->
   <div class="hdr-controls">
+    <div id="auth-status">
+      <button class="hdr-btn" id="btn-login" style="font-size:12px">👤 Login</button>
+    </div>
     <button class="hdr-btn" id="btn-lang">ES</button>
     <button class="hdr-btn icon" id="btn-info">ℹ</button>
+  </div>
+
+  <!-- Auth Modal -->
+  <div class="auth-modal" id="auth-modal" style="display:none">
+    <div class="auth-box">
+      <div class="auth-title">NAUTA</div>
+      <div class="auth-sub" id="t-auth-sub">Iniciá sesión para coordinar grupos de nado. Los reportes de condiciones no requieren cuenta.</div>
+      <button class="btn-google" id="btn-google-login">
+        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.31z"/></svg>
+        Continuar con Google
+      </button>
+      <button class="btn btn-ghost" id="btn-close-auth" style="margin-top:8px;font-size:14px">Cancelar</button>
+    </div>
   </div>
   <!-- Lang menu -->
   <div class="lang-menu" id="lang-menu">
@@ -672,6 +772,27 @@ input:focus { border-color: var(--water); background: #fff; }
       <div class="card-title" id="t-beach-title">ESTADO DE PLAYAS</div>
       <div id="beach-content"></div>
       <div class="beach-updated" id="beach-updated"></div>
+    </div>
+
+    <!-- Community reports card -->
+    <div class="card" id="report-card" style="display:none">
+      <div class="card-title" id="t-report-title">REPORTAR CONDICIONES</div>
+      <!-- Step 1: Swim question -->
+      <div class="swim-question" id="report-step-swim">
+        <div class="swim-q-label" id="t-swam-q">¿Nadaste hoy en esta playa?</div>
+        <div class="swim-pills">
+          <button class="swim-pill yes" id="swam-yes">🏊 Sí, nadé</button>
+          <button class="swim-pill no"  id="swam-no">👀 Solo observé</button>
+        </div>
+      </div>
+      <!-- Step 2: Category selector -->
+      <div id="report-step-cats" style="display:none">
+        <div style="font-size:14px;color:var(--text2);margin-bottom:12px" id="t-report-what">¿Qué querés reportar?</div>
+        <div class="report-categories" id="report-cats"></div>
+        <div id="report-value-area"></div>
+        <button class="btn btn-primary" id="btn-submit-report" style="margin-top:4px" id="t-submit-report">Enviar reporte</button>
+        <div id="report-feedback" style="display:none;padding:12px;background:#F0FFF8;border:1px solid var(--ok);border-radius:8px;font-size:14px;color:var(--ok);margin-top:10px;text-align:center">✅ ¡Reporte enviado! Gracias.</div>
+      </div>
     </div>
 
     <!-- Physical profile -->
@@ -948,7 +1069,7 @@ const T = {
     exitCue4:'Sensación de adormecimiento en manos o pies',
     exitSign1:'Agua ≤10°C — alta demanda cardiovascular',
     exitSign2:'Hipotermia leve estimada en',
-    exitSign3:'Duración supera umbral WA (16°C/20min)',
+    exitSign3:'Agua templada (16°C) por más de 20 min — la fatiga acumulada también enfría',exitRecSource:'Basado en estudios de fisiología de natación en aguas frías.',
   },
   en: {
     gpsTitle:'GPS LOCATION', gpsName:'Your GPS location', gpsCoords:'Using GPS coordinates',
@@ -1001,7 +1122,7 @@ const T = {
     exitCue4:'Numbness in hands or feet',
     exitSign1:'Water ≤10°C — high cardiovascular demand',
     exitSign2:'Mild hypothermia estimated at',
-    exitSign3:'Duration exceeds WA threshold (16°C/20min)',
+    exitSign3:'Mild water (16°C) over 20 min — accumulated fatigue also cools you down',exitRecSource:'Based on cold-water swimming physiology research.',
   },
   it: {
     gpsTitle:'POSIZIONE GPS', gpsName:'La tua posizione GPS', gpsCoords:'Usando coordinate GPS',
@@ -1054,7 +1175,7 @@ const T = {
     exitCue4:'Intorpidimento di mani o piedi',
     exitSign1:'Acqua ≤10°C — alta domanda cardiovascolare',
     exitSign2:'Ipotermia lieve stimata a',
-    exitSign3:'Durata supera soglia WA (16°C/20min)',
+    exitSign3:'Acqua mite (16°C) oltre 20 min — la fatica accumulata raffredda anch\'essa',exitRecSource:'Basato su studi di fisiologia del nuoto in acque fredde.',
   },
   fr: {
     gpsTitle:'POSITION GPS', gpsName:'Votre position GPS', gpsCoords:'Utilisant les coordonnées GPS',
@@ -1107,7 +1228,7 @@ const T = {
     exitCue4:'Engourdissement des mains ou des pieds',
     exitSign1:'Eau ≤10°C — demande cardiovasculaire élevée',
     exitSign2:'Hypothermie légère estimée à',
-    exitSign3:'Durée dépasse seuil WA (16°C/20min)',
+    exitSign3:'Eau tempérée (16°C) au-delà de 20 min — la fatigue accumulée refroidit aussi',exitRecSource:'Basé sur des études de physiologie de la nage en eau froide.',
   },
   pt: {
     gpsTitle:'LOCALIZAÇÃO GPS', gpsName:'A sua localização GPS', gpsCoords:'Usando coordenadas GPS',
@@ -1160,7 +1281,7 @@ const T = {
     exitCue4:'Dormência nas mãos ou nos pés',
     exitSign1:'Água ≤10°C — alta demanda cardiovascular',
     exitSign2:'Hipotermia leve estimada em',
-    exitSign3:'Duração supera limiar WA (16°C/20min)',
+    exitSign3:'Água amena (16°C) por mais de 20 min — a fadiga acumulada também arrefece',exitRecSource:'Baseado em estudos de fisiologia da natação em águas frias.',
   },
 };
 
@@ -1217,10 +1338,295 @@ const S = {
   profile: safeGet('nauta_profile'),
 };
 
+// ── SUPABASE ──────────────────────────────────────────────────────
+const SUPA_URL = 'https://hbhlnbxfjeqvznjqzame.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhiaGxuYnhmamVxdnpuanF6YW1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwMjc4NTcsImV4cCI6MjA5ODYwMzg1N30.M15D62jun8VOJeExCpraxBykkC53N81ccFaesh7ASaY';
+const supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+// ── PWA ───────────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/Impacto-termico/sw.js').catch(() => {});
+  });
+}
+
+// ── AUTH ──────────────────────────────────────────────────────────
+let currentUser = null;
+
+async function initAuth() {
+  try {
+    const { data: { session } } = await supa.auth.getSession();
+    if (session?.user) setUser(session.user);
+    supa.auth.onAuthStateChange((_event, session) => setUser(session?.user || null));
+  } catch(e) { console.log('Auth init error:', e.message); }
+}
+
+function setUser(user) {
+  currentUser = user;
+  const statusEl = $('auth-status');
+  if (!statusEl) return;
+  if (user) {
+    const initial = (user.user_metadata?.full_name || user.email || '?')[0].toUpperCase();
+    const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Usuario';
+    statusEl.innerHTML = `<div class="user-badge" onclick="handleAuthClick()">
+      <div class="user-avatar">${initial}</div>
+      <span style="font-size:12px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</span>
+    </div>`;
+  } else {
+    statusEl.innerHTML = `<button class="hdr-btn" style="font-size:12px" onclick="handleAuthClick()">👤 Login</button>`;
+  }
+}
+
+function handleAuthClick() {
+  if (currentUser) {
+    if (confirm('¿Cerrar sesión?')) supa.auth.signOut();
+  } else {
+    $('auth-modal').style.display = 'flex';
+  }
+}
+
+document.getElementById('btn-close-auth').addEventListener('click', () => {
+  $('auth-modal').style.display = 'none';
+});
+
+document.getElementById('btn-google-login').addEventListener('click', async () => {
+  await supa.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.href }
+  });
+});
+
+// ── REPORT CATEGORIES ─────────────────────────────────────────────
+const REPORT_CATS = [
+  { id:'temperature', icon:'🌡', label:'Temperatura', input:'number', placeholder:'ej: 11.5', unit:'°C', min:0, max:35 },
+  { id:'clarity',     icon:'💧', label:'Claridad',    input:'scale', labels:['Cristalina','Clara','Turbia','Muy turbia','Opaca'] },
+  { id:'color',       icon:'🎨', label:'Color',       input:'choice', options:['🔵 Azul','🟢 Verde','🟤 Marrón','⚪ Grisácea','🟡 Amarilla'] },
+  { id:'salinity',    icon:'🧂', label:'Salinidad',   input:'scale', labels:['Dulce','Normal','Muy salada'] },
+  { id:'tide',        icon:'🌊', label:'Marea',       input:'scale', labels:['Muy baja','Baja','Normal','Alta','Muy alta'] },
+  { id:'jellyfish',   icon:'🪼', label:'Aguavivas',   input:'scale', labels:['Ninguna','Pocas','Muchas','Masivas'] },
+  { id:'cyano',       icon:'🟢', label:'Cianobacterias', input:'yesno' },
+  { id:'smell',       icon:'👃', label:'Olor anormal', input:'yesno' },
+  { id:'pollution',   icon:'⚠️',  label:'Contaminación', input:'yesno' },
+];
+
+const BEACH_CAMERAS = {
+  'pocitos':  { url:'https://anteltv.com.uy/camaras', label:'Cámara Pocitos — Antel TV' },
+  'ramirez':  { url:'https://anteltv.com.uy/camaras', label:'Cámara Rambla — Antel TV' },
+  'malvin':   { url:'https://lineup.surf/spots/uruguay/montevideo/playa-honda', label:'Cámara Malvín — Lineup' },
+  'honda':    { url:'https://lineup.surf/spots/uruguay/montevideo/playa-honda', label:'Cámara Honda — Lineup' },
+};
+
+let RS = { swam: null, selectedCats: new Set(), values: {} };
+
+function initReportUI() {
+  const grid = $('report-cats');
+  if (!grid) return;
+  grid.innerHTML = REPORT_CATS.map(c =>
+    `<div class="report-cat" data-cat="${c.id}" onclick="toggleCat('${c.id}')">
+      <div class="report-cat-icon">${c.icon}</div>
+      <div class="report-cat-label">${c.label}</div>
+    </div>`
+  ).join('');
+}
+
+function toggleCat(catId) {
+  const el = document.querySelector(`.report-cat[data-cat="${catId}"]`);
+  if (RS.selectedCats.has(catId)) {
+    RS.selectedCats.delete(catId);
+    el?.classList.remove('selected');
+  } else {
+    RS.selectedCats.add(catId);
+    el?.classList.add('selected');
+  }
+  renderValueInputs();
+}
+
+function renderValueInputs() {
+  const area = $('report-value-area');
+  if (!area) return;
+  let html = '';
+  RS.selectedCats.forEach(catId => {
+    const cat = REPORT_CATS.find(c => c.id === catId);
+    if (!cat) return;
+    html += `<div style="margin-bottom:14px;padding:12px;background:var(--shallow);border-radius:8px">
+      <div style="font-size:14px;font-weight:700;color:var(--deep);margin-bottom:10px">${cat.icon} ${cat.label}</div>`;
+    if (cat.input === 'number') {
+      html += `<div style="display:flex;align-items:center;gap:8px">
+        <input type="number" id="val-${catId}" placeholder="${cat.placeholder}"
+          min="${cat.min}" max="${cat.max}" style="margin-bottom:0;flex:1"
+          oninput="RS.values['${catId}']=this.value">
+        <span style="font-size:14px;color:var(--text3)">${cat.unit}</span>
+      </div>`;
+    } else if (cat.input === 'yesno') {
+      html += `<div class="swim-pills">
+        <button class="swim-pill yes" onclick="setVal('${catId}','si',this)">✅ Sí</button>
+        <button class="swim-pill no"  onclick="setVal('${catId}','no',this)">❌ No</button>
+      </div>`;
+    } else if (cat.input === 'choice') {
+      html += `<div style="display:flex;flex-wrap:wrap;gap:8px">
+        ${cat.options.map(o => `<button class="pill" onclick="setVal('${catId}','${o}',this)">${o}</button>`).join('')}
+      </div>`;
+    } else if (cat.input === 'scale') {
+      html += `<div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${cat.labels.map((l,i) =>
+          `<button class="pill" style="flex:1;min-width:55px;text-align:center;font-size:12px;padding:8px 4px"
+            onclick="setVal('${catId}','${i+1}:${l}',this)">
+            <div style="font-weight:700">${i+1}</div>
+            <div style="font-size:10px;margin-top:2px">${l}</div>
+          </button>`
+        ).join('')}
+      </div>`;
+    }
+    html += '</div>';
+  });
+  area.innerHTML = html;
+}
+
+function setVal(catId, value, btn) {
+  RS.values[catId] = value;
+  const parent = btn.closest('div');
+  parent.querySelectorAll('.pill,.swim-pill').forEach(b => {
+    b.classList.remove('active','selected');
+    b.style.background = '';
+    b.style.borderColor = '';
+  });
+  btn.classList.add('active');
+  btn.style.background = 'var(--water)';
+  btn.style.color = '#fff';
+  btn.style.borderColor = 'var(--water)';
+}
+
+// Swim question
+document.getElementById('swam-yes').addEventListener('click', () => {
+  RS.swam = true;
+  $('swam-yes').classList.add('selected');
+  $('swam-no').classList.remove('selected');
+  $('report-step-cats').style.display = 'block';
+});
+document.getElementById('swam-no').addEventListener('click', () => {
+  RS.swam = false;
+  $('swam-no').classList.add('selected');
+  $('swam-yes').classList.remove('selected');
+  $('report-step-cats').style.display = 'block';
+});
+
+// Submit
+document.getElementById('btn-submit-report').addEventListener('click', async () => {
+  if (RS.swam === null) { alert('¿Nadaste hoy?'); return; }
+  const lat = S.coords?.lat, lon = S.coords?.lon;
+  if (!lat || !lon) { alert('No se detectó ubicación.'); return; }
+  const beachName = S.locName || 'Desconocida';
+
+  setBtn('btn-submit-report', true, '<span class="spinner"></span> Enviando...');
+  try {
+    const inserts = [{ lat, lon, beach_name: beachName, report_type:'swim', value: RS.swam?'si':'no', swam: RS.swam }];
+    RS.selectedCats.forEach(catId => {
+      const val = RS.values[catId];
+      inserts.push({ lat, lon, beach_name: beachName, report_type: catId, value: val ? String(val) : 'si', swam: RS.swam });
+    });
+    const { error } = await supa.from('reports').insert(inserts);
+    if (error) throw error;
+
+    $('report-feedback').style.display = 'block';
+    setTimeout(() => {
+      $('report-feedback').style.display = 'none';
+      RS = { swam: null, selectedCats: new Set(), values: {} };
+      $('swam-yes').classList.remove('selected');
+      $('swam-no').classList.remove('selected');
+      $('report-step-cats').style.display = 'none';
+      document.querySelectorAll('.report-cat').forEach(e => e.classList.remove('selected'));
+      $('report-value-area').innerHTML = '';
+    }, 2500);
+    loadCommunityReports();
+  } catch(e) { alert('Error: ' + e.message); }
+  setBtn('btn-submit-report', false, 'Enviar reporte');
+});
+
+// ── COMMUNITY REPORTS (load from Supabase) ────────────────────────
+async function loadCommunityReports() {
+  if (!S.coords) return;
+  const dept = detectDept(S.locName);
+  if (!dept) return;
+
+  try {
+    const today = new Date(); today.setHours(0,0,0,0);
+    // Find nearby reports by radius (0.05 degrees ≈ 5km)
+    const { data, error } = await supa
+      .from('reports')
+      .select('*')
+      .gte('created_at', today.toISOString())
+      .gte('lat', S.coords.lat - 0.05)
+      .lte('lat', S.coords.lat + 0.05)
+      .gte('lon', S.coords.lon - 0.05)
+      .lte('lon', S.coords.lon + 0.05)
+      .order('created_at', { ascending: false });
+
+    if (error || !data?.length) return;
+    renderCommunityReports(data);
+  } catch(e) { console.log('Community load error:', e.message); }
+}
+
+function renderCommunityReports(reports) {
+  const swimmers = reports.filter(r => r.report_type === 'swim' && r.swam).length;
+  const tempR = reports.filter(r => r.report_type === 'temperature' && r.value && !isNaN(r.value));
+  const avgTemp = tempR.length
+    ? (tempR.reduce((s,r) => s+parseFloat(r.value),0)/tempR.length).toFixed(1) : null;
+
+  const alertLabels = { jellyfish:'🪼 Aguavivas', cyano:'🟢 Cianobacterias', smell:'👃 Olor anormal', pollution:'⚠️ Contaminación' };
+  const alerts = {};
+  reports.forEach(r => {
+    if (alertLabels[r.report_type] && r.value !== 'no') {
+      alerts[r.report_type] = (alerts[r.report_type]||0)+1;
+    }
+  });
+
+  const lastTime = reports[0]?.created_at ? timeSince(new Date(reports[0].created_at)) : null;
+
+  const beachContent = $('beach-content');
+  if (!beachContent) return;
+
+  // Remove old summary if exists
+  const old = document.getElementById('community-sum');
+  if (old) old.remove();
+
+  let html = `<div id="community-sum" class="community-summary">
+    <div class="community-swimmers">🏊 ${swimmers > 0 ? swimmers + (swimmers===1?' nadador hoy':' nadadores hoy') : 'Sin nados reportados hoy'}</div>`;
+  if (avgTemp) html += `<div style="font-size:14px;color:var(--text2)">🌡 Temp. reportada: <strong>${avgTemp}°C</strong></div>`;
+  if (Object.keys(alerts).length) {
+    html += `<div class="community-reports">`;
+    Object.entries(alerts).forEach(([type,count]) => {
+      html += `<span class="community-tag alert">${alertLabels[type]} (${count})</span>`;
+    });
+    html += `</div>`;
+  }
+  if (lastTime) html += `<div style="font-size:12px;color:var(--text3);margin-top:4px">Último reporte: ${lastTime}</div>`;
+  html += '</div>';
+
+  beachContent.insertAdjacentHTML('afterbegin', html);
+
+  // Camera link
+  const norm = normalize(S.locName);
+  const camKey = Object.keys(BEACH_CAMERAS).find(k => norm.includes(k));
+  if (camKey && !$('cam-link')) {
+    const cam = BEACH_CAMERAS[camKey];
+    beachContent.insertAdjacentHTML('beforeend',
+      `<a href="${cam.url}" target="_blank" class="camera-link" id="cam-link">📷 ${cam.label}</a>`);
+  }
+}
+
+function timeSince(date) {
+  const m = Math.round((Date.now()-date)/60000);
+  if (m<1) return 'ahora mismo';
+  if (m<60) return `hace ${m} min`;
+  return `hace ${Math.floor(m/60)}h`;
+}
+
 // ── INIT ──────────────────────────────────────────────────────────
 window.addEventListener('load', () => {
   applyLang();
   loadProfile();
+  initAuth();
+  initReportUI();
   // GPS — show card only if permission granted
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(pos => {
@@ -1957,8 +2363,8 @@ function getExitRec(r, waterTemp, durationMin) {
       <li>${t('exitCue4')}</li>
     </ul>
     ${signs.length ? `<div style="margin-top:8px;font-size:16px;color:${warnCol};font-weight:600">⚠️ ${signs.join(' · ')}</div>` : ''}
-    <div style="margin-top:8px;font-size:14px;color:var(--text3)">
-      Tipton et al. (2017) · Castellani & Young (2016) · JSAMS OWS Review (2024)
+    <div style="margin-top:8px;font-size:13px;color:var(--text3)">
+      ${t('exitRecSource')}
     </div>
   </div>`;
 }
@@ -2042,6 +2448,10 @@ async function loadBeachStatus() {
     const data = await res.json();
     if (data.beaches?.length) {
       renderBeaches(data);
+    loadCommunityReports();
+    // Show report card for Montevideo beaches
+    const dept2 = detectDept(S.locName);
+    if (dept2 === 'montevideo') $('report-card').style.display = 'block';
     } else {
       // beaches.json exists but empty — workflow may not have run yet
       $('beach-content').innerHTML = `
@@ -2170,6 +2580,7 @@ $('link-new-loc').addEventListener('click', () => {
   $('search-input').value = '';
   $('forecast-card').style.display = 'none';
   $('beach-card').style.display = 'none';
+  $('report-card').style.display = 'none';
   $('wave-info').innerHTML = '';
   showStep('location');
 });
