@@ -1408,9 +1408,13 @@ function setUser(user) {
   } else {
     statusEl.innerHTML = `<button class="hdr-btn" style="font-size:12px" onclick="handleAuthClick()">👤 Login</button>`;
   }
-  // Show/hide message area based on login
+  // Trigger message area update when login state changes
+  updateMessageArea();
+}
+
+function updateMessageArea() {
   const msgArea = $('message-area');
-  if (msgArea) msgArea.style.display = user ? 'block' : 'none';
+  if (msgArea) msgArea.style.display = currentUser ? 'block' : 'none';
 }
 
 function handleAuthClick() {
@@ -1670,8 +1674,8 @@ function renderCommunityReports(reports) {
   if (old) old.remove();
 
   let html = `<div id="community-sum" class="community-summary">
-    <div class="community-swimmers">🏊 ${swimmers > 0 ? swimmers + (swimmers===1?' '+t('swimmersToday1'):' '+t('swimmersToday')) : 'Sin nados reportados hoy'}</div>`;
-  if (avgTemp) html += `<div style="font-size:14px;color:var(--text2)">🌡 Temp. reportada: <strong>${avgTemp}°C</strong></div>`;
+    <div class="community-swimmers">🏊 ${swimmers > 0 ? swimmers + (swimmers===1?' '+t('swimmersToday1'):' '+t('swimmersToday')) : '👀 '+t('noSwims')}</div>`;
+  if (avgTemp) html += `<div style="font-size:14px;color:var(--text2)">🌡 ${t('tempReported')} <strong>${avgTemp}°C</strong></div>`;
   if (Object.keys(alerts).length) {
     html += `<div class="community-reports">`;
     Object.entries(alerts).forEach(([type,count]) => {
@@ -1679,7 +1683,7 @@ function renderCommunityReports(reports) {
     });
     html += `</div>`;
   }
-  if (lastTime) html += `<div style="font-size:12px;color:var(--text3);margin-top:4px">Último reporte: ${lastTime}</div>`;
+  if (lastTime) html += `<div style="font-size:12px;color:var(--text3);margin-top:4px">${t('lastReport')} ${lastTime}</div>`;
   html += '</div>';
 
   beachContent.insertAdjacentHTML('afterbegin', html);
@@ -2531,7 +2535,10 @@ async function loadBeachStatus() {
     loadCommunityReports();
     // Show report card for Montevideo beaches
     const dept2 = detectDept(S.locName);
-    if (dept2 === 'montevideo') $('report-card').style.display = 'block';
+    if (dept2 === 'montevideo') {
+      $('report-card').style.display = 'block';
+      updateMessageArea(); // show message area if logged in
+    }
     } else {
       // beaches.json exists but empty — workflow may not have run yet
       $('beach-content').innerHTML = `
