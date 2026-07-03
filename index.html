@@ -1593,6 +1593,9 @@ document.getElementById('btn-submit-report').addEventListener('click', async () 
     const inserts = [{ lat, lon, beach_name: beachName, report_type:'swim', value: RS.swam?'si':'no', swam: RS.swam, expires_at: expiresAt }];
     RS.selectedCats.forEach(catId => {
       const val = RS.values[catId];
+      const cat = getReportCats(RS.swam).find(c => c.id === catId);
+      // Skip numeric inputs without a value
+      if (cat?.input === 'number' && (!val || isNaN(parseFloat(val)))) return;
       inserts.push({ lat, lon, beach_name: beachName, report_type: catId, value: val ? String(val) : 'si', swam: RS.swam, expires_at: expiresAt });
     });
     // Add message if logged in and has content
@@ -1630,36 +1633,53 @@ document.getElementById('btn-submit-report').addEventListener('click', async () 
 // ── COMMUNITY REPORTS (load from Supabase) ────────────────────────
 async function loadCommunityReports() {
   if (!S.coords) return;
-  const dept = detectDept(S.locName);
-  if (!dept) return;
 
   try {
-    const today = new Date(); today.setHours(0,0,0,0);
-    // Find nearby reports by radius (0.05 degrees ≈ 5km)
+    // Use expires_at to get only today's valid reports
+    const now = new Date().toISOString();
     const { data, error } = await supa
       .from('reports')
       .select('*')
-      .gte('created_at', today.toISOString())
+      .gt('expires_at', now)
       .gte('lat', S.coords.lat - 0.05)
       .lte('lat', S.coords.lat + 0.05)
       .gte('lon', S.coords.lon - 0.05)
       .lte('lon', S.coords.lon + 0.05)
       .order('created_at', { ascending: false });
 
-    if (error || !data?.length) return;
+    if (error) { console.log('Community load error:', error.message); return; }
+    if (!data?.length) {
+      // No reports yet — still show report card
+      showReportCardOnly();
+      return;
+    }
     renderCommunityReports(data);
   } catch(e) { console.log('Community load error:', e.message); }
+}
+
+function showReportCardOnly() {
+  const dept = detectDept(S.locName);
+  if (dept === 'montevideo') {
+    $('report-card').style.display = 'block';
+    updateMessageArea();
+  }
 }
 
 function renderCommunityReports(reports) {
   if (!reports?.length) return;
 
-  const beachContent = $('beach-content');
-  if (!beachContent) return;
-
-  // Remove old summary
+  // Remove old summary wherever it is
   const oldSum = document.getElementById('community-sum');
   if (oldSum) oldSum.remove();
+
+  // Try beach-content first, fall back to top of report-card
+  const beachContent = $('beach-content');
+  const insertTarget = beachContent || $('report-card');
+  if (!insertTarget) return;
+  
+  // Make sure report card is visible
+  $('report-card').style.display = 'block';
+  updateMessageArea();
 
   // Swimmers
   const swimmers = reports.filter(r => r.report_type === 'swim' && r.swam).length;
@@ -1745,19 +1765,22 @@ function renderCommunityReports(reports) {
   }
 
   html += '</div>';
-  beachContent.insertAdjacentHTML('afterbegin', html);
+  if (beachContent) {
+    beachContent.insertAdjacentHTML('afterbegin', html);
+  } else {
+    // No beach card — show community summary at top of report card
+    const reportContent = $('report-content') || $('report-step-swim');
+    if (reportContent) reportContent.insertAdjacentHTML('beforebegin', html);
+  }
 
   // Camera link
   const norm = normalize(S.locName);
   const camKey = Object.keys(BEACH_CAMERAS).find(k => norm.includes(k));
-  if (camKey && !$('cam-link')) {
+  if (camKey && !$('cam-link') && beachContent) {
     const cam = BEACH_CAMERAS[camKey];
     beachContent.insertAdjacentHTML('beforeend',
       `<a href="${cam.url}" target="_blank" class="camera-link" id="cam-link">📷 ${cam.label}</a>`);
   }
-
-  // Show/update message area for logged-in users
-  updateMessageArea();
 }
 
 function timeSince(date) {
