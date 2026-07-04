@@ -1921,8 +1921,10 @@ async function fetchWeather() {
   try {
     const { lat, lon } = S.coords;
     const [meteo, marine] = await Promise.all([
-      fetch(`${METEO}/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,shortwave_radiation,weather_code&hourly=temperature_2m,wind_speed_10m,wind_direction_10m,weather_code,shortwave_radiation&forecast_days=1&timezone=auto`).then(r => r.json()),
-      fetch(`${MARINE}/marine?latitude=${lat}&longitude=${lon}&current=sea_surface_temperature,wave_height,wave_direction,wave_period,swell_wave_height,ocean_current_velocity&timezone=auto`).then(r => r.json()).catch(() => ({})),
+      fetch(`${METEO}/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,shortwave_radiation,weather_code&hourly=temperature_2m,wind_speed_10m,wind_direction_10m,weather_code,shortwave_radiation&forecast_days=1&timezone=auto`)
+        .then(r => { if (!r.ok) throw new Error('Meteo HTTP ' + r.status); return r.json(); }),
+      fetch(`${MARINE}/marine?latitude=${lat}&longitude=${lon}&current=sea_surface_temperature,wave_height,wave_direction,wave_period,swell_wave_height,ocean_current_velocity&timezone=auto`)
+        .then(r => r.ok ? r.json() : {}).catch(() => ({})),
     ]);
     if (!meteo.current) {
       console.log('Meteo response:', JSON.stringify(meteo).slice(0, 300));
