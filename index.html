@@ -2440,11 +2440,11 @@ function buildDualCharts(curve, durationMin) {
 
   const xS = tv => PAD.l + (tv / durationMin) * iW;
   const xStep = durationMin <= 20 ? 5 : durationMin <= 40 ? 10 : 15;
-  const xTicks = Array.from({length: Math.floor(durationMin/xStep)+1}, (_,i) => i*xStep)
-    .map(v => `<text x="${xS(v).toFixed(1)}" y="${H-6}" text-anchor="middle" font-size="8" fill="#7AAABB">${v}'</text>`);
+  const H = 130, iH = H - PAD.t - PAD.b;
+  const xTicksArr = Array.from({length: Math.floor(durationMin/xStep)+1}, (_,i) => i*xStep);
+  const xTicksSVG = xTicksArr.map(v => `<text x="${xS(v).toFixed(1)}" y="${H-6}" text-anchor="middle" font-size="8" fill="#7AAABB">${v}'</text>`).join('');
 
   // Chart 1: Temperatures
-  const H = 130, iH = H - PAD.t - PAD.b;
   const Tmin = Math.min(34, Math.min(...curve.map(p => p.Tc)) - 0.5);
   const Tmax = Math.max(37.5, Math.max(...curve.map(p => p.Tsc)) + 0.3);
   const yT = T => PAD.t + (1 - (T-Tmin)/(Tmax-Tmin)) * iH;
@@ -2462,7 +2462,7 @@ function buildDualCharts(curve, durationMin) {
     </div>
     <svg width="100%" viewBox="0 0 ${W} ${H}">
       ${yTicksT}
-      ${xTicks.map(x=>x.replace('${H}',H)).join('')}
+      ${xTicksSVG}
       <path d="${mkTpath('Tse')}" fill="none" stroke="#90BBCC" stroke-width="1.5" stroke-dasharray="4,2"/>
       <path d="${mkTpath('Tsc')}" fill="none" stroke="#0092B8" stroke-width="2"/>
       <path d="${mkTpath('Tc')}"  fill="none" stroke="#1A4A6B" stroke-width="2.5"/>
@@ -2489,7 +2489,7 @@ function buildDualCharts(curve, durationMin) {
     </div>
     <svg width="100%" viewBox="0 0 ${W} ${H}">
       ${yTicksQ}
-      ${xTicks.map(x=>x.replace('${H}',H)).join('')}
+      ${xTicksSVG}
       <path d="${mkQpath('qSolar')}"      fill="none" stroke="#F0A000" stroke-width="1.5" stroke-dasharray="3,2"/>
       <path d="${mkQpath('qExposed',-1)}" fill="none" stroke="#B02020" stroke-width="1.5"/>
       <path d="${mkQpath('qAir',-1)}"    fill="none" stroke="#C07000" stroke-width="1.5"/>
@@ -2949,8 +2949,14 @@ function renderODEResult(durationMin) {
   // Exit recommendation based on science
   const exitRec = getExitRec(r, S.weather.waterTemp ?? 15, durationMin);
 
-  // Build SVG curve
-  const svgCurve = buildDualCharts(r.curve, durationMin);
+  // Build SVG curve — adapt key names from model to chart format
+  const adaptedCurve = r.curve.map(p => ({
+    t: p.t, Tc: p.Tc, Tsc: p.Ts, Tse: p.Te,
+    qMet: p.Qmet, qWater: p.Qw, qAir: p.Qa,
+    qExposed: p.Qexp, qSolar: p.Qs,
+    qNet: p.Qnet !== undefined ? p.Qnet : (p.Qmet - p.Qw - p.Qa - p.Qexp + p.Qs),
+  }));
+  const svgCurve = buildDualCharts(adaptedCurve, durationMin);
   const suggestedTimeHTML = renderSuggestedTime(r);
 
   $('sim-result').innerHTML = `
