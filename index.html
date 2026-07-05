@@ -674,6 +674,81 @@ input:focus { border-color: var(--water); background: #fff; }
   letter-spacing: 3px;
   font-family: 'Courier New', monospace;
 }
+
+/* ── EQUIPMENT CHECKBOXES ────────────────────────────────────── */
+.equip-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+.equip-check {
+  display:flex; align-items:center; gap:10px;
+  padding:12px 14px; background:var(--shallow);
+  border:2px solid var(--border); border-radius:var(--rad-sm);
+  cursor:pointer; transition:all .15s; font-size:15px; color:var(--text2);
+  font-weight:500;
+}
+.equip-check.active { border-color:var(--water); background:#fff; color:var(--deep); font-weight:700; }
+.equip-icon { font-size:20px; }
+#equip-options { display:none; margin-top:10px; }
+
+/* ── CHARTS ──────────────────────────────────────────────────── */
+.chart-wrap {
+  background:#fff; border:1px solid var(--border);
+  border-radius:var(--rad-sm); padding:12px 8px 6px;
+  margin-bottom:14px; overflow:hidden;
+}
+.chart-title {
+  font-size:11px; color:var(--text3); letter-spacing:2px;
+  font-family:'Courier New',monospace; margin-bottom:6px;
+  font-weight:700;
+}
+.chart-legend {
+  display:flex; flex-wrap:wrap; gap:8px;
+  margin-top:8px; padding-top:8px;
+  border-top:1px solid var(--foam);
+}
+.legend-item {
+  display:flex; align-items:center; gap:5px;
+  font-size:12px; color:var(--text2);
+}
+.legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+/* ── HISTORICAL WATER TEMP ───────────────────────────────────── */
+.hist-water {
+  background:var(--shallow); border-radius:var(--rad-sm);
+  padding:10px 14px; margin-top:8px;
+  border-left:3px solid var(--water2);
+  font-size:15px; color:var(--text2);
+}
+.hist-water strong { color:var(--water2); font-family:Georgia,serif; font-size:18px; }
+
+/* ── 2-DAY FORECAST ─────────────────────────────────────────── */
+.forecast-day {
+  margin-bottom:10px;
+}
+.forecast-day-label {
+  font-size:11px; color:var(--text3); letter-spacing:2px;
+  font-family:'Courier New',monospace; margin-bottom:6px;
+  font-weight:700;
+}
+.forecast-day-row {
+  display:flex; gap:6px; overflow-x:auto;
+  scrollbar-width:none; padding-bottom:2px;
+}
+.forecast-day-row::-webkit-scrollbar { display:none; }
+
+/* ── SUGGESTED TIME ─────────────────────────────────────────── */
+.suggested-time {
+  text-align:center; padding:16px;
+  background:var(--shallow); border-radius:var(--rad-sm);
+  border:1.5px solid var(--border); margin-bottom:14px;
+}
+.suggested-time-val {
+  font-size:48px; font-weight:900; font-family:Georgia,serif;
+  color:var(--deep); line-height:1;
+}
+.suggested-time-lbl {
+  font-size:12px; color:var(--text3); letter-spacing:2px;
+  font-family:'Courier New',monospace; margin-top:4px;
+}
+
 </style>
 </head>
 <body>
@@ -760,12 +835,28 @@ input:focus { border-color: var(--water); background: #fff; }
       <div class="grid2" id="weather-grid"></div>
       <div id="wave-info"></div>
       <div class="loc-label" id="loc-label"></div>
+      <div id="hist-water-temp" style="display:none;margin-top:8px;padding:8px 12px;background:var(--shallow);border-radius:var(--rad-sm);font-size:13px;color:var(--text2);border-left:3px solid var(--text3)"></div>
     </div>
 
-    <!-- Forecast -->
+    <!-- Historical water temp -->
+    <div class="hist-water" id="hist-water-temp" style="display:none"></div>
+
+    <!-- Forecast today -->
     <div class="card" id="forecast-card" style="display:none">
       <div class="card-title" id="t-forecast">PRONÓSTICO HOY</div>
       <div class="forecast-row" id="forecast-row"></div>
+    </div>
+
+    <!-- 2-day forecast -->
+    <div class="card" id="forecast-2day-card" style="display:none">
+      <div class="card-title" id="t-forecast-2day">PRÓXIMOS 2 DÍAS</div>
+      <div id="forecast-2day"></div>
+    </div>
+
+    <!-- 2-day forecast -->
+    <div class="card" id="forecast2-card" style="display:none">
+      <div class="card-title" id="t-forecast2">PRÓXIMOS 2 DÍAS</div>
+      <div id="forecast2-content"></div>
     </div>
 
     <!-- Beach status -->
@@ -839,6 +930,39 @@ input:focus { border-color: var(--water); background: #fff; }
         <button class="pill" data-value="standard" id="t-std-suit">Traje estándar</button>
         <button class="pill" data-value="thermal" id="t-thermal-suit">Traje térmico</button>
       </div>
+      <div id="equipment-extras" style="display:none;margin-top:12px;padding:12px 14px;background:var(--shallow);border-radius:var(--rad-sm);border:1px solid var(--foam)">
+        <div class="lbl" id="t-extras-lbl" style="margin:0 0 10px">EQUIPAMIENTO ADICIONAL</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <label style="display:flex;align-items:center;gap:10px;font-size:15px;color:var(--text2);cursor:pointer">
+            <input type="checkbox" id="eq-gloves" style="width:18px;height:18px;accent-color:var(--water)">
+            <span id="t-eq-gloves">🧤 Guantes de neopreno</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;font-size:15px;color:var(--text2);cursor:pointer">
+            <input type="checkbox" id="eq-hood" style="width:18px;height:18px;accent-color:var(--water)">
+            <span id="t-eq-hood">🧢 Gorra de neopreno</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;font-size:15px;color:var(--text2);cursor:pointer">
+            <input type="checkbox" id="eq-booties" style="width:18px;height:18px;accent-color:var(--water)">
+            <span id="t-eq-booties">🦶 Escarpines</span>
+          </label>
+        </div>
+      </div>
+      <!-- Equipment options — shown when thermal selected -->
+      <div id="equip-options">
+        <div class="lbl" id="t-equip-lbl" style="margin-top:12px">EQUIPAMIENTO ADICIONAL</div>
+        <div class="equip-grid">
+          <div class="equip-check" data-equip="gloves" onclick="toggleEquip(this)">
+            <span class="equip-icon">🧤</span><span id="t-gloves">Guantes</span>
+          </div>
+          <div class="equip-check" data-equip="hood" onclick="toggleEquip(this)">
+            <span class="equip-icon">🪖</span><span id="t-hood">Gorra neopreno</span>
+          </div>
+          <div class="equip-check" data-equip="booties" onclick="toggleEquip(this)">
+            <span class="equip-icon">🦶</span><span id="t-booties">Escarpines</span>
+          </div>
+        </div>
+      </div>
+
       <div class="lbl" id="t-dir-lbl" style="margin-top:16px">DIRECCIÓN DE NADO <span class="lbl-opt" id="t-optional2">OPCIONAL</span></div>
       <div style="font-size:16px;color:var(--text3);margin-bottom:10px" id="t-dir-hint">Si no la ingresás, se asume 45° respecto al viento.</div>
       <div class="compass" id="dir-group">
@@ -864,20 +988,32 @@ input:focus { border-color: var(--water); background: #fff; }
 
   <!-- STEP 3: RESULT -->
   <div id="step-result" class="step">
+
+    <!-- Initial balance summary -->
     <div class="net-block" id="net-block">
       <div class="net-label" id="net-lbl-text">BALANCE NETO</div>
       <div class="net-value" id="net-value">—</div>
       <div class="net-unit">Watts</div>
       <div class="net-badge" id="net-badge">—</div>
     </div>
+
+    <!-- Breakdown -->
     <div class="card">
       <div class="card-title" id="t-breakdown">DESGLOSE TÉRMICO</div>
       <div id="balance-rows"></div>
     </div>
-    <div class="card" id="time-card" style="display:none">
-      <div class="card-title" id="t-thresholds">TIEMPO HASTA UMBRALES</div>
-      <div id="time-bars"></div>
+
+    <!-- Suggested time -->
+    <div class="card" id="suggested-card" style="display:none">
+      <div class="card-title" id="t-suggested-title">TIEMPO SUGERIDO EN AGUA</div>
+      <div class="suggested-time">
+        <div class="suggested-time-val" id="suggested-val">—</div>
+        <div class="suggested-time-lbl" id="t-suggested-lbl">MINUTOS HASTA 35°C</div>
+      </div>
+      <div style="font-size:14px;color:var(--text3);text-align:center" id="suggested-note"></div>
     </div>
+
+    <!-- Session simulator with charts -->
     <div class="card">
       <div class="card-title" id="t-sim-title">SIMULADOR DE SESIÓN</div>
       <div style="font-size:17px;color:var(--text2);margin-bottom:12px" id="t-sim-hint">¿Cuántos minutos planificás nadar?</div>
@@ -885,8 +1021,26 @@ input:focus { border-color: var(--water); background: #fff; }
         <input type="number" id="sim-min" placeholder="min" min="1" max="180">
         <button class="btn btn-primary" id="btn-sim">Simular</button>
       </div>
-      <div id="sim-result"></div>
+      <div id="sim-result">
+        <!-- Chart 1: Temperatures -->
+        <div class="chart-wrap" id="chart-temp-wrap" style="display:none">
+          <div class="chart-title" id="t-chart-temp">TEMPERATURAS — MODELO DIFERENCIAL</div>
+          <svg id="chart-temp" width="100%" viewBox="0 0 340 130" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="chart-legend" id="legend-temp"></div>
+        </div>
+        <!-- Chart 2: Heat fluxes -->
+        <div class="chart-wrap" id="chart-flux-wrap" style="display:none">
+          <div class="chart-title" id="t-chart-flux">FLUJOS DE CALOR [W]</div>
+          <svg id="chart-flux" width="100%" viewBox="0 0 340 130" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="chart-legend" id="legend-flux"></div>
+        </div>
+        <!-- Recovery box -->
+        <div id="recovery-box"></div>
+        <!-- Disclaimer -->
+        <div id="ode-disclaimer-box"></div>
+      </div>
     </div>
+
     <button class="btn btn-ghost" id="btn-recalc">← Recalcular sesión</button>
     <div class="link-btn" id="link-new-loc">→ Nueva ubicación</div>
   </div>
@@ -1015,12 +1169,64 @@ const MARINE  = 'https://marine-api.open-meteo.com/v1';
 const GEO     = 'https://geocoding-api.open-meteo.com/v1';
 const NOM     = 'https://nominatim.openstreetmap.org';
 const BEACHES = 'https://martin1homas.github.io/Impacto-termico/beaches.json';
-const SUIT_R  = { none: 0, standard: 0.05, thermal: 0.10 };
+// ── EQUIPMENT CONFIG ─────────────────────────────────────────────
+// R values calibrated from experimental data (Martin Thomas, Playa Ramírez, Jul 2026)
+// Orca Thermal: homóplato measurement at 10°C water, gradient +10°C → R=0.074 derived
+// from d=3mm Yamamoto neoprene k=0.050 W/m°C + Thermal X lining
+const SUIT_R = {
+  none:     0,
+  standard: 0.022,  // estimated literature 3mm standard neoprene
+  thermal:  0.074,  // calibrated: Orca Thermal (Yamamoto 39, 3mm torso + Thermal X lining)
+};
+
+// Equipment areas and additional R
+// Area fractions of Du Bois total surface area
+const EQUIP = {
+  gloves:  { A_fraction: 0.05, R_add: 0.030 },  // hands ~5% BSA
+  hood:    { A_fraction: 0.09, R_add: 0.030 },  // head ~9% BSA
+  booties: { A_fraction: 0.035, R_add: 0.025 }, // feet ~3.5% BSA
+};
+
+// State for equipment selection
+let S_equip = { gloves: false, hood: false, booties: false };
+
+function toggleEquip(el) {
+  const key = el.dataset.equip;
+  S_equip[key] = !S_equip[key];
+  el.classList.toggle('active', S_equip[key]);
+}
+
+// Get effective areas and R for current equipment
+function getEquipConfig(suit, A_total) {
+  // Base exposed area (without any equipment)
+  // Covered by suit (if thermal/standard): ~85% of body
+  // Exposed: face (~4%), hands (~5%), feet (~3.5%), head (~9% — under suit hood?)
+  let A_covered   = suit !== 'none' ? 0.85 * A_total : 0;
+  let A_face      = 0.04 * A_total;   // always exposed (no face gear)
+  let A_hands     = 0.05 * A_total;
+  let A_head      = 0.09 * A_total;
+  let A_feet      = 0.035 * A_total;
+  let R_head      = 0.002;  // silicone cap only (baseline)
+
+  if (suit === 'none') {
+    return { A_covered: 0, A_exposed: A_total, R_suit: 0, R_head, A_head };
+  }
+
+  const R_suit = SUIT_R[suit];
+
+  if (S_equip.gloves)  { A_covered += A_hands; A_hands = 0; }
+  if (S_equip.hood)    { A_covered += A_head;  R_head = R_suit; A_head = 0; }
+  if (S_equip.booties) { A_covered += A_feet;  A_feet = 0; }
+
+  const A_exposed = A_face + A_hands + A_feet;
+
+  return { A_covered, A_exposed, A_face, A_hands, A_feet, A_head, R_suit, R_head };
+}
 
 // ── I18N ─────────────────────────────────────────────────────────
 const T = {
   es: {
-    gpsTitle:'UBICACIÓN GPS', gpsName:'Tu ubicación GPS',timeNow:'ahora mismo',timeMin:'hace {n} min',timeHour:'hace {n}h',msgLabel:'💬 Mensaje para otros nadadores',msgPlaceholder:'ej: Corriente fuerte en zona norte hoy...',reportTitle:'REPORTAR CONDICIONES',swamQ:'¿Nadaste hoy en esta playa?',swamYes:'🏊 Sí, nadé',swamNo:'👀 Solo observé',reportWhat:'¿Qué querés reportar?',submitReport:'Enviar reporte',reportSending:'Enviando...',reportSent:'✅ ¡Reporte enviado! Gracias.',swamAlert:'¿Nadaste hoy?',swimmersToday1:'nadador hoy',swimmersToday:'nadadores hoy',noSwims:'Sin nados reportados hoy',tempReported:'Temp. reportada:',lastReport:'Último reporte:',catTemperature:'Temperatura',catClarity:'Claridad',catColor:'Color',catSalinity:'Salinidad',catTide:'Marea',catJellyfish:'Aguavivas',catCyano:'Cianobacterias',catSmell:'Olor anormal',catPollution:'Contaminación',catWaves:'Oleaje',clarityLabels:'Cristalina,Clara,Turbia,Muy turbia,Opaca',salinityLabels:'Dulce,Normal,Muy salada',tideLabels:'Muy baja,Baja,Normal,Alta,Muy alta',jellyfishLabels:'Ninguna,Pocas,Muchas,Masivas',wavesLabels:'Calmo,Leve,Moderado,Agitado,Muy agitado',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Azul',colorGreen:'🟢 Verde',colorBrown:'🟤 Marrón',colorGrey:'⚪ Grisácea',colorYellow:'🟡 Amarilla',alertJellyfish:'🪼 Aguavivas',alertCyano:'🟢 Cianobacterias',alertSmell:'👃 Olor anormal',alertPollution:'⚠️ Contaminación',authSub:'Iniciá sesión para coordinar grupos de nado. Los reportes no requieren cuenta.',authCancel:'Cancelar',authGoogle:'Continuar con Google', gpsCoords:'Usando coordenadas GPS',
+    gpsTitle:'UBICACIÓN GPS', gpsName:'Tu ubicación GPS',extrasLbl:'EQUIPAMIENTO ADICIONAL',eqGloves:'🧤 Guantes de neopreno',eqHood:'🧢 Gorra de neopreno',eqBooties:'🦶 Escarpines',forecast2:'PRÓXIMOS 2 DÍAS',histWaterTemp:'Hace un año en este lugar el agua estaba a',suggestedTime:'TIEMPO SUGERIDO EN EL AGUA',untilLimit:'hasta llegar a 35°C',noLimit:'Sin límite estimado para esta sesión',chartTemp:'TEMPERATURA CORPORAL ESTIMADA',chartFlows:'FLUJOS DE CALOR',qMet:'Producción metabólica',qWater:'Pérdida al agua (traje)',qAir:'Pérdida al aire',qExposed:'Pérdida zonas expuestas',qSolar:'Ganancia solar',qNet:'Balance neto',tCore:'T° núcleo',tSkinC:'T° piel cubierta',tSkinE:'T° piel expuesta',histWaterLabel:'Hace un año el agua estaba a',suggestedWarn:'Tiempo muy limitado — extrema precaución',suggestedCaution:'Tiempo moderado — salí antes de sentir frío',suggestedOk:'Tiempo disponible con este equipamiento',suggestedNoLimit:'Sin límite térmico para esta sesión',t35Label:'MINUTOS HASTA 35°C',forecast2day:'PRÓXIMOS 2 DÍAS',timeNow:'ahora mismo',timeMin:'hace {n} min',timeHour:'hace {n}h',msgLabel:'💬 Mensaje para otros nadadores',msgPlaceholder:'ej: Corriente fuerte en zona norte hoy...',reportTitle:'REPORTAR CONDICIONES',swamQ:'¿Nadaste hoy en esta playa?',swamYes:'🏊 Sí, nadé',swamNo:'👀 Solo observé',reportWhat:'¿Qué querés reportar?',submitReport:'Enviar reporte',reportSending:'Enviando...',reportSent:'✅ ¡Reporte enviado! Gracias.',swamAlert:'¿Nadaste hoy?',swimmersToday1:'nadador hoy',swimmersToday:'nadadores hoy',noSwims:'Sin nados reportados hoy',tempReported:'Temp. reportada:',lastReport:'Último reporte:',catTemperature:'Temperatura',catClarity:'Claridad',catColor:'Color',catSalinity:'Salinidad',catTide:'Marea',catJellyfish:'Aguavivas',catCyano:'Cianobacterias',catSmell:'Olor anormal',catPollution:'Contaminación',catWaves:'Oleaje',clarityLabels:'Cristalina,Clara,Turbia,Muy turbia,Opaca',salinityLabels:'Dulce,Normal,Muy salada',tideLabels:'Muy baja,Baja,Normal,Alta,Muy alta',jellyfishLabels:'Ninguna,Pocas,Muchas,Masivas',wavesLabels:'Calmo,Leve,Moderado,Agitado,Muy agitado',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Azul',colorGreen:'🟢 Verde',colorBrown:'🟤 Marrón',colorGrey:'⚪ Grisácea',colorYellow:'🟡 Amarilla',alertJellyfish:'🪼 Aguavivas',alertCyano:'🟢 Cianobacterias',alertSmell:'👃 Olor anormal',alertPollution:'⚠️ Contaminación',authSub:'Iniciá sesión para coordinar grupos de nado. Los reportes no requieren cuenta.',authCancel:'Cancelar',authGoogle:'Continuar con Google', gpsCoords:'Usando coordenadas GPS',
     fetchWeather:'Obtener condiciones actuales', searchOther:'→ Buscar otra ubicación',
     searchTitle:'BUSCAR UBICACIÓN', searchHint:'Playas, ríos, lagos, ciudades — cualquier lugar geográfico.',
     searchPH:'ej: Playa Ramírez Montevideo...', searchBtn:'Buscar', searching:'Buscando...',
@@ -1073,7 +1279,7 @@ const T = {
     exitSign3:'Agua templada (16°C) por más de 20 min — la fatiga acumulada también enfría',exitRecSource:'Basado en estudios de fisiología de natación en aguas frías.',
   },
   en: {
-    gpsTitle:'GPS LOCATION', gpsName:'Your GPS location',timeNow:'just now',timeMin:'{n} min ago',timeHour:'{n}h ago',msgLabel:'💬 Message for other swimmers',msgPlaceholder:'e.g.: Strong current in north area today...',reportTitle:'REPORT CONDITIONS',swamQ:'Did you swim here today?',swamYes:'🏊 Yes, I swam',swamNo:'👀 Just observed',reportWhat:'What do you want to report?',submitReport:'Submit report',reportSending:'Sending...',reportSent:'✅ Report submitted! Thank you.',swamAlert:'Did you swim today?',swimmersToday1:'swimmer today',swimmersToday:'swimmers today',noSwims:'No swims reported today',tempReported:'Reported temp:',lastReport:'Last report:',catTemperature:'Temperature',catClarity:'Clarity',catColor:'Color',catSalinity:'Salinity',catTide:'Tide',catJellyfish:'Jellyfish',catCyano:'Cyanobacteria',catSmell:'Unusual smell',catPollution:'Pollution',catWaves:'Waves',clarityLabels:'Crystal clear,Clear,Murky,Very murky,Opaque',salinityLabels:'Fresh,Normal,Very salty',tideLabels:'Very low,Low,Normal,High,Very high',jellyfishLabels:'None,Few,Many,Massive',wavesLabels:'Calm,Light,Moderate,Rough,Very rough',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Blue',colorGreen:'🟢 Green',colorBrown:'🟤 Brown',colorGrey:'⚪ Grey',colorYellow:'🟡 Yellow',alertJellyfish:'🪼 Jellyfish',alertCyano:'🟢 Cyanobacteria',alertSmell:'👃 Unusual smell',alertPollution:'⚠️ Pollution',authSub:'Sign in to coordinate swim groups. Reports do not require an account.',authCancel:'Cancel',authGoogle:'Continue with Google', gpsCoords:'Using GPS coordinates',
+    gpsTitle:'GPS LOCATION', gpsName:'Your GPS location',extrasLbl:'ADDITIONAL EQUIPMENT',eqGloves:'🧤 Neoprene gloves',eqHood:'🧢 Neoprene cap',eqBooties:'🦶 Booties',forecast2:'NEXT 2 DAYS',histWaterTemp:'One year ago water temperature here was',suggestedTime:'SUGGESTED TIME IN WATER',untilLimit:'until reaching 35°C',noLimit:'No estimated limit for this session',chartTemp:'ESTIMATED BODY TEMPERATURE',chartFlows:'HEAT FLOWS',qMet:'Metabolic production',qWater:'Water heat loss (wetsuit)',qAir:'Air heat loss',qExposed:'Exposed zones heat loss',qSolar:'Solar gain',qNet:'Net balance',tCore:'Core temp',tSkinC:'Covered skin temp',tSkinE:'Exposed skin temp',histWaterLabel:'One year ago the water was',suggestedWarn:'Very limited time — extreme caution',suggestedCaution:'Moderate time — exit before feeling cold',suggestedOk:'Time available with this equipment',suggestedNoLimit:'No thermal limit for this session',t35Label:'MINUTES TO 35°C',forecast2day:'NEXT 2 DAYS',timeNow:'just now',timeMin:'{n} min ago',timeHour:'{n}h ago',msgLabel:'💬 Message for other swimmers',msgPlaceholder:'e.g.: Strong current in north area today...',reportTitle:'REPORT CONDITIONS',swamQ:'Did you swim here today?',swamYes:'🏊 Yes, I swam',swamNo:'👀 Just observed',reportWhat:'What do you want to report?',submitReport:'Submit report',reportSending:'Sending...',reportSent:'✅ Report submitted! Thank you.',swamAlert:'Did you swim today?',swimmersToday1:'swimmer today',swimmersToday:'swimmers today',noSwims:'No swims reported today',tempReported:'Reported temp:',lastReport:'Last report:',catTemperature:'Temperature',catClarity:'Clarity',catColor:'Color',catSalinity:'Salinity',catTide:'Tide',catJellyfish:'Jellyfish',catCyano:'Cyanobacteria',catSmell:'Unusual smell',catPollution:'Pollution',catWaves:'Waves',clarityLabels:'Crystal clear,Clear,Murky,Very murky,Opaque',salinityLabels:'Fresh,Normal,Very salty',tideLabels:'Very low,Low,Normal,High,Very high',jellyfishLabels:'None,Few,Many,Massive',wavesLabels:'Calm,Light,Moderate,Rough,Very rough',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Blue',colorGreen:'🟢 Green',colorBrown:'🟤 Brown',colorGrey:'⚪ Grey',colorYellow:'🟡 Yellow',alertJellyfish:'🪼 Jellyfish',alertCyano:'🟢 Cyanobacteria',alertSmell:'👃 Unusual smell',alertPollution:'⚠️ Pollution',authSub:'Sign in to coordinate swim groups. Reports do not require an account.',authCancel:'Cancel',authGoogle:'Continue with Google', gpsCoords:'Using GPS coordinates',
     fetchWeather:'Get current conditions', searchOther:'→ Search another location',
     searchTitle:'SEARCH LOCATION', searchHint:'Beaches, rivers, lakes, cities — any geographic location.',
     searchPH:'e.g.: Brighton Beach, Dover...', searchBtn:'Search', searching:'Searching...',
@@ -1126,7 +1332,7 @@ const T = {
     exitSign3:'Mild water (16°C) over 20 min — accumulated fatigue also cools you down',exitRecSource:'Based on cold-water swimming physiology research.',
   },
   it: {
-    gpsTitle:'POSIZIONE GPS', gpsName:'La tua posizione GPS',timeNow:'adesso',timeMin:'{n} min fa',timeHour:'{n}h fa',msgLabel:'💬 Messaggio per altri nuotatori',msgPlaceholder:'es: Corrente forte nella zona nord oggi...',reportTitle:'SEGNALA CONDIZIONI',swamQ:'Hai nuotato qui oggi?',swamYes:'🏊 Sì, ho nuotato',swamNo:'👀 Solo osservato',reportWhat:'Cosa vuoi segnalare?',submitReport:'Invia segnalazione',reportSending:'Invio...',reportSent:'✅ Segnalazione inviata! Grazie.',swamAlert:'Hai nuotato oggi?',swimmersToday1:'nuotatore oggi',swimmersToday:'nuotatori oggi',noSwims:'Nessun nuoto segnalato oggi',tempReported:'Temp. segnalata:',lastReport:'Ultima segnalazione:',catTemperature:'Temperatura',catClarity:'Chiarezza',catColor:'Colore',catSalinity:'Salinità',catTide:'Marea',catJellyfish:'Meduse',catCyano:'Cianobatteri',catSmell:'Odore anomalo',catPollution:'Inquinamento',catWaves:'Moto ondoso',clarityLabels:'Cristallina,Chiara,Torbida,Molto torbida,Opaca',salinityLabels:'Dolce,Normale,Molto salata',tideLabels:'Molto bassa,Bassa,Normale,Alta,Molto alta',jellyfishLabels:'Nessuna,Poche,Molte,Massive',wavesLabels:'Calmo,Lieve,Moderato,Mosso,Molto mosso',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Blu',colorGreen:'🟢 Verde',colorBrown:'🟤 Marrone',colorGrey:'⚪ Grigia',colorYellow:'🟡 Gialla',alertJellyfish:'🪼 Meduse',alertCyano:'🟢 Cianobatteri',alertSmell:'👃 Odore anomalo',alertPollution:'⚠️ Inquinamento',authSub:'Accedi per coordinare gruppi di nuoto. Le segnalazioni non richiedono account.',authCancel:'Annulla',authGoogle:'Continua con Google', gpsCoords:'Usando coordinate GPS',
+    gpsTitle:'POSIZIONE GPS', gpsName:'La tua posizione GPS',extrasLbl:'EQUIPAGGIAMENTO AGGIUNTIVO',eqGloves:'🧤 Guanti in neoprene',eqHood:'🧢 Cuffia in neoprene',eqBooties:'🦶 Calzari',forecast2:'PROSSIMI 2 GIORNI',histWaterTemp:"Un anno fa la temperatura dell'acqua qui era",suggestedTime:'TEMPO CONSIGLIATO IN ACQUA',untilLimit:'fino a raggiungere 35°C',noLimit:'Nessun limite stimato per questa sessione',chartTemp:'TEMPERATURA CORPOREA STIMATA',chartFlows:'FLUSSI DI CALORE',qMet:'Produzione metabolica',qWater:'Perdita in acqua (muta)',qAir:'Perdita in aria',qExposed:'Perdita zone esposte',qSolar:'Guadagno solare',qNet:'Bilancio netto',tCore:'Temp. nucleo',tSkinC:'Temp. pelle coperta',tSkinE:'Temp. pelle esposta',histWaterLabel:'Un anno fa l\'acqua era a',suggestedWarn:'Tempo molto limitato — massima cautela',suggestedCaution:'Tempo moderato — uscire prima del freddo',suggestedOk:'Tempo disponibile con questo equipaggiamento',suggestedNoLimit:'Nessun limite termico per questa sessione',t35Label:'MINUTI A 35°C',forecast2day:'PROSSIMI 2 GIORNI',timeNow:'adesso',timeMin:'{n} min fa',timeHour:'{n}h fa',msgLabel:'💬 Messaggio per altri nuotatori',msgPlaceholder:'es: Corrente forte nella zona nord oggi...',reportTitle:'SEGNALA CONDIZIONI',swamQ:'Hai nuotato qui oggi?',swamYes:'🏊 Sì, ho nuotato',swamNo:'👀 Solo osservato',reportWhat:'Cosa vuoi segnalare?',submitReport:'Invia segnalazione',reportSending:'Invio...',reportSent:'✅ Segnalazione inviata! Grazie.',swamAlert:'Hai nuotato oggi?',swimmersToday1:'nuotatore oggi',swimmersToday:'nuotatori oggi',noSwims:'Nessun nuoto segnalato oggi',tempReported:'Temp. segnalata:',lastReport:'Ultima segnalazione:',catTemperature:'Temperatura',catClarity:'Chiarezza',catColor:'Colore',catSalinity:'Salinità',catTide:'Marea',catJellyfish:'Meduse',catCyano:'Cianobatteri',catSmell:'Odore anomalo',catPollution:'Inquinamento',catWaves:'Moto ondoso',clarityLabels:'Cristallina,Chiara,Torbida,Molto torbida,Opaca',salinityLabels:'Dolce,Normale,Molto salata',tideLabels:'Molto bassa,Bassa,Normale,Alta,Molto alta',jellyfishLabels:'Nessuna,Poche,Molte,Massive',wavesLabels:'Calmo,Lieve,Moderato,Mosso,Molto mosso',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Blu',colorGreen:'🟢 Verde',colorBrown:'🟤 Marrone',colorGrey:'⚪ Grigia',colorYellow:'🟡 Gialla',alertJellyfish:'🪼 Meduse',alertCyano:'🟢 Cianobatteri',alertSmell:'👃 Odore anomalo',alertPollution:'⚠️ Inquinamento',authSub:'Accedi per coordinare gruppi di nuoto. Le segnalazioni non richiedono account.',authCancel:'Annulla',authGoogle:'Continua con Google', gpsCoords:'Usando coordinate GPS',
     fetchWeather:'Ottieni condizioni attuali', searchOther:'→ Cerca un\'altra posizione',
     searchTitle:'CERCA POSIZIONE', searchHint:'Spiagge, fiumi, laghi, città — qualsiasi luogo geografico.',
     searchPH:'es: Spiaggia di Ostia, Roma...', searchBtn:'Cerca', searching:'Cercando...',
@@ -1179,7 +1385,7 @@ const T = {
     exitSign3:'Acqua mite (16°C) oltre 20 min — la fatica accumulata raffredda anch\'essa',exitRecSource:'Basato su studi di fisiologia del nuoto in acque fredde.',
   },
   fr: {
-    gpsTitle:'POSITION GPS', gpsName:'Votre position GPS',timeNow:'à l\'instant',timeMin:'il y a {n} min',timeHour:'il y a {n}h',msgLabel:'💬 Message pour les autres nageurs',msgPlaceholder:'ex: Fort courant dans la zone nord aujourd\'hui...',reportTitle:'SIGNALER LES CONDITIONS',swamQ:"Avez-vous nagé ici aujourd'hui?",swamYes:"🏊 Oui, j'ai nagé",swamNo:'👀 Juste observé',reportWhat:'Que voulez-vous signaler?',submitReport:'Envoyer le signalement',reportSending:'Envoi...',reportSent:'✅ Signalement envoyé ! Merci.',swamAlert:"Avez-vous nagé aujourd'hui?",swimmersToday1:"nageur aujourd'hui",swimmersToday:"nageurs aujourd'hui",noSwims:"Aucune nage signalée aujourd'hui",tempReported:'Temp. signalée:',lastReport:'Dernier signalement:',catTemperature:'Température',catClarity:'Clarté',catColor:'Couleur',catSalinity:'Salinité',catTide:'Marée',catJellyfish:'Méduses',catCyano:'Cyanobactéries',catSmell:'Odeur anormale',catPollution:'Pollution',catWaves:'Houle',clarityLabels:'Cristalline,Claire,Trouble,Très trouble,Opaque',salinityLabels:'Douce,Normale,Très salée',tideLabels:'Très basse,Basse,Normale,Haute,Très haute',jellyfishLabels:'Aucune,Peu,Beaucoup,Massive',wavesLabels:'Calme,Légère,Modérée,Agitée,Très agitée',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Bleu',colorGreen:'🟢 Vert',colorBrown:'🟤 Brun',colorGrey:'⚪ Grise',colorYellow:'🟡 Jaune',alertJellyfish:'🪼 Méduses',alertCyano:'🟢 Cyanobactéries',alertSmell:'👃 Odeur anormale',alertPollution:'⚠️ Pollution',authSub:'Connectez-vous pour coordonner des groupes de nage. Les signalements ne nécessitent pas de compte.',authCancel:'Annuler',authGoogle:'Continuer avec Google', gpsCoords:'Utilisant les coordonnées GPS',
+    gpsTitle:'POSITION GPS', gpsName:'Votre position GPS',extrasLbl:'ÉQUIPEMENT SUPPLÉMENTAIRE',eqGloves:'🧤 Gants en néoprène',eqHood:'🧢 Bonnet en néoprène',eqBooties:'🦶 Chaussons',forecast2:'2 PROCHAINS JOURS',histWaterTemp:"Il y a un an la température de l'eau ici était de",suggestedTime:"TEMPS SUGGÉRÉ DANS L'EAU",untilLimit:"jusqu'à atteindre 35°C",noLimit:'Aucune limite estimée pour cette session',chartTemp:'TEMPÉRATURE CORPORELLE ESTIMÉE',chartFlows:'FLUX DE CHALEUR',qMet:'Production métabolique',qWater:"Perte dans l'eau (combinaison)",qAir:"Perte dans l'air",qExposed:'Perte zones exposées',qSolar:'Apport solaire',qNet:'Bilan net',tCore:'Temp. noyau',tSkinC:'Temp. peau couverte',tSkinE:'Temp. peau exposée',histWaterLabel:'Il y a un an l\'eau était à',suggestedWarn:'Temps très limité — extrême prudence',suggestedCaution:'Temps modéré — sortez avant de sentir le froid',suggestedOk:'Temps disponible avec cet équipement',suggestedNoLimit:'Aucune limite thermique pour cette session',t35Label:'MINUTES JUSQU\'À 35°C',forecast2day:'2 PROCHAINS JOURS',timeNow:'à l\'instant',timeMin:'il y a {n} min',timeHour:'il y a {n}h',msgLabel:'💬 Message pour les autres nageurs',msgPlaceholder:'ex: Fort courant dans la zone nord aujourd\'hui...',reportTitle:'SIGNALER LES CONDITIONS',swamQ:"Avez-vous nagé ici aujourd'hui?",swamYes:"🏊 Oui, j'ai nagé",swamNo:'👀 Juste observé',reportWhat:'Que voulez-vous signaler?',submitReport:'Envoyer le signalement',reportSending:'Envoi...',reportSent:'✅ Signalement envoyé ! Merci.',swamAlert:"Avez-vous nagé aujourd'hui?",swimmersToday1:"nageur aujourd'hui",swimmersToday:"nageurs aujourd'hui",noSwims:"Aucune nage signalée aujourd'hui",tempReported:'Temp. signalée:',lastReport:'Dernier signalement:',catTemperature:'Température',catClarity:'Clarté',catColor:'Couleur',catSalinity:'Salinité',catTide:'Marée',catJellyfish:'Méduses',catCyano:'Cyanobactéries',catSmell:'Odeur anormale',catPollution:'Pollution',catWaves:'Houle',clarityLabels:'Cristalline,Claire,Trouble,Très trouble,Opaque',salinityLabels:'Douce,Normale,Très salée',tideLabels:'Très basse,Basse,Normale,Haute,Très haute',jellyfishLabels:'Aucune,Peu,Beaucoup,Massive',wavesLabels:'Calme,Légère,Modérée,Agitée,Très agitée',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Bleu',colorGreen:'🟢 Vert',colorBrown:'🟤 Brun',colorGrey:'⚪ Grise',colorYellow:'🟡 Jaune',alertJellyfish:'🪼 Méduses',alertCyano:'🟢 Cyanobactéries',alertSmell:'👃 Odeur anormale',alertPollution:'⚠️ Pollution',authSub:'Connectez-vous pour coordonner des groupes de nage. Les signalements ne nécessitent pas de compte.',authCancel:'Annuler',authGoogle:'Continuer avec Google', gpsCoords:'Utilisant les coordonnées GPS',
     fetchWeather:'Obtenir les conditions actuelles', searchOther:'→ Chercher un autre lieu',
     searchTitle:'RECHERCHER UN LIEU', searchHint:'Plages, rivières, lacs, villes — tout lieu géographique.',
     searchPH:'ex: Plage de Nice, Côte d\'Azur...', searchBtn:'Chercher', searching:'Recherche...',
@@ -1232,7 +1438,7 @@ const T = {
     exitSign3:'Eau tempérée (16°C) au-delà de 20 min — la fatigue accumulée refroidit aussi',exitRecSource:'Basé sur des études de physiologie de la nage en eau froide.',
   },
   pt: {
-    gpsTitle:'LOCALIZAÇÃO GPS', gpsName:'A sua localização GPS',timeNow:'agora mesmo',timeMin:'há {n} min',timeHour:'há {n}h',msgLabel:'💬 Mensagem para outros nadadores',msgPlaceholder:'ex: Corrente forte na zona norte hoje...',reportTitle:'REPORTAR CONDIÇÕES',swamQ:'Nadou aqui hoje?',swamYes:'🏊 Sim, nadei',swamNo:'👀 Só observei',reportWhat:'O que quer reportar?',submitReport:'Enviar relatório',reportSending:'Enviando...',reportSent:'✅ Relatório enviado! Obrigado.',swamAlert:'Nadou hoje?',swimmersToday1:'nadador hoje',swimmersToday:'nadadores hoje',noSwims:'Sem nados reportados hoje',tempReported:'Temp. reportada:',lastReport:'Último relatório:',catTemperature:'Temperatura',catClarity:'Clareza',catColor:'Cor',catSalinity:'Salinidade',catTide:'Maré',catJellyfish:'Medusas',catCyano:'Cianobactérias',catSmell:'Cheiro anormal',catPollution:'Contaminação',catWaves:'Ondulação',clarityLabels:'Cristalina,Clara,Turva,Muito turva,Opaca',salinityLabels:'Doce,Normal,Muito salgada',tideLabels:'Muito baixa,Baixa,Normal,Alta,Muito alta',jellyfishLabels:'Nenhuma,Poucas,Muitas,Massiva',wavesLabels:'Calmo,Leve,Moderado,Agitado,Muito agitado',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Azul',colorGreen:'🟢 Verde',colorBrown:'🟤 Castanho',colorGrey:'⚪ Cinzenta',colorYellow:'🟡 Amarela',alertJellyfish:'🪼 Medusas',alertCyano:'🟢 Cianobactérias',alertSmell:'👃 Cheiro anormal',alertPollution:'⚠️ Contaminação',authSub:'Inicie sessão para coordenar grupos de natação. Os relatórios não requerem conta.',authCancel:'Cancelar',authGoogle:'Continuar com Google', gpsCoords:'Usando coordenadas GPS',
+    gpsTitle:'LOCALIZAÇÃO GPS', gpsName:'A sua localização GPS',extrasLbl:'EQUIPAMENTO ADICIONAL',eqGloves:'🧤 Luvas de neoprene',eqHood:'🧢 Touca de neoprene',eqBooties:'🦶 Sapatilhas',forecast2:'PRÓXIMOS 2 DIAS',histWaterTemp:'Há um ano a temperatura da água aqui era de',suggestedTime:'TEMPO SUGERIDO NA ÁGUA',untilLimit:'até atingir 35°C',noLimit:'Sem limite estimado para esta sessão',chartTemp:'TEMPERATURA CORPORAL ESTIMADA',chartFlows:'FLUXOS DE CALOR',qMet:'Produção metabólica',qWater:'Perda na água (fato)',qAir:'Perda no ar',qExposed:'Perda zonas expostas',qSolar:'Ganho solar',qNet:'Balanço líquido',tCore:'Temp. núcleo',tSkinC:'Temp. pele coberta',tSkinE:'Temp. pele exposta',histWaterLabel:'Há um ano a água estava a',suggestedWarn:'Tempo muito limitado — extrema cautela',suggestedCaution:'Tempo moderado — sair antes de sentir frio',suggestedOk:'Tempo disponível com este equipamento',suggestedNoLimit:'Sem limite térmico para esta sessão',t35Label:'MINUTOS ATÉ 35°C',forecast2day:'PRÓXIMOS 2 DIAS',timeNow:'agora mesmo',timeMin:'há {n} min',timeHour:'há {n}h',msgLabel:'💬 Mensagem para outros nadadores',msgPlaceholder:'ex: Corrente forte na zona norte hoje...',reportTitle:'REPORTAR CONDIÇÕES',swamQ:'Nadou aqui hoje?',swamYes:'🏊 Sim, nadei',swamNo:'👀 Só observei',reportWhat:'O que quer reportar?',submitReport:'Enviar relatório',reportSending:'Enviando...',reportSent:'✅ Relatório enviado! Obrigado.',swamAlert:'Nadou hoje?',swimmersToday1:'nadador hoje',swimmersToday:'nadadores hoje',noSwims:'Sem nados reportados hoje',tempReported:'Temp. reportada:',lastReport:'Último relatório:',catTemperature:'Temperatura',catClarity:'Clareza',catColor:'Cor',catSalinity:'Salinidade',catTide:'Maré',catJellyfish:'Medusas',catCyano:'Cianobactérias',catSmell:'Cheiro anormal',catPollution:'Contaminação',catWaves:'Ondulação',clarityLabels:'Cristalina,Clara,Turva,Muito turva,Opaca',salinityLabels:'Doce,Normal,Muito salgada',tideLabels:'Muito baixa,Baixa,Normal,Alta,Muito alta',jellyfishLabels:'Nenhuma,Poucas,Muitas,Massiva',wavesLabels:'Calmo,Leve,Moderado,Agitado,Muito agitado',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Azul',colorGreen:'🟢 Verde',colorBrown:'🟤 Castanho',colorGrey:'⚪ Cinzenta',colorYellow:'🟡 Amarela',alertJellyfish:'🪼 Medusas',alertCyano:'🟢 Cianobactérias',alertSmell:'👃 Cheiro anormal',alertPollution:'⚠️ Contaminação',authSub:'Inicie sessão para coordenar grupos de natação. Os relatórios não requerem conta.',authCancel:'Cancelar',authGoogle:'Continuar com Google', gpsCoords:'Usando coordenadas GPS',
     fetchWeather:'Obter condições atuais', searchOther:'→ Procurar outro local',
     searchTitle:'PESQUISAR LOCALIZAÇÃO', searchHint:'Praias, rios, lagos, cidades — qualquer lugar geográfico.',
     searchPH:'ex: Praia de Copacabana, Rio...', searchBtn:'Pesquisar', searching:'Pesquisando...',
@@ -1987,8 +2193,12 @@ async function fetchWeather() {
     };
     renderWeatherGrid();
     renderForecast();
+    render2DayForecast(S.weather.hourly, S.weather.waterTemp);
     updateWindInfo();
     loadBeachStatus();
+    loadHistoricalWaterTemp();
+    loadHistoricalWaterTemp();
+    render2DayForecast();
     showStep('params');
   } catch (e) {
     showErr('err-location', 'Error: ' + e.message);
@@ -2110,6 +2320,25 @@ function setupPills(groupId, key, numeric) {
   });
 }
 setupPills('suit-group', 'suit', false);
+// Show/hide equipment extras based on suit
+$('suit-group').addEventListener('click', e => {
+  const b = e.target.closest('.pill');
+  if (!b) return;
+  const showExtras = b.dataset.value === 'thermal' || b.dataset.value === 'standard';
+  $('equipment-extras').style.display = showExtras ? 'block' : 'none';
+});
+
+// Show/hide equipment options when thermal/standard selected
+$('suit-group').addEventListener('click', () => {
+  const equipDiv = $('equip-options');
+  if (S.suit === 'none') {
+    equipDiv.style.display = 'none';
+    S_equip = { gloves:false, hood:false, booties:false };
+    document.querySelectorAll('.equip-check').forEach(e => e.classList.remove('active'));
+  } else {
+    equipDiv.style.display = 'block';
+  }
+});
 setupPills('sex-group', 'sex', true);
 $('speed-group').addEventListener('click', e => {
   const b = e.target.closest('.speed-pill');
@@ -2174,106 +2403,157 @@ function solarSin(lat, lon, date, tzSec) {
   return Math.max(0, sinA);
 }
 
-function calcThermal(profile, speedSecs, suit, swimDir, weather, coords) {
-  const { altura, peso, edad, sex, grasa } = profile;
-  const { airTemp, windSpeed, windDir, waterTemp: rawWT, tz } = weather;
-  const waterTemp = rawWT ?? 15;
+// ── EQUIPMENT CONFIGURATION ───────────────────────────────────────
+function getEquipment() {
+  const suit = S.suit;
+  const gloves  = (suit === 'thermal' || suit === 'standard') && document.getElementById('eq-gloves')?.checked;
+  const hood    = (suit === 'thermal' || suit === 'standard') && document.getElementById('eq-hood')?.checked;
+  const booties = (suit === 'thermal' || suit === 'standard') && document.getElementById('eq-booties')?.checked;
 
-  // Anthropometry
-  const bmi = peso / ((altura / 100) ** 2);
-  const bf  = (grasa > 0) ? grasa : estBF(bmi, edad, sex);
-  const A   = 0.007184 * (altura ** 0.725) * (peso ** 0.425);
-  const A_sub = 0.82 * A, A_air = 0.10 * A, A_sol = 0.14 * A;
-  const effMass = peso * (1 - bf / 100) * 0.82;
-  const fatAdj  = Math.max(1, 1 + (bf - 15) * 0.006);
+  // Thermal resistance [m²°C/W] calibrated from Martin Thomas / Playa Ramírez 2026
+  // Orca Thermal 3mm Yamamoto: R = d/k = 0.003/0.050 + 0.0005/0.035 = 0.074
+  const R_suit = { none: 0, standard: 0.022, thermal: 0.074 }[suit] || 0;
+  const R_hood_neo = hood ? 0.030 : 0.003;
 
-  // Metabolic
-  const v      = 100 / speedSecs;
-  const C_sw   = 300 + 180 * v * v;
-  const f_cold = 1 - Math.max(0, (24 - waterTemp) * 0.012);
-  const Q_met  = C_sw * v * f_cold + 27;
+  // Reference body area proportions (adult male, ~1.80m²)
+  const A_face  = 0.040, A_head = 0.090;
+  const A_hands = 0.050, A_feet = 0.035;
+  const A_trunk = 0.630, A_arms = 0.252, A_legs = 0.612;
 
-  // Wind direction factor
-  const wflow = (windDir + 180) % 360;
-  let fAvg;
-  if (swimDir === null) {
-    fAvg = 0.71;
-  } else {
-    const fi = Math.abs(Math.cos(rad(angleDiff(wflow, swimDir))));
-    const fr = Math.abs(Math.cos(rad(angleDiff(wflow, (swimDir + 180) % 360))));
-    fAvg = (fi + fr) / 2;
-  }
-  const vMs  = windSpeed / 3.6;
-  const hAir = Math.max(3.5, 8.3 * Math.pow(vMs * fAvg, 0.6));
+  let A_exp = A_face; // always exposed
+  if (!gloves)  A_exp += A_hands;
+  if (!booties) A_exp += A_feet;
+  if (suit === 'none') A_exp += A_hands + A_feet;
 
-  // Water
-  const hW    = (120 + 200 * v) / fatAdj;
-  const R     = SUIT_R[suit];
-  const hWeff = R > 0 ? 1 / (1 / hW + R) : hW;
+  let A_cov = suit === 'none' ? 0 : A_trunk + A_arms + A_legs;
+  if (gloves)  A_cov += A_hands;
+  if (booties) A_cov += A_feet;
 
-  // Skin temp (energy balance)
-  const denom = hWeff * A_sub + hAir * A_air;
-  let Tskin = (Q_met * 0.85 + hWeff * A_sub * waterTemp + hAir * A_air * airTemp) / denom;
-  Tskin = Math.max(waterTemp + 0.5, Math.min(waterTemp + 10, Tskin));
-
-  const Q_water  = hWeff  * A_sub * (Tskin - waterTemp);
-  const Q_aire   = hAir   * A_air * (Tskin - airTemp);
-
-  // Solar
-  const sinA   = solarSin(coords.lat, coords.lon, new Date(), tz);
-  const I      = sinA > 0.01 ? 1361 * Math.pow(0.7, 1 / sinA) * sinA : 0;
-  const Q_solar = I * A_sol * 0.70;
-
-  const Q_net = Q_met - Q_water - Q_aire + Q_solar;
-
-  return {
-    Q_met, Q_water, Q_aire, Q_solar, Q_net,
-    Tskin, hAir, fAvg, effMass, bf, A, v,
-    sinA, I, waterTemp, airTemp, windSpeed, windDir, suit,
-  };
+  return { R_suit, R_hood_neo, A_exp, A_cov, A_head, gloves, hood, booties };
 }
 
-// ── DIFFERENTIAL THERMAL MODEL (ODE) ─────────────────────────────
-// Two-compartment model: core + skin
-// Calibrated from Garmin FIT data (Martin Thomas, Playa Ramírez 2024-2026)
-//
-// Parameters:
-//   k_base  = 10 W/m²°C  (core→skin conductivity, no vasoconstriction)
-//   k_min   = 2  W/m²°C  (max vasoconstriction, T_agua < 10°C)
-//   f_vaso  = vasoconstrictive factor, linear in T_agua
-//
-// Reference: Tipton et al. (2017), Castellani & Young (2016)
+// ── DUAL CHART RENDERER ───────────────────────────────────────────
+function buildDualCharts(curve, durationMin) {
+  if (!curve || curve.length < 2) return '';
+  const W = 320, PAD = { t:8, r:12, b:24, l:42 };
+  const iW = W - PAD.l - PAD.r;
 
-function runODE(profile, speedSecs, suit, swimDir, weather, coords, durationMin) {
+  const xS = tv => PAD.l + (tv / durationMin) * iW;
+  const xStep = durationMin <= 20 ? 5 : durationMin <= 40 ? 10 : 15;
+  const xTicks = Array.from({length: Math.floor(durationMin/xStep)+1}, (_,i) => i*xStep)
+    .map(v => `<text x="${xS(v).toFixed(1)}" y="${H-6}" text-anchor="middle" font-size="8" fill="#7AAABB">${v}'</text>`);
+
+  // Chart 1: Temperatures
+  const H = 130, iH = H - PAD.t - PAD.b;
+  const Tmin = Math.min(34, Math.min(...curve.map(p => p.Tc)) - 0.5);
+  const Tmax = Math.max(37.5, Math.max(...curve.map(p => p.Tsc)) + 0.3);
+  const yT = T => PAD.t + (1 - (T-Tmin)/(Tmax-Tmin)) * iH;
+  const mkTpath = key => curve.map((p,i) => (i===0?'M':'L')+xS(p.t).toFixed(1)+','+yT(p[key]).toFixed(1)).join(' ');
+  const yTicksT = [33,34,35,36,37].filter(v=>v>=Tmin&&v<=Tmax).map(v =>
+    `<line x1="${PAD.l}" y1="${yT(v).toFixed(1)}" x2="${W-PAD.r}" y2="${yT(v).toFixed(1)}" stroke="${v===35?'#C05000':'#D4E9F2'}" stroke-width="${v===35?1.5:0.5}" ${v===35?'stroke-dasharray="3,2"':''}/>
+     <text x="${PAD.l-4}" y="${yT(v).toFixed(1)}" text-anchor="end" font-size="8" fill="${v===35?'#C05000':'#7AAABB'}" dominant-baseline="middle">${v}°</text>`
+  ).join('');
+
+  const chart1 = `
+    <div style="font-size:11px;color:var(--text3);margin-bottom:6px;display:flex;gap:12px;flex-wrap:wrap">
+      <span>● <span style="color:#1A4A6B">${t('tCore')}</span></span>
+      <span>● <span style="color:#0092B8">${t('tSkinC')}</span></span>
+      <span>– <span style="color:#90BBCC">${t('tSkinE')}</span></span>
+    </div>
+    <svg width="100%" viewBox="0 0 ${W} ${H}">
+      ${yTicksT}
+      ${xTicks.map(x=>x.replace('${H}',H)).join('')}
+      <path d="${mkTpath('Tse')}" fill="none" stroke="#90BBCC" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <path d="${mkTpath('Tsc')}" fill="none" stroke="#0092B8" stroke-width="2"/>
+      <path d="${mkTpath('Tc')}"  fill="none" stroke="#1A4A6B" stroke-width="2.5"/>
+      <circle cx="${xS(curve[curve.length-1].t).toFixed(1)}" cy="${yT(curve[curve.length-1].Tc).toFixed(1)}" r="3" fill="#1A4A6B"/>
+    </svg>`;
+
+  // Chart 2: Heat flows
+  const allQ = curve.flatMap(p => [p.qMet, -p.qWater, -p.qAir, -p.qExposed, p.qSolar, p.qNet]);
+  const Qmin = Math.min(-50, Math.min(...allQ)*1.1);
+  const Qmax = Math.max(50,  Math.max(...allQ)*1.1);
+  const yQ = Q => PAD.t + (1 - (Q-Qmin)/(Qmax-Qmin)) * iH;
+  const mkQpath = (key, sign=1) => curve.map((p,i) => (i===0?'M':'L')+xS(p.t).toFixed(1)+','+yQ(p[key]*sign).toFixed(1)).join(' ');
+  const yTicksQ = [-300,-200,-100,0,100,200,300].filter(v=>v>=Qmin&&v<=Qmax).map(v =>
+    `<line x1="${PAD.l}" y1="${yQ(v).toFixed(1)}" x2="${W-PAD.r}" y2="${yQ(v).toFixed(1)}" stroke="${v===0?'#90BBCC':'#D4E9F2'}" stroke-width="${v===0?1:0.5}"/>
+     <text x="${PAD.l-4}" y="${yQ(v).toFixed(1)}" text-anchor="end" font-size="7" fill="#7AAABB" dominant-baseline="middle">${v}W</text>`
+  ).join('');
+
+  const chart2 = `
+    <div style="font-size:11px;color:var(--text3);margin-bottom:6px;display:flex;gap:8px;flex-wrap:wrap">
+      <span style="color:#0A7A4A">▲${t('qMet')}</span>
+      <span style="color:#0092B8">▼${t('qWater')}</span>
+      <span style="color:#C07000">▼${t('qAir')}</span>
+      <span style="color:#B02020">▼${t('qExposed')}</span>
+    </div>
+    <svg width="100%" viewBox="0 0 ${W} ${H}">
+      ${yTicksQ}
+      ${xTicks.map(x=>x.replace('${H}',H)).join('')}
+      <path d="${mkQpath('qSolar')}"      fill="none" stroke="#F0A000" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <path d="${mkQpath('qExposed',-1)}" fill="none" stroke="#B02020" stroke-width="1.5"/>
+      <path d="${mkQpath('qAir',-1)}"    fill="none" stroke="#C07000" stroke-width="1.5"/>
+      <path d="${mkQpath('qWater',-1)}"  fill="none" stroke="#0092B8" stroke-width="1.5"/>
+      <path d="${mkQpath('qMet')}"       fill="none" stroke="#0A7A4A" stroke-width="1.5"/>
+      <path d="${mkQpath('qNet')}"       fill="none" stroke="#1A4A6B" stroke-width="2.5"/>
+    </svg>`;
+
+  return `
+    <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px 8px;margin:10px 0">
+      <div style="font-size:10px;color:var(--water);letter-spacing:3px;font-family:'Courier New',monospace;margin-bottom:8px;font-weight:700">${t('chartTemp')}</div>
+      ${chart1}
+    </div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px 8px;margin:10px 0">
+      <div style="font-size:10px;color:var(--water);letter-spacing:3px;font-family:'Courier New',monospace;margin-bottom:8px;font-weight:700">${t('chartFlows')}</div>
+      ${chart2}
+    </div>`;
+}
+
+// ── SUGGESTED TIME ────────────────────────────────────────────────
+function renderSuggestedTime(result) {
+  if (result.t_35 !== null) {
+    const mins = Math.round(result.t_35);
+    const col = mins < 20 ? '#B02020' : mins < 40 ? '#C05000' : '#C07000';
+    return `<div style="padding:14px 16px;background:${col}10;border:2px solid ${col};border-radius:var(--rad-sm);margin-bottom:12px;text-align:center">
+      <div style="font-size:11px;color:${col};letter-spacing:3px;font-weight:700;font-family:'Courier New',monospace;margin-bottom:6px">${t('suggestedTime')}</div>
+      <div style="font-size:48px;font-weight:900;color:${col};font-family:Georgia,serif;line-height:1">${mins}</div>
+      <div style="font-size:13px;color:${col};margin-top:4px">${t('untilLimit')}</div>
+    </div>`;
+  }
+  return `<div style="padding:12px 16px;background:#F0FFF8;border:1.5px solid var(--ok);border-radius:var(--rad-sm);margin-bottom:12px;font-size:14px;color:var(--ok);text-align:center">✅ ${t('noLimit')}</div>`;
+}
+
+function runUnifiedModel(profile, speedSecs, suit, swimDir, weather, coords, durationMin) {
   const { altura, peso, edad, sex, grasa } = profile;
   const { airTemp, windSpeed, windDir, tz } = weather;
   const waterTemp = weather.waterTemp ?? 15;
 
-  // Anthropometry
+  // ── ANTHROPOMETRY ────────────────────────────────────────────
   const bmi    = peso / ((altura/100)**2);
   const bf     = (grasa > 0) ? grasa : estBF(bmi, edad, sex);
   const A      = 0.007184 * (altura**0.725) * (peso**0.425);
-  const A_sub  = 0.82*A, A_air = 0.10*A, A_sol = 0.14*A;
   const fatAdj = Math.max(1, 1 + (bf-15)*0.006);
 
-  // Masses and heat capacities
-  const m_core = peso * (1 - bf/100) * 0.82;  // lean core mass
-  const m_skin = peso * 0.08;                   // peripheral shell
-  const C_core = m_core * 3470;                 // J/°C
-  const C_skin = m_skin * 3500;                 // J/°C
+  // ── EQUIPMENT CONFIG ─────────────────────────────────────────
+  const eq = getEquipConfig(suit, A);
 
-  // Metabolic production
+  // ── COMPARTMENT MASSES & CAPACITIES ─────────────────────────
+  const m_core = peso * (1 - bf/100) * 0.82;
+  const m_skin = peso * 0.08;
+  const C_core = m_core * 3470;   // J/°C
+  const C_skin = m_skin * 3500;   // J/°C
+
+  // ── METABOLIC PRODUCTION ────────────────────────────────────
   const v      = 100 / speedSecs;
   const C_sw   = 300 + 180 * v*v;
   const f_cold = 1 - Math.max(0, (24 - waterTemp) * 0.012);
-  const Q_met  = C_sw * v * f_cold + 27;
+  const Q_met0 = C_sw * v * f_cold + 27;
 
-  // Wind direction factor
+  // ── WIND DIRECTION FACTOR ────────────────────────────────────
   const wflow = (windDir + 180) % 360;
   let fAvg;
-  if (swimDir === null) {
-    fAvg = 0.71;
-  } else {
+  if (swimDir === null) { fAvg = 0.71; }
+  else {
     const fi = Math.abs(Math.cos(rad(angleDiff(wflow, swimDir))));
     const fr = Math.abs(Math.cos(rad(angleDiff(wflow, (swimDir+180)%360))));
     fAvg = (fi + fr) / 2;
@@ -2281,70 +2561,236 @@ function runODE(profile, speedSecs, suit, swimDir, weather, coords, durationMin)
   const vMs  = windSpeed / 3.6;
   const hAir = Math.max(3.5, 8.3 * Math.pow(vMs * fAvg, 0.6));
 
-  // Water convection
-  const hW    = (120 + 200*v) / fatAdj;
-  const R     = SUIT_R[suit];
-  const hWeff = R > 0 ? 1/(1/hW + R) : hW;
+  // ── WATER CONVECTION ─────────────────────────────────────────
+  const hW     = (120 + 200*v) / fatAdj;
+  const hWcov  = eq.R_suit > 0 ? 1/(1/hW + eq.R_suit) : hW;  // through suit
+  const hWexp  = hW;                                             // bare skin → water
 
-  // Solar
-  const sinA    = solarSin(coords.lat, coords.lon, new Date(), tz);
-  const I       = sinA > 0.01 ? 1361 * Math.pow(0.7, 1/sinA) * sinA : 0;
+  // ── SOLAR ────────────────────────────────────────────────────
+  const A_sol   = 0.14 * A;
+  const sinAlpha = solarSin(coords.lat, coords.lon, new Date(), tz);
+  const I       = sinAlpha > 0.01 ? 1361 * Math.pow(0.7, 1/sinAlpha) * sinAlpha : 0;
   const Q_solar = I * A_sol * 0.70;
 
-  // Vasoconstrictive conductivity — calibrated from Garmin data
-  // At T_agua=13°C (Orca Thermal sessions): k ≈ 6 W/m²°C
-  // At T_agua=9°C (July 2025 sessions): k ≈ 3 W/m²°C
-  const f_vaso  = Math.max(0.2, 1 - Math.max(0, (20 - waterTemp) * 0.04));
-  const k_cond  = 10 * f_vaso;  // W/m²°C
+  // ── VASOCONSTRICTIVE CONDUCTIVITY ───────────────────────────
+  const f_vaso = Math.max(0.2, 1 - Math.max(0, (20 - waterTemp) * 0.04));
+  const k_cond = 10 * f_vaso;   // W/m²°C core→skin
 
-  // ODE integration — Euler method, dt=5s
-  const dt   = 5;           // seconds
-  const nMax = durationMin * 60 / dt;
+  // ── INITIAL CONDITIONS ───────────────────────────────────────
+  const dt   = 5;   // seconds
+  const nMax = Math.round((durationMin || 1) * 60 / dt);
   let T_core = 37.0;
-  let T_skin = 33.0;        // warm pre-immersion skin
-  const curve = [{ t: 0, Tc: T_core, Ts: T_skin }];
+  let T_skin = 33.0;      // warm pre-immersion under suit
+  let T_exp  = 33.0;      // exposed skin starts warm
+
+  // Curve data
+  const curve = [{ t:0, Tc:T_core, Ts:T_skin, Te:T_exp, Qmet:Q_met0, Qw:0, Qa:0, Qs:Q_solar, Qexp:0 }];
+
+  let t_35 = null;  // time to reach 35°C
 
   for (let i = 0; i < nMax; i++) {
-    const t_sec = i * dt;
+    const t_sec = (i+1) * dt;
 
-    // Metabolic production falls slightly if core cools
+    // Metabolic — decays slightly if core cools
     const f_core = Math.max(0.7, 1 - Math.max(0, (37 - T_core) * 0.05));
-    const Q_m    = Q_met * f_core;
+    const Q_met  = Q_met0 * f_core;
 
-    // Core → skin heat flux
-    const Q_cs   = k_cond * A * (T_core - T_skin);
+    // Core → skin (vasoconstrictive)
+    const Q_cs = k_cond * A * (T_core - T_skin);
 
-    // Skin → water
-    const Q_sw   = hWeff * A_sub * (T_skin - waterTemp);
+    // Covered skin → water (through suit)
+    const Q_water_cov = hWcov * eq.A_covered * (T_skin - waterTemp);
 
-    // Skin → air
-    const Q_sa   = hAir  * A_air * (T_skin - airTemp);
+    // Covered skin → air (small exposed area above water)
+    const A_air_frac = 0.10 * A;
+    const Q_air = hAir * A_air_frac * (T_skin - airTemp);
+
+    // Exposed skin: transient cooling toward water temp
+    // τ = 300s (5 min) equilibration constant — from observation
+    const tau_exp = 300;
+    const T_exp_target = waterTemp;
+    const Q_exp = hWexp * eq.A_exposed * (T_exp - T_exp_target);
+
+    // Head (if not covered by neoprene hood)
+    const Q_head = eq.A_head > 0
+      ? (eq.R_head > 0.01
+          ? (1/(1/hW + eq.R_head)) * eq.A_head * (T_skin - waterTemp)
+          : hW * eq.A_head * (T_skin - waterTemp))
+      : 0;
+
+    const Q_net_skin = Q_cs - Q_water_cov - Q_air - Q_exp - Q_head + Q_solar;
 
     // Differentials
-    const dTc = (Q_m - Q_cs) / C_core * dt;
-    const dTs = (Q_cs - Q_sw - Q_sa + Q_solar) / C_skin * dt;
+    const dTc = (Q_met - Q_cs) / C_core * dt;
+    const dTs = Q_net_skin / C_skin * dt;
+    const dTe = -(T_exp - T_exp_target) / tau_exp * dt;  // exponential decay
 
-    T_core = Math.max(30, Math.min(38, T_core + dTc));
-    T_skin = Math.max(waterTemp - 0.5, Math.min(37, T_skin + dTs));
+    T_core = Math.max(28, Math.min(38, T_core + dTc));
+    T_skin = Math.max(waterTemp - 1, Math.min(37, T_skin + dTs));
+    T_exp  = Math.max(waterTemp, Math.min(37, T_exp + dTe));
+
+    if (T_core <= 35.0 && t_35 === null) t_35 = t_sec / 60;
 
     // Record every 30s
     if (i % 6 === 0) {
-      curve.push({ t: (t_sec + dt) / 60, Tc: T_core, Ts: T_skin });
+      curve.push({
+        t:   t_sec / 60,
+        Tc:  T_core,
+        Ts:  T_skin,
+        Te:  T_exp,
+        Qmet: Q_met,
+        Qw:  Q_water_cov + Q_head,
+        Qa:  Q_air,
+        Qs:  Q_solar,
+        Qexp: Q_exp,
+        Qnet: Q_met - Q_water_cov - Q_air - Q_exp - Q_head + Q_solar,
+      });
     }
   }
 
-  // Find threshold times
-  const tMild = curve.find(p => p.Tc <= 35.0);
-  const tMod  = curve.find(p => p.Tc <= 33.0);
+  // Initial balance (t=0 instantaneous)
+  const Q_met_init = Q_met0;
+  const T_skin_0   = 34.0;  // warm skin at start
+  const Q_water_init = hWcov * eq.A_covered * (T_skin_0 - waterTemp);
+  const Q_air_init   = hAir * 0.10*A * (T_skin_0 - airTemp);
+  const Q_exp_init   = hW * eq.A_exposed * (T_skin_0 - waterTemp);
+  const Q_net_init   = Q_met_init - Q_water_init - Q_air_init - Q_exp_init + Q_solar;
 
   return {
-    curve,
-    T_core_final: T_core,
-    T_skin_final: T_skin,
-    t_mild: tMild ? tMild.t : null,
-    t_mod:  tMod  ? tMod.t  : null,
-    Q_met, hWeff, hAir, fAvg, sinA, I, waterTemp,
+    // Initial balance (for display card)
+    Q_met: Q_met_init, Q_water: Q_water_init, Q_aire: Q_air_init,
+    Q_solar, Q_exp: Q_exp_init, Q_net: Q_net_init,
+    // Differential results
+    curve, T_core_final: T_core, T_skin_final: T_skin,
+    t_35,
+    // Metadata
+    waterTemp, airTemp, windSpeed, windDir, suit,
+    v, fAvg, sinAlpha, I,
+    eq, hWcov, hAir, bf, A, fatAdj,
   };
+}
+
+// Backwards compatibility alias
+function calcThermal(profile, speedSecs, suit, swimDir, weather, coords) {
+  const r = runUnifiedModel(profile, speedSecs, suit, swimDir, weather, coords, 1);
+  r.Tskin = r.T_skin_final;
+  r.effMass = profile.peso * (1 - (profile.grasa || r.bf)/100) * 0.82;
+  return r;
+}
+
+function runODE(profile, speedSecs, suit, swimDir, weather, coords, durationMin) {
+  return runUnifiedModel(profile, speedSecs, suit, swimDir, weather, coords, durationMin);
+}
+
+
+
+// ── SVG CHART ENGINE ─────────────────────────────────────────────
+function buildSVGChart(svgId, series, durationMin, opts={}) {
+  const svg = document.getElementById(svgId);
+  if (!svg) return;
+  const W=340, H=130;
+  const PAD = { t:8, r:32, b:22, l:38 };
+  const iW = W - PAD.l - PAD.r;
+  const iH = H - PAD.t - PAD.b;
+
+  // Value ranges
+  const allY = series.flatMap(s => s.data.map(p => p.y));
+  let yMin = opts.yMin ?? Math.min(...allY);
+  let yMax = opts.yMax ?? Math.max(...allY);
+  const yPad = (yMax - yMin) * 0.08 || 5;
+  yMin -= yPad; yMax += yPad;
+
+  const xScale = t => PAD.l + (t / durationMin) * iW;
+  const yScale = v => PAD.t + (1 - (v - yMin)/(yMax - yMin)) * iH;
+
+  let html = '';
+
+  // Grid lines & Y labels
+  const nTicks = 4;
+  for (let i = 0; i <= nTicks; i++) {
+    const v = yMin + (yMax - yMin) * i / nTicks;
+    const y = yScale(v).toFixed(1);
+    html += `<line x1="${PAD.l}" y1="${y}" x2="${W-PAD.r}" y2="${y}" stroke="#D4E9F2" stroke-width="0.5"/>`;
+    html += `<text x="${PAD.l-3}" y="${y}" text-anchor="end" font-size="8" fill="#7AAABB" dominant-baseline="middle">${v.toFixed(0)}${opts.unit||''}</text>`;
+  }
+
+  // Reference lines (horizontal thresholds)
+  (opts.refs || []).forEach(ref => {
+    if (ref.v >= yMin && ref.v <= yMax) {
+      const y = yScale(ref.v).toFixed(1);
+      html += `<line x1="${PAD.l}" y1="${y}" x2="${W-PAD.r}" y2="${y}" stroke="${ref.color}" stroke-width="1" stroke-dasharray="3,2"/>`;
+      html += `<text x="${W-PAD.r+2}" y="${y}" font-size="7" fill="${ref.color}" dominant-baseline="middle">${ref.label}</text>`;
+    }
+  });
+
+  // X labels
+  const xStep = durationMin <= 15 ? 5 : durationMin <= 30 ? 10 : durationMin <= 60 ? 15 : 20;
+  for (let x = 0; x <= durationMin; x += xStep) {
+    html += `<text x="${xScale(x).toFixed(1)}" y="${H-5}" text-anchor="middle" font-size="8" fill="#7AAABB">${x}'</text>`;
+  }
+
+  // Zero line if needed
+  if (yMin < 0 && yMax > 0) {
+    const y0 = yScale(0).toFixed(1);
+    html += `<line x1="${PAD.l}" y1="${y0}" x2="${W-PAD.r}" y2="${y0}" stroke="#999" stroke-width="0.8"/>`;
+  }
+
+  // Series paths
+  series.forEach(s => {
+    const pts = s.data.filter(p => p.t <= durationMin);
+    if (pts.length < 2) return;
+    const path = pts.map((p, i) =>
+      (i===0?'M':'L') + xScale(p.t).toFixed(1) + ',' + yScale(p.y).toFixed(1)
+    ).join(' ');
+    html += `<path d="${path}" fill="none" stroke="${s.color}" stroke-width="${s.width||1.8}" stroke-linecap="round" stroke-linejoin="round" ${s.dash?`stroke-dasharray="${s.dash}"`:''}/>`;
+    // End dot
+    const last = pts[pts.length-1];
+    html += `<circle cx="${xScale(last.t).toFixed(1)}" cy="${yScale(last.y).toFixed(1)}" r="2.5" fill="${s.color}"/>`;
+  });
+
+  svg.innerHTML = html;
+
+  // Legend
+  const legendEl = document.getElementById(svgId.replace('chart-','legend-'));
+  if (legendEl) {
+    legendEl.innerHTML = series.map(s =>
+      `<div class="legend-item"><div class="legend-dot" style="background:${s.color}"></div>${s.label}</div>`
+    ).join('');
+  }
+}
+
+function renderSessionCharts(r, durationMin) {
+  if (!r.curve || r.curve.length < 2) return;
+
+  // ── CHART 1: TEMPERATURES ──────────────────────────────────────
+  document.getElementById('chart-temp-wrap').style.display = 'block';
+  buildSVGChart('chart-temp', [
+    { label: 'T núcleo',      color:'#1A4A6B', width:2.5, data: r.curve.map(p=>({t:p.t, y:p.Tc})) },
+    { label: 'T piel (traje)',color:'#0092B8', width:1.5, data: r.curve.map(p=>({t:p.t, y:p.Ts})) },
+    { label: 'T piel expuesta',color:'#C07000', width:1.5, dash:'3,2', data: r.curve.map(p=>({t:p.t, y:p.Te})) },
+  ], durationMin, {
+    unit: '°C',
+    yMin: Math.min(r.waterTemp - 1, 34),
+    yMax: 37.5,
+    refs: [
+      { v:37.0, color:'#40A040', label:'37°' },
+      { v:35.0, color:'#C05000', label:'35°' },
+    ]
+  });
+
+  // ── CHART 2: HEAT FLUXES ───────────────────────────────────────
+  document.getElementById('chart-flux-wrap').style.display = 'block';
+  buildSVGChart('chart-flux', [
+    { label: 'Q_met',  color:'#0A7A4A', width:2,   data: r.curve.map(p=>({t:p.t, y:p.Qmet||0})) },
+    { label: 'Q_agua', color:'#0092B8', width:1.8, data: r.curve.map(p=>({t:p.t, y:-(p.Qw||0)})) },
+    { label: 'Q_aire', color:'#356088', width:1.5, data: r.curve.map(p=>({t:p.t, y:-(p.Qa||0)})) },
+    { label: 'Q_exp',  color:'#C07000', width:1.5, dash:'3,2', data: r.curve.map(p=>({t:p.t, y:-(p.Qexp||0)})) },
+    { label: 'Q_solar',color:'#E08000', width:1.2, data: r.curve.map(p=>({t:p.t, y:p.Qs||0})) },
+    { label: 'Q_neto', color:'#B02020', width:2.2, data: r.curve.map(p=>({t:p.t, y:p.Qnet||0})) },
+  ], durationMin, {
+    unit: 'W',
+    refs: [{ v:0, color:'#999', label:'0' }]
+  });
 }
 
 // ── CALCULATE ─────────────────────────────────────────────────────
@@ -2357,11 +2803,46 @@ $('btn-calculate').addEventListener('click', () => {
   const profile = { altura, peso, edad, grasa, sex: S.sex };
   saveProfile();
   showProfileBar();
-  const r = calcThermal(profile, S.speedSecs, S.suit, S.swimDir, S.weather, S.coords);
+  // Run unified model for 1 min to get initial balance
+  const r = runUnifiedModel(profile, S.speedSecs, S.suit, S.swimDir, S.weather, S.coords, 1);
   S.result = r;
+  S.profile = profile;
   renderResult(r);
+  // Show suggested time if negative balance
+  renderSuggestedTime(r);
   showStep('result');
 });
+
+
+function renderSuggestedTime(r) {
+  // Run longer simulation to find t_35
+  if (r.Q_net >= -20) {
+    $('suggested-card').style.display = 'none';
+    return;
+  }
+  const full = runUnifiedModel(S.profile, S.speedSecs, S.suit, S.swimDir, S.weather, S.coords, 180);
+  const card = $('suggested-card');
+  if (full.t_35 !== null) {
+    card.style.display = 'block';
+    $('suggested-val').textContent = Math.round(full.t_35);
+    const note = $('suggested-note');
+    if (full.t_35 < 10) {
+      note.textContent = '⚠️ ' + t('suggestedWarn');
+      note.style.color = 'var(--danger)';
+    } else if (full.t_35 < 20) {
+      note.textContent = '⚠️ ' + t('suggestedCaution');
+      note.style.color = 'var(--warn)';
+    } else {
+      note.textContent = t('suggestedOk');
+      note.style.color = 'var(--ok)';
+    }
+  } else {
+    card.style.display = 'block';
+    $('suggested-val').textContent = '>180';
+    $('suggested-note').textContent = t('suggestedNoLimit');
+    $('suggested-note').style.color = 'var(--ok)';
+  }
+}
 
 function renderResult(r) {
   const net = r.Q_net;
@@ -2443,11 +2924,14 @@ $('btn-sim').addEventListener('click', () => {
   if (!S.profile.altura || !S.profile.peso || !S.profile.edad) {
     alert(t('profileAlert')); return;
   }
+  const r = runUnifiedModel(S.profile, S.speedSecs, S.suit, S.swimDir, S.weather, S.coords, mins);
+  S.result = r;
+  renderSessionCharts(r, mins);
   renderODEResult(mins);
 });
 
 function renderODEResult(durationMin) {
-  const r = runODE(S.profile, S.speedSecs, S.suit, S.swimDir, S.weather, S.coords, durationMin);
+  const r = runUnifiedModel(S.profile, S.speedSecs, S.suit, S.swimDir, S.weather, S.coords, durationMin);
   const Tn  = r.T_core_final;
   const deficit = Math.abs(37 - Tn) * (S.profile.peso * (1 - (S.profile.grasa||estBF((S.profile.peso/((S.profile.altura/100)**2)),S.profile.edad,S.sex))/100) * 0.82) * 3470 / 1000;
 
@@ -2466,7 +2950,8 @@ function renderODEResult(durationMin) {
   const exitRec = getExitRec(r, S.weather.waterTemp ?? 15, durationMin);
 
   // Build SVG curve
-  const svgCurve = buildThermalCurve(r.curve, durationMin);
+  const svgCurve = buildDualCharts(r.curve, durationMin);
+  const suggestedTimeHTML = renderSuggestedTime(r);
 
   $('sim-result').innerHTML = `
     <div class="grid2" style="margin-bottom:12px">
@@ -2581,6 +3066,85 @@ function getExitRec(r, waterTemp, durationMin) {
       ${t('exitRecSource')}
     </div>
   </div>`;
+}
+
+
+// ── HISTORICAL WATER TEMP (1 year ago) ───────────────────────────
+async function loadHistoricalWaterTemp() {
+  if (!S.coords) return;
+  const { lat, lon } = S.coords;
+
+  // Date exactly 1 year ago
+  const d = new Date();
+  d.setFullYear(d.getFullYear() - 1);
+  const dateStr = d.toISOString().split('T')[0];
+
+  try {
+    const res = await fetch(
+      `https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}` +
+      `&daily=sea_surface_temperature_max,sea_surface_temperature_min` +
+      `&start_date=${dateStr}&end_date=${dateStr}&timezone=auto`
+    );
+    if (!res.ok) return;
+    const data = await res.json();
+    const tmax = data.daily?.sea_surface_temperature_max?.[0];
+    const tmin = data.daily?.sea_surface_temperature_min?.[0];
+    if (tmax == null && tmin == null) return;
+    const avg = tmax != null && tmin != null ? ((tmax+tmin)/2).toFixed(1) : (tmax??tmin).toFixed(1);
+    const hist = document.getElementById('hist-water-temp');
+    if (hist) {
+      const dateLabel = d.toLocaleDateString([], { day:'numeric', month:'long' });
+      hist.innerHTML = `🕐 ${t('histWaterLabel')} <strong>${avg}°C</strong> <span style="font-size:13px;color:var(--text3)">(${dateLabel} ${d.getFullYear()})</span>`;
+      hist.style.display = 'block';
+    }
+  } catch(e) { /* silent fail */ }
+}
+
+// ── 2-DAY FORECAST ────────────────────────────────────────────────
+function render2DayForecast() {
+  const w = S.weather;
+  if (!w?.hourly?.time?.length) return;
+  const container = $('forecast-2day');
+  if (!container) return;
+
+  const now = new Date();
+  const times = w.hourly.time;
+  const temps = w.hourly.temperature_2m || [];
+  const winds = w.hourly.wind_speed_10m || [];
+  const codes = w.hourly.weather_code || [];
+
+  // Group by day
+  const days = {};
+  times.forEach((t, i) => {
+    const d = new Date(t);
+    if (d < now) return;
+    const dayKey = d.toLocaleDateString([], { weekday:'long', day:'numeric', month:'short' });
+    if (!days[dayKey]) days[dayKey] = [];
+    if (days[dayKey].length < 8) {  // max 8 slots per day
+      days[dayKey].push({ h: d.getHours(), temp: temps[i], wind: winds[i], code: codes[i] });
+    }
+  });
+
+  const dayEntries = Object.entries(days).slice(0, 2);
+  if (!dayEntries.length) return;
+
+  let html = '';
+  dayEntries.forEach(([dayLabel, slots]) => {
+    html += `<div class="forecast-day">
+      <div class="forecast-day-label">${dayLabel.toUpperCase()}</div>
+      <div class="forecast-day-row">`;
+    slots.forEach(s => {
+      html += `<div class="fc-slot">
+        <div class="fc-time">${s.h}:00</div>
+        <div class="fc-icon">${wIcon(s.code)}</div>
+        <div class="fc-temp">${(s.temp??'?').toFixed?.(0) ?? '?'}°</div>
+        <div class="fc-wind">${(s.wind??'?').toFixed?.(0) ?? '?'}km/h</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  container.innerHTML = html;
+  $('forecast-2day-card').style.display = 'block';
 }
 
 // ── BEACH STATUS ──────────────────────────────────────────────────
