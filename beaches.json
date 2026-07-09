@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-09T15:24:18Z",
+  "updated": "2026-07-09T18:02:35Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -13,9 +13,9 @@
         ]
       },
       "beach": "pocitos",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -31,9 +31,9 @@
         ]
       },
       "beach": "Pocitos",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -49,9 +49,9 @@
         ]
       },
       "beach": "pocitos",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -103,9 +103,9 @@
         ]
       },
       "beach": "Buceo",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -193,9 +193,9 @@
         ]
       },
       "beach": "Buceo",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -247,9 +247,9 @@
         ]
       },
       "beach": "Buceo",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
