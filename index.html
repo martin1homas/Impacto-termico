@@ -2850,8 +2850,12 @@ function buildSVGChart(svgId, series, durationMin, opts={}) {
 function renderSessionCharts(r, durationMin) {
   if (!r.curve || r.curve.length < 2) return;
 
+  const tempWrap = document.getElementById('chart-temp-wrap');
+  const fluxWrap = document.getElementById('chart-flux-wrap');
+  if (!tempWrap || !fluxWrap) return; // elements inside sim-result may not exist yet
+
   // ── CHART 1: TEMPERATURES ──────────────────────────────────────
-  document.getElementById('chart-temp-wrap').style.display = 'block';
+  tempWrap.style.display = 'block';
   buildSVGChart('chart-temp', [
     { label: 'T núcleo',      color:'#1A4A6B', width:2.5, data: r.curve.map(p=>({t:p.t, y:p.Tc})) },
     { label: 'T piel (traje)',color:'#0092B8', width:1.5, data: r.curve.map(p=>({t:p.t, y:p.Ts})) },
@@ -2867,7 +2871,7 @@ function renderSessionCharts(r, durationMin) {
   });
 
   // ── CHART 2: HEAT FLUXES ───────────────────────────────────────
-  document.getElementById('chart-flux-wrap').style.display = 'block';
+  fluxWrap.style.display = 'block';
   buildSVGChart('chart-flux', [
     { label: 'Q_met',  color:'#0A7A4A', width:2,   data: r.curve.map(p=>({t:p.t, y:p.Qmet||0})) },
     { label: 'Q_agua', color:'#0092B8', width:1.8, data: r.curve.map(p=>({t:p.t, y:-(p.Qw||0)})) },
@@ -2903,33 +2907,9 @@ $('btn-calculate').addEventListener('click', () => {
 
 
 function renderSuggestedTime(r) {
-  // Run longer simulation to find t_35
-  if (r.Q_net >= -20) {
-    $('suggested-card').style.display = 'none';
-    return;
-  }
-  const full = runUnifiedModel(S.profile, S.speedSecs, S.suit, S.swimDir, S.weather, S.coords, 180);
+  // Suggested time removed — thresholds shown in simulation instead
   const card = $('suggested-card');
-  if (full.t_35 !== null) {
-    card.style.display = 'block';
-    $('suggested-val').textContent = Math.round(full.t_35);
-    const note = $('suggested-note');
-    if (full.t_35 < 10) {
-      note.textContent = '⚠️ ' + t('suggestedWarn');
-      note.style.color = 'var(--danger)';
-    } else if (full.t_35 < 20) {
-      note.textContent = '⚠️ ' + t('suggestedCaution');
-      note.style.color = 'var(--warn)';
-    } else {
-      note.textContent = t('suggestedOk');
-      note.style.color = 'var(--ok)';
-    }
-  } else {
-    card.style.display = 'block';
-    $('suggested-val').textContent = '>180';
-    $('suggested-note').textContent = t('suggestedNoLimit');
-    $('suggested-note').style.color = 'var(--ok)';
-  }
+  if (card) card.style.display = 'none';
 }
 
 function renderResult(r) {
@@ -3020,60 +3000,93 @@ $('btn-sim').addEventListener('click', () => {
   }
   const r = runUnifiedModel(S.profile, S.speedSecs, S.suit, S.swimDir, S.weather, S.coords, mins);
   S.result = r;
-  renderSessionCharts(r, mins);
-  renderODEResult(mins);
+  renderODEResult(r, mins);
 });
 
-function renderODEResult(durationMin) {
-  const r = runUnifiedModel(S.profile, S.speedSecs, S.suit, S.swimDir, S.weather, S.coords, durationMin);
-  const Tn  = r.T_core_final;
-  const deficit = Math.abs(37 - Tn) * (S.profile.peso * (1 - (S.profile.grasa||estBF((S.profile.peso/((S.profile.altura/100)**2)),S.profile.edad,S.sex))/100) * 0.82) * 3470 / 1000;
+function renderODEResult(r, durationMin) {
+  if (!r) r = runUnifiedModel(S.profile, S.speedSecs, S.suit, S.swimDir, S.weather, S.coords, durationMin);
+  const Tn = r.T_core_final;
+  const deficit = Math.abs(37 - Tn) *
+    (S.profile.peso * (1 - (S.profile.grasa||estBF(
+      S.profile.peso/((S.profile.altura/100)**2), S.profile.edad, S.sex
+    ))/100) * 0.82) * 3470 / 1000;
 
   // Core temp color
   const tempCol = Tn > 36.5 ? '#0A7A4A' : Tn > 35.5 ? '#C07000' : Tn > 35 ? '#C05000' : '#B02020';
 
-  // Recovery recommendation
-  let col, rl, rd;
-  if (Tn > 36.5)       { col='#0A7A4A'; rl=t('noDeficit');  rd=t('noDeficitD'); }
-  else if (Tn > 36.0)  { col='#0A7A4A'; rl=t('fastRec');    rd=t('fastRecD'); }
-  else if (Tn > 35.5)  { col='#C07000'; rl=t('modRec');     rd=t('modRecD'); }
-  else if (Tn > 35.0)  { col='#C05000'; rl=t('longRec');    rd=t('longRecD'); }
-  else                  { col='#B02020'; rl=t('danger');      rd=t('dangerD'); }
+  // Find t_36 and t_35 from curve
+  let t_36 = null, t_35 = null;
+  for (const p of r.curve) {
+    if (t_36 === null && p.Tc <= 36.0) t_36 = p.t;
+    if (t_35 === null && p.Tc <= 35.0) t_35 = p.t;
+  }
 
-  // Exit recommendation based on science
-  const exitRec = getExitRec(r, S.weather.waterTemp ?? 15, durationMin);
+  // Threshold display
+  const thresholdHTML = `
+    <div class="grid2" style="margin-bottom:12px">
+      <div class="dcell">
+        <div class="dcell-lbl">T° núcleo (${durationMin} min)</div>
+        <div class="dcell-val" style="color:${tempCol}">${Tn.toFixed(1)}°C</div>
+      </div>
+      <div class="dcell">
+        <div class="dcell-lbl">${t('accumDef')}</div>
+        <div class="dcell-val">${deficit.toFixed(0)} kJ</div>
+      </div>
+    </div>
+    <div style="background:var(--shallow);border-radius:8px;padding:12px 14px;margin-bottom:12px">
+      <div style="font-size:11px;letter-spacing:2px;color:var(--text3);font-family:'Courier New',monospace;margin-bottom:8px">UMBRALES TÉRMICOS</div>
+      <div style="display:flex;gap:8px">
+        <div style="flex:1;padding:10px;background:#fff;border-radius:6px;border:1.5px solid ${t_36 ? '#C07000' : '#40A040'};text-align:center">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">HIPOTERMIA LEVE</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:6px">T_core ≤ 36°C</div>
+          <div style="font-size:22px;font-weight:900;font-family:Georgia,serif;color:${t_36 ? '#C07000' : '#40A040'}">
+            ${t_36 ? Math.round(t_36)+"'" : '>'+durationMin+"'"}
+          </div>
+        </div>
+        <div style="flex:1;padding:10px;background:#fff;border-radius:6px;border:1.5px solid ${t_35 ? '#B02020' : '#40A040'};text-align:center">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">HIPOTERMIA MODERADA</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:6px">T_core ≤ 35°C</div>
+          <div style="font-size:22px;font-weight:900;font-family:Georgia,serif;color:${t_35 ? '#B02020' : '#40A040'}">
+            ${t_35 ? Math.round(t_35)+"'" : '>'+durationMin+"'"}
+          </div>
+        </div>
+      </div>
+    </div>`;
 
-  // Build SVG curve — adapt key names from model to chart format
+  // Charts
   const adaptedCurve = r.curve.map(p => ({
     t: p.t, Tc: p.Tc, Tsc: p.Ts, Tse: p.Te,
     qMet: p.Qmet, qWater: p.Qw, qAir: p.Qa,
     qExposed: p.Qexp, qSolar: p.Qs,
-    qNet: p.Qnet !== undefined ? p.Qnet : (p.Qmet - p.Qw - p.Qa - p.Qexp + p.Qs),
+    qNet: p.Qnet ?? (p.Qmet - p.Qw - p.Qa - p.Qexp + p.Qs),
   }));
   const svgCurve = buildDualCharts(adaptedCurve, durationMin);
-  const suggestedTimeHTML = renderSuggestedTime(r);
+
+  // Recovery
+  let col, rl, rd;
+  if (Tn > 36.5)      { col='#0A7A4A'; rl=t('noDeficit');  rd=t('noDeficitD'); }
+  else if (Tn > 36.0) { col='#0A7A4A'; rl=t('fastRec');    rd=t('fastRecD'); }
+  else if (Tn > 35.5) { col='#C07000'; rl=t('modRec');     rd=t('modRecD'); }
+  else if (Tn > 35.0) { col='#C05000'; rl=t('longRec');    rd=t('longRecD'); }
+  else                 { col='#B02020'; rl=t('danger');      rd=t('dangerD'); }
+
+  const exitRec = getExitRec(r, S.weather.waterTemp ?? 15, durationMin);
 
   $('sim-result').innerHTML = `
-    <div class="grid2" style="margin-bottom:12px">
-      <div class="dcell"><div class="dcell-lbl">${t('coreTemp')}</div>
-        <div class="dcell-val" style="color:${tempCol}">${Tn.toFixed(1)}°C</div></div>
-      <div class="dcell"><div class="dcell-lbl">${t('accumDef')}</div>
-        <div class="dcell-val">${deficit.toFixed(0)} kJ</div></div>
-    </div>
-
+    ${thresholdHTML}
     ${svgCurve}
-
     ${exitRec}
-
     <div class="rec-box" style="border-color:${col};background:${col}12;margin-top:10px">
       <div class="rec-title" style="color:${col}">${rl}</div>
       <div class="rec-text">${rd}</div>
     </div>
-
     <div style="margin-top:12px;padding:10px 14px;background:#FFFBF0;border:1px solid #C0A020;border-radius:8px;font-size:15px;color:#604000;line-height:1.6">
       ⚠️ ${t('odeDisclaimer')}
     </div>
   `;
+
+  // Also update the new chart containers if they exist
+  renderSessionCharts(r, durationMin);
 }
 
 function buildThermalCurve(curve, durationMin) {
