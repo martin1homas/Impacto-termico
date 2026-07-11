@@ -2959,17 +2959,31 @@ function renderResult(r) {
 
   const paceLbl = document.querySelector('.speed-pill.active .sp-pace')?.textContent || '';
   const sunDeg  = (Math.asin(Math.min(1, r.sinAlpha ?? r.sinA ?? 0)) * 180 / Math.PI).toFixed(1);
-  const dirDesc = r.swimDir === null
+  const swimDir = (r.swimDir === undefined || r.swimDir === null) ? null : r.swimDir;
+  const dirDesc = swimDir === null
     ? t('assumedDir')
-    : dirLabel(r.swimDir) + ` (f=${(r.fAvg??0.71).toFixed(2)})`;
+    : dirLabel(swimDir) + ` (f=${(r.fAvg??0.71).toFixed(2)})`;
   const Tskin = r.T_skin_final ?? r.Tskin ?? 20;
   const effMass = r.effMass ?? (S.profile?.peso ?? 70) * (1 - (r.bf ?? 20)/100) * 0.82;
+
+  // For no-suit: total water loss = Q_water + Q_nosuit + Q_exp
+  const isNoSuit = r.suit === 'none';
+  const Q_water_display = isNoSuit
+    ? (r.Q_water??0) + (r.Q_exp??0) + Math.abs(r.Q_net - (r.Q_met??0) + (r.Q_aire??0) - (r.Q_solar??0))
+    : (r.Q_water??0);
+  // Simpler: just show Q_net components correctly
+  // Q_water_total = Q_met - Q_net - Q_aire + Q_solar (by definition)
+  const Q_water_total = Math.max(0, (r.Q_met??0) - (r.Q_net??0) - (r.Q_aire??0) + (r.Q_solar??0));
+  const T_skin_display = isNoSuit ? (r.waterTemp??10) : Tskin;
+  const h_display = isNoSuit
+    ? `R_fat=${(r.bf??15/100*0.024).toFixed ? (0.024).toFixed(3) : '~0.024'}`
+    : `h_ef=${(r.hWcov??0).toFixed(0)}`;
 
   $('balance-rows').innerHTML = [
     { icon:'⚡', name:`${t('metabolic')} (${paceLbl}/100m)`,
       detail:`${Math.round((r.Q_met??0) - 27)}W base × f_frío · +27W NST`, val: r.Q_met??0, sign: 1 },
-    { icon:'💧', name:`${t('waterLoss')} (${(r.waterTemp??15).toFixed(1)}°C · T_piel ${Tskin.toFixed(1)}°C)`,
-      detail:`h_ef=${(r.hWcov??r.hAir??0).toFixed(0)} · ${suit2label(r.suit)}`, val: r.Q_water??0, sign: -1 },
+    { icon:'💧', name:`${t('waterLoss')} (${(r.waterTemp??15).toFixed(1)}°C · T_piel ${T_skin_display.toFixed(1)}°C)`,
+      detail:`${h_display} · ${suit2label(r.suit)}`, val: Q_water_total, sign: -1 },
     { icon:'💨', name:`${t('airLoss')} (${(r.windSpeed??0).toFixed(1)} km/h ${wLabel(r.windDir??0)} ${wArrow(r.windDir??0)})`,
       detail:`nado: ${dirDesc}`, val: r.Q_aire??0, sign: -1 },
     { icon:'☀️', name:`${t('solarGain')} (${sunDeg}°)`,
