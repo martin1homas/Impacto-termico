@@ -1134,7 +1134,7 @@ function wLabel(deg) {
   return dirs[Math.round((deg ?? 0) / 22.5) % 16];
 }
 function wArrow(deg) {
-  const flow = ((deg ?? 0) + 180) % 360;
+  const flow = (deg ?? 0) % 360;
   return ['↓','↙','←','↖','↑','↗','→','↘'][Math.round(flow / 45) % 8];
 }
 function dirLabel(deg) {
@@ -2184,7 +2184,7 @@ async function fetchWeather() {
   try {
     const { lat, lon } = S.coords;
     const [meteo, marine] = await Promise.all([
-      fetch(`${METEO}/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,shortwave_radiation,weather_code&hourly=temperature_2m,wind_speed_10m,wind_direction_10m,weather_code,shortwave_radiation&forecast_days=1&timezone=auto`)
+      fetch(`${METEO}/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,shortwave_radiation,weather_code&hourly=temperature_2m,wind_speed_10m,wind_direction_10m,weather_code,shortwave_radiation&forecast_days=3&timezone=auto`)
         .then(r => { if (!r.ok) throw new Error('Meteo HTTP ' + r.status); return r.json(); }),
       fetch(`${MARINE}/marine?latitude=${lat}&longitude=${lon}&current=sea_surface_temperature,wave_height,wave_direction,wave_period,swell_wave_height,ocean_current_velocity&timezone=auto`)
         .then(r => r.ok ? r.json() : {}).catch(() => ({})),
@@ -2210,12 +2210,10 @@ async function fetchWeather() {
     };
     renderWeatherGrid();
     renderForecast();
-    render2DayForecast(S.weather.hourly, S.weather.waterTemp);
+    render2DayForecast();
     updateWindInfo();
     loadBeachStatus();
     loadHistoricalWaterTemp();
-    loadHistoricalWaterTemp();
-    render2DayForecast();
     showStep('params');
   } catch (e) {
     showErr('err-location', 'Error: ' + e.message);
@@ -2678,39 +2676,67 @@ function runUnifiedModel(profile, speedSecs, suit, swimDir, weather, coords, dur
     const Q_cs = k_cond * f_thermo * eq.A_covered * (T_core - T_skin);
 
     // ── COVERED SKIN → WATER (through suit) ──────────────────
-    const Q_water_cov = hWcov * eq.A_covered * (T_skin - waterTemp);
+    // Only relevant when there IS a suit
+    const Q_water_cov = suit !== 'none'
+      ? hWcov * eq.A_covered * (T_skin - waterTemp)
+      : 0;
+
+    // ── NO SUIT: subcutaneous fat as natural insulator ───────────
+    // Key insight from literature: without a wetsuit, heat loss is
+    // dominated by the resistance of subcutaneous fat, not direct
+    // convection from core to water.
+    //
+    // Fat layer thickness (Clarys et al., Pendergast et al.):
+    //   d_fat = (bf * peso * 0.80) / (A * 900)
+    //   80% of body fat is subcutaneous; 900 kg/m³ adipose density
+    //
+    // Thermal conductivity of adipose tissue:
+    //   k_fat ≈ 0.20 W/m°C (Fiala et al., 1999)
+    //
+    // R_fat varies with BMI/BF:
+    //   BF=12% (lean athlete): R_fat ≈ 0.019 m²°C/W
+    //   BF=18% (average):      R_fat ≈ 0.029 m²°C/W
+    //   BF=25% (higher BF):    R_fat ≈ 0.040 m²°C/W
+    //
+    // Effective conductance skin→water without suit:
+    //   hEff = 1 / (R_fat + 1/hW)
+    //   This is much lower than hW alone — explains why
+    //   swimmers don't lose heat as fast as raw convection predicts
+    const A_body_main = A - A_face - A_hands - A_feet;
+    const d_fat   = (bf/100 * peso * 0.80) / (A * 900);  // meters
+    const R_fat   = d_fat / 0.20;  // m²°C/W, k_fat=0.20 W/m°C
+    const hEff_ns = 1 / (R_fat + 1/hW);  // effective conductance skin→water
+
+    // Q_nosuit: heat from CORE through tissue+fat to water
+    // Flows from core → (vasoconstrictive tissue) → fat layer → water
+    // Using hEff_ns on the core→water gradient via skin compartment
+    const Q_nosuit = suit === 'none'
+      ? hEff_ns * A_body_main * (T_core - waterTemp) * 0.20
+      // 0.20 factor = additional tissue resistance between core and fat surface
+      : 0;
 
     // ── COVERED SKIN → AIR ───────────────────────────────────
     const Q_air = hAir * 0.10 * A * (T_skin - airTemp);
 
-    // ── EXPOSED SKIN EQUILIBRATION (Eq. 3 — analytical) ──────
-    // T_exp decays exponentially toward waterTemp (τ=300s)
+    // ── EXPOSED SKIN EQUILIBRATION (Eq. 3) ───────────────────
     const dTe = -(T_exp - waterTemp) / tau_exp * dt;
 
-    // ── CORE → EXPOSED ZONES (bypasses skin compartment) ─────
-    // Face + feet: tissue conduction, T_exp is the cold boundary
+    // ── CORE → EXPOSED ZONES (face, feet, hands) ─────────────
     const A_exp_tissue = A_face + A_feet;
     const Q_exp_tissue = k_exp * A_exp_tissue * (T_core - T_exp);
-
-    // Hands (no gloves): high convection, T_agua is the cold boundary
-    const Q_exp_hands = h_hands * A_hands * (T_core - waterTemp);
-
-    // Total exposed zone loss directly from core
-    const Q_exp = Q_exp_tissue + Q_exp_hands;
-
-    // ── NO SUIT: torso/legs exposed ───────────────────────────
-    // Without suit, covered area = 0, but torso/legs lose heat
-    // directly to water via tissue conduction
-    const Q_nosuit = suit === 'none'
-      ? hW * 0.12 * (A - A_exp_tissue - A_hands) * (T_core - waterTemp)
-      : 0;
+    const Q_exp_hands  = h_hands * A_hands * (T_core - waterTemp);
+    const Q_exp        = Q_exp_tissue + Q_exp_hands;
 
     // ── DIFFERENTIALS ─────────────────────────────────────────
-    // Eq. 1: Core — gains from metabolism, loses to skin and exposed zones
+    // Eq. 1: Core loses to skin coupling, exposed zones, and no-suit direct loss
     const dTc = (Q_met - Q_cs - Q_exp - Q_nosuit) / C_core * dt;
 
-    // Eq. 2: Covered skin — gains from core, loses to water and air
-    const dTs = (Q_cs - Q_water_cov - Q_air + Q_solar) / C_skin * dt;
+    // Eq. 2: Covered skin — gains from core, loses to water/air
+    // No-suit: skin loses heat through fat layer to water
+    const Q_skin_to_water = suit !== 'none'
+      ? Q_water_cov
+      : hEff_ns * A_body_main * (T_skin - waterTemp);
+    const dTs = (Q_cs - Q_skin_to_water - Q_air + Q_solar) / C_skin * dt;
 
     // Eq. 3: Exposed skin — decays to waterTemp (above)
 
@@ -3216,7 +3242,10 @@ async function loadHistoricalWaterTemp() {
 // ── 2-DAY FORECAST ────────────────────────────────────────────────
 function render2DayForecast() {
   const w = S.weather;
-  if (!w?.hourly?.time?.length) return;
+  if (!w?.hourly?.time?.length) {
+    console.log('render2DayForecast: no hourly data', w?.hourly);
+    return;
+  }
   const container = $('forecast-2day');
   if (!container) return;
 
@@ -3473,6 +3502,7 @@ $('link-new-loc').addEventListener('click', () => {
   $('search-results').style.display = 'none';
   $('search-input').value = '';
   $('forecast-card').style.display = 'none';
+  $('forecast-2day-card').style.display = 'none';
   $('beach-card').style.display = 'none';
   $('report-card').style.display = 'none';
   $('wave-info').innerHTML = '';
