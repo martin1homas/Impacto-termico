@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-18T17:02:36Z",
+  "updated": "2026-07-18T19:12:37Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -13,9 +13,9 @@
         ]
       },
       "beach": "pocitos",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -31,9 +31,9 @@
         ]
       },
       "beach": "Pocitos",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -49,9 +49,9 @@
         ]
       },
       "beach": "pocitos",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -139,9 +139,9 @@
         ]
       },
       "beach": "Cerro",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -157,9 +157,9 @@
         ]
       },
       "beach": "Cerro",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -427,9 +427,9 @@
         ]
       },
       "beach": "Punta Yeguas",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -517,9 +517,9 @@
         ]
       },
       "beach": "del Parador",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
