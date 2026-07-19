@@ -3019,7 +3019,8 @@ function renderResult(r) {
     const timeCard = $('time-card');
     if (timeCard) timeCard.style.display = 'none';
   }
-  $('sim-min').value = '';
+  const simMinEl = $('sim-min');
+  if (simMinEl) simMinEl.value = '';
   $('sim-result').innerHTML = '';
 }
 
