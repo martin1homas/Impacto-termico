@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-19T11:12:59Z",
+  "updated": "2026-07-19T13:37:32Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -13,9 +13,9 @@
         ]
       },
       "beach": "pocitos",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 9,
+      "healthFlagCauseDesc": "Lluvias",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -31,9 +31,9 @@
         ]
       },
       "beach": "Pocitos",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 9,
+      "healthFlagCauseDesc": "Lluvias",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -49,9 +49,9 @@
         ]
       },
       "beach": "pocitos",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 9,
+      "healthFlagCauseDesc": "Lluvias",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -139,9 +139,9 @@
         ]
       },
       "beach": "Cerro",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 9,
+      "healthFlagCauseDesc": "Lluvias",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -157,9 +157,9 @@
         ]
       },
       "beach": "Cerro",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 9,
+      "healthFlagCauseDesc": "Lluvias",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -427,9 +427,9 @@
         ]
       },
       "beach": "Punta Yeguas",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 9,
+      "healthFlagCauseDesc": "Lluvias",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -517,9 +517,9 @@
         ]
       },
       "beach": "del Parador",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 9,
+      "healthFlagCauseDesc": "Lluvias",
       "safetyFlag": null,
       "linkComoIr": null
     },
