@@ -1,5 +1,5 @@
 // NAUTA Service Worker v3
-const CACHE = 'nauta-v3';
+const CACHE = 'nauta-v202607192306';
 const STATIC = [
   '/Impacto-termico/manifest.json',
   '/Impacto-termico/icon-192.png',
