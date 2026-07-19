@@ -1520,6 +1520,7 @@ function applyLang() {
     'link-back-loc':'changeLocation', 'net-lbl-text':'netBalance',
     't-breakdown':'breakdown', 't-thresholds':'thresholds',
     't-sim-title':'simTitle', 't-sim-hint':'simHint', 'btn-sim':'simBtn',
+    't-report-title':'reportTitle', 't-forecast-2day':'forecast2day',
     'btn-recalc':'recalc', 'link-new-loc':'newLoc',
     't-about-desc':'aboutDesc', 'btn-close-info':'backToApp',
   };
@@ -1531,7 +1532,12 @@ function applyLang() {
   $('search-input').placeholder = t('searchPH');
   // Re-render dynamic content
   if (S.weather) renderWeatherGrid();
+  if (S.weather) render2DayForecast();
   if (S.result)  renderResult(S.result);
+  if (S.result)  renderODEResult(S.result, 60);
+  // Re-render historical water temp label if visible
+  const hist = $('hist-water-temp');
+  if (hist && hist.style.display !== 'none') loadHistoricalWaterTemp();
 }
 
 // ── STATE ─────────────────────────────────────────────────────────
