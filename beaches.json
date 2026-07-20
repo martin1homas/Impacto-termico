@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-20T11:50:49Z",
+  "updated": "2026-07-20T14:21:13Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -13,9 +13,9 @@
         ]
       },
       "beach": "pocitos",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -31,9 +31,9 @@
         ]
       },
       "beach": "Pocitos",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -49,9 +49,9 @@
         ]
       },
       "beach": "pocitos",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -67,9 +67,9 @@
         ]
       },
       "beach": "Ramirez",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -85,9 +85,9 @@
         ]
       },
       "beach": "Honda",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -103,9 +103,9 @@
         ]
       },
       "beach": "Buceo",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -121,9 +121,9 @@
         ]
       },
       "beach": "Malvin",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -139,9 +139,9 @@
         ]
       },
       "beach": "Cerro",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -157,9 +157,9 @@
         ]
       },
       "beach": "Cerro",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -175,9 +175,9 @@
         ]
       },
       "beach": "Punta Espinillo",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -193,9 +193,9 @@
         ]
       },
       "beach": "Buceo",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -211,9 +211,9 @@
         ]
       },
       "beach": "Verde",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -229,9 +229,9 @@
         ]
       },
       "beach": "Pajas Blancas",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -247,9 +247,9 @@
         ]
       },
       "beach": "Buceo",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -265,9 +265,9 @@
         ]
       },
       "beach": "de los Ingleses",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -283,9 +283,9 @@
         ]
       },
       "beach": "La Colorada",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -301,9 +301,9 @@
         ]
       },
       "beach": "Malvin",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -319,9 +319,9 @@
         ]
       },
       "beach": "Malvin",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -337,9 +337,9 @@
         ]
       },
       "beach": "del nacional",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -355,9 +355,9 @@
         ]
       },
       "beach": "Carrasco",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -373,9 +373,9 @@
         ]
       },
       "beach": "La Mulata",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -391,9 +391,9 @@
         ]
       },
       "beach": "Verde",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -409,9 +409,9 @@
         ]
       },
       "beach": "Carrasco",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -427,9 +427,9 @@
         ]
       },
       "beach": "Punta Yeguas",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -445,9 +445,9 @@
         ]
       },
       "beach": "Santa Catalina",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -463,9 +463,9 @@
         ]
       },
       "beach": "Honda",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -481,9 +481,9 @@
         ]
       },
       "beach": "Malvin",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -499,9 +499,9 @@
         ]
       },
       "beach": "Carrasco",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -517,9 +517,9 @@
         ]
       },
       "beach": "del Parador",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -535,9 +535,9 @@
         ]
       },
       "beach": "Zabala",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -553,9 +553,9 @@
         ]
       },
       "beach": "Los Cilindros",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -571,9 +571,9 @@
         ]
       },
       "beach": "Nariño",
-      "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     }
