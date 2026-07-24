@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-24T15:36:31Z",
+  "updated": "2026-07-24T17:43:12Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -266,8 +266,8 @@
       },
       "beach": "de los Ingleses",
       "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlagCause": 7,
+      "healthFlagCauseDesc": "Enterococos",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -284,8 +284,8 @@
       },
       "beach": "La Colorada",
       "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlagCause": 7,
+      "healthFlagCauseDesc": "Enterococos",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -338,8 +338,8 @@
       },
       "beach": "del nacional",
       "healthFlag": "true",
-      "healthFlagCause": 9,
-      "healthFlagCauseDesc": "Lluvias",
+      "healthFlagCause": 7,
+      "healthFlagCauseDesc": "Enterococos",
       "safetyFlag": null,
       "linkComoIr": null
     },
