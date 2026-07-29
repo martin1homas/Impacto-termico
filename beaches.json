@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-29T17:20:40Z",
+  "updated": "2026-07-29T19:25:48Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -139,9 +139,9 @@
         ]
       },
       "beach": "Cerro",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -157,9 +157,9 @@
         ]
       },
       "beach": "Cerro",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
