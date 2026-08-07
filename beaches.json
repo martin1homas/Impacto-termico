@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-07T14:58:54Z",
+  "updated": "2026-08-07T16:03:38Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -103,9 +103,9 @@
         ]
       },
       "beach": "buceo",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -193,9 +193,9 @@
         ]
       },
       "beach": "buceo",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -247,9 +247,9 @@
         ]
       },
       "beach": "buceo",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
