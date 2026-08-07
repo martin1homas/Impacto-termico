@@ -1,10 +1,10 @@
 {
-  "updated": "2026-08-06T15:18:48Z",
+  "updated": "2026-08-07T00:07:30Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
       "name": "Marti",
-      "address": "Jose Marti Republica del Peru y Marti.",
+      "address": "Rambla Republica del Peru y Marti.",
       "location": {
         "type": "Point",
         "coordinates": [
