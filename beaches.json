@@ -1,10 +1,10 @@
 {
-  "updated": "2026-08-10T11:52:18Z",
+  "updated": "2026-08-10T13:21:51Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
-      "name": "Marti",
-      "address": "Rambla Republica del Peru y Marti.",
+      "name": "Martí",
+      "address": "Rambla República del Perú y Martí.",
       "location": {
         "type": "Point",
         "coordinates": [
@@ -22,7 +22,7 @@
     {
       "id": "MVD:lifeguardstation:3",
       "name": "Buxareo",
-      "address": "Rambla Republica del Peru y Buxareo.",
+      "address": "Rambla República del Perú y Buxareo.",
       "location": {
         "type": "Point",
         "coordinates": [
@@ -40,7 +40,7 @@
     {
       "id": "MVD:lifeguardstation:2",
       "name": "Pereira",
-      "address": "Rambla Republica del Peru y Gabriel Pereira.",
+      "address": "Rambla República del Perú y Gabriel Pereira.",
       "location": {
         "type": "Point",
         "coordinates": [
@@ -57,7 +57,7 @@
     },
     {
       "id": "MVD:lifeguardstation:4",
-      "name": "Ramirez",
+      "name": "Ramírez",
       "address": "Rambla Presidente Wilson y Sarmiento",
       "location": {
         "type": "Point",
@@ -93,8 +93,8 @@
     },
     {
       "id": "MVD:lifeguardstation:12",
-      "name": "Batlle y Ordoñez",
-      "address": "Rambla Republica de Chile y Batlle y Ordonez.",
+      "name": "Batlle y Ordóñez",
+      "address": "Rambla República de Chile y Batlle y Ordóñez.",
       "location": {
         "type": "Point",
         "coordinates": [
@@ -111,8 +111,8 @@
     },
     {
       "id": "MVD:lifeguardstation:17",
-      "name": "Rio de la Plata",
-      "address": "Rambla O’Higgins y Rio de la Plata.",
+      "name": "Río de la Plata",
+      "address": "Rambla O’Higgins y Río de la Plata.",
       "location": {
         "type": "Point",
         "coordinates": [
@@ -147,8 +147,8 @@
     },
     {
       "id": "MVD:lifeguardstation:6",
-      "name": "Bogota",
-      "address": "Rambla Suiza y Bogota.",
+      "name": "Bogotá",
+      "address": "Rambla Suiza y Bogotá.",
       "location": {
         "type": "Point",
         "coordinates": [
@@ -183,8 +183,8 @@
     },
     {
       "id": "MVD:lifeguardstation:14",
-      "name": "Solano Lopez",
-      "address": "Rambla Republica de Chile y Solano Lopez.",
+      "name": "Solano López",
+      "address": "Rambla República de Chile y Solano López.",
       "location": {
         "type": "Point",
         "coordinates": [
@@ -202,7 +202,7 @@
     {
       "id": "MVD:lifeguardstation:23",
       "name": "San Marino",
-      "address": "Rambla Republica de Mexico y San Marino.",
+      "address": "Rambla República de México y San Marino.",
       "location": {
         "type": "Point",
         "coordinates": [
@@ -220,7 +220,7 @@
     {
       "id": "MVD:lifeguardstation:9",
       "name": "Pajas Blancas",
-      "address": "Rambla Puerto Soledad de las Malvinas y Capitan Leal de Ibarra.",
+      "address": "Rambla Puerto Soledad de las Malvinas y Capitán Leal de Ibarra.",
       "location": {
         "type": "Point",
         "coordinates": [
@@ -238,7 +238,7 @@
     {
       "id": "MVD:lifeguardstation:13",
       "name": "Arrascaeta",
-      "address": "Rambla Republica de Chile y Arrascaeta.",
+      "address": "Rambla República de Chile y Arrascaeta.",
       "location": {
         "type": "Point",
         "coordinates": [
@@ -291,8 +291,8 @@
     },
     {
       "id": "MVD:lifeguardstation:15",
-      "name": "Hipolito Irigoyen",
-      "address": "Rambla O’Higgins e Hipolito Irigoyen.",
+      "name": "Hipólito Irigoyen",
+      "address": "Rambla O’Higgins e Hipólito Irigoyen.",
       "location": {
         "type": "Point",
         "coordinates": [
@@ -346,7 +346,7 @@
     {
       "id": "MVD:lifeguardstation:26",
       "name": "Arocena",
-      "address": "Rambla Republica de Mexico y Arocena.",
+      "address": "Rambla República de México y Arocena.",
       "location": {
         "type": "Point",
         "coordinates": [
@@ -363,8 +363,8 @@
     },
     {
       "id": "MVD:lifeguardstation:24",
-      "name": "Podesta",
-      "address": "Rambla Republica de Mexico y Pablo Podesta.",
+      "name": "Podestá",
+      "address": "Rambla República de México y Pablo Podestá.",
       "location": {
         "type": "Point",
         "coordinates": [
@@ -382,7 +382,7 @@
     {
       "id": "MVD:lifeguardstation:22",
       "name": "Belastiqui",
-      "address": "Rambla Republica de Mexico y Belastiqui.",
+      "address": "Rambla República de México y Belastiqui.",
       "location": {
         "type": "Point",
         "coordinates": [
@@ -400,7 +400,7 @@
     {
       "id": "MVD:lifeguardstation:27",
       "name": "Cartagena",
-      "address": "Rambla Republica de Mexico y Cartagena.",
+      "address": "Rambla Republica de México y Cartagena.",
       "location": {
         "type": "Point",
         "coordinates": [
@@ -490,7 +490,7 @@
     {
       "id": "MVD:lifeguardstation:25",
       "name": "Bolivia",
-      "address": "Rambla Republica de Mexico y Bolivia.",
+      "address": "Rambla República de México y Bolivia.",
       "location": {
         "type": "Point",
         "coordinates": [
@@ -508,7 +508,7 @@
     {
       "id": "MVD:lifeguardstation:29",
       "name": "Punta Yeguas Chica",
-      "address": "Por Camino Antartida Uruguaya, al final",
+      "address": "Por Camino Antártida Uruguaya, al final",
       "location": {
         "type": "Point",
         "coordinates": [
@@ -544,7 +544,7 @@
     {
       "id": "MVD:lifeguardstation:31",
       "name": "Los Cilindros",
-      "address": "Por camino Pedro Garcia hasta el final.",
+      "address": "Por Camino Pedro García hasta el final.",
       "location": {
         "type": "Point",
         "coordinates": [
@@ -562,7 +562,7 @@
     {
       "id": "MVD:lifeguardstation:32",
       "name": "Nariño",
-      "address": "Rambla Republica de Mexico y Narino",
+      "address": "Rambla República de México y Nariño",
       "location": {
         "type": "Point",
         "coordinates": [
