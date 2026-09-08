@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-08T14:18:03Z",
+  "updated": "2026-09-08T18:26:15Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -355,9 +355,9 @@
         ]
       },
       "beach": "carrasco",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 7,
+      "healthFlagCauseDesc": "Enterococos",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -409,9 +409,9 @@
         ]
       },
       "beach": "carrasco",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 7,
+      "healthFlagCauseDesc": "Enterococos",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -499,9 +499,9 @@
         ]
       },
       "beach": "carrasco",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 7,
+      "healthFlagCauseDesc": "Enterococos",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -571,9 +571,9 @@
         ]
       },
       "beach": "carrasco",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 7,
+      "healthFlagCauseDesc": "Enterococos",
       "safetyFlag": null,
       "linkComoIr": null
     }
