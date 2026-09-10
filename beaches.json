@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-10T14:12:14Z",
+  "updated": "2026-09-10T18:15:01Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -13,9 +13,9 @@
         ]
       },
       "beach": "pocitos",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -31,9 +31,9 @@
         ]
       },
       "beach": "pocitos",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -49,9 +49,9 @@
         ]
       },
       "beach": "pocitos",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
