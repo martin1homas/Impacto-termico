@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-15T13:21:30Z",
+  "updated": "2026-09-15T18:03:53Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -139,9 +139,9 @@
         ]
       },
       "beach": "delcerro",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 7,
+      "healthFlagCauseDesc": "Enterococos",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -157,9 +157,9 @@
         ]
       },
       "beach": "delcerro",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 7,
+      "healthFlagCauseDesc": "Enterococos",
       "safetyFlag": null,
       "linkComoIr": null
     },
