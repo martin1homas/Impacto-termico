@@ -1,0 +1,3584 @@
+<!DOCTYPE html>
+<!-- NAUTA build 2026-07-19 23:06:31 -->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="theme-color" content="#1A4A6B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NAUTA">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>NAUTA — Open Water Thermal Intelligence</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+/* ── TOKENS ───────────────────────────────────────────────── */
+:root {
+  --sand:    #F7F4EF;
+  --foam:    #D4E9F2;
+  --shallow: #E8F2F8;
+  --deep:    #1A4A6B;
+  --water:   #00637D;
+  --water2:  #006B94;
+  --text:    #1A4A6B;
+  --text2:   #3A6A8B;
+  --text3:   #356088;
+  --border:  #C8DDE8;
+  --ok:      #0A7A4A;
+  --warn:    #C07000;
+  --danger:  #B02020;
+  --rad:     14px;
+  --rad-sm:  8px;
+}
+
+/* ── RESET ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  min-height: 100vh;
+  background: var(--sand);
+  font-family: system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 60px;
+}
+
+/* ── HEADER ──────────────────────────────────────────────── */
+.app-header {
+  width: 100%;
+  background: var(--deep);
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.header-inner {
+  padding: 28px 20px 20px;
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+.eyebrow {
+  font-size:11px;
+  letter-spacing: 3px;
+  color: var(--foam);
+  opacity: .65;
+  margin-bottom: 6px;
+  font-family: 'Courier New', monospace;
+  padding: 0 70px;
+}
+.app-title {
+  font-family: Georgia, serif;
+  font-size:36px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 6px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.app-tagline {
+  font-size:16px;
+  color: var(--foam);
+  opacity: .8;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+/* Horizon wave — the signature element */
+.wave-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 28px;
+  overflow: hidden;
+}
+.wave-svg {
+  width: 200%;
+  height: 100%;
+  animation: wave-drift 4s ease-in-out infinite alternate;
+}
+@media (prefers-reduced-motion: reduce) { .wave-svg { animation: none; } }
+@keyframes wave-drift { from { transform: translateX(0); } to { transform: translateX(-25%); } }
+
+/* Header controls */
+.hdr-controls {
+  position: absolute;
+  top: 20px; right: 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  z-index: 3;
+}
+.hdr-btn {
+  height: 32px;
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 16px;
+  color: #fff;
+  font-size:16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier New', monospace;
+  padding: 0 12px;
+  transition: background .2s;
+}
+.hdr-btn:active { background: rgba(255,255,255,.25); }
+.hdr-btn.icon { width: 32px; padding: 0; font-size:20px; }
+
+/* Lang menu */
+.lang-menu {
+  position: absolute;
+  top: 60px; right: 16px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--rad-sm);
+  overflow: hidden;
+  z-index: 100;
+  min-width: 160px;
+  box-shadow: 0 8px 24px rgba(26,74,107,.15);
+  display: none;
+}
+.lang-menu.open { display: block; }
+.lang-opt {
+  padding: 12px 16px;
+  font-size:18px;
+  color: var(--text);
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background .12s;
+}
+.lang-opt:last-child { border-bottom: none; }
+.lang-opt:active, .lang-opt:hover { background: var(--shallow); }
+.lang-opt.active { color: var(--water); font-weight: 700; }
+.lang-code { font-size:15px; color: var(--text3); font-family: 'Courier New', monospace; }
+
+/* ── LAYOUT ──────────────────────────────────────────────── */
+.container { width: 100%; max-width: 460px; padding: 0 16px; }
+
+/* ── CARDS ───────────────────────────────────────────────── */
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--rad);
+  padding: 20px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(26,74,107,.06);
+}
+.card-title {
+  font-size:14px;
+  letter-spacing: 4px;
+  color: var(--water);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+}
+.card-title::after { content: ''; flex: 1; height: 1px; background: var(--foam); }
+
+/* ── INPUTS ──────────────────────────────────────────────── */
+input[type=text], input[type=number] {
+  width: 100%;
+  padding: 13px 14px;
+  background: var(--shallow);
+  border: 1.5px solid var(--border);
+  border-radius: var(--rad-sm);
+  color: var(--text);
+  font-size:20px;
+  margin-bottom: 12px;
+  outline: none;
+  transition: border-color .2s;
+  -webkit-appearance: none;
+}
+input::placeholder { color: var(--text3); }
+input:focus { border-color: var(--water); background: #fff; }
+
+/* ── BUTTONS ─────────────────────────────────────────────── */
+.btn {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: var(--rad-sm);
+  font-size:18px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  font-family: system-ui, sans-serif;
+  transition: all .15s;
+  margin-bottom: 4px;
+}
+.btn-primary {
+  background: var(--water);
+  color: #fff;
+}
+.btn-primary:active { background: var(--water2); transform: scale(.98); }
+.btn-ghost {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--text2);
+}
+.btn-ghost:active { background: var(--shallow); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ── PILLS ───────────────────────────────────────────────── */
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+.pill {
+  padding: 9px 16px;
+  background: var(--shallow);
+  color: var(--text2);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  font-size:17px;
+  cursor: pointer;
+  transition: all .15s;
+  font-weight: 500;
+}
+.pill.active {
+  background: var(--water);
+  color: #fff;
+  border-color: var(--water);
+  font-weight: 700;
+}
+
+/* ── LABELS ──────────────────────────────────────────────── */
+.lbl {
+  font-size:15px;
+  color: var(--text2);
+  letter-spacing: 2px;
+  margin: 16px 0 8px;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+.lbl:first-child { margin-top: 0; }
+.lbl-opt {
+  font-size:14px;
+  color: var(--text3);
+  margin-left: 6px;
+  letter-spacing: 1px;
+  font-weight: 400;
+}
+
+/* ── GRID ────────────────────────────────────────────────── */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+/* ── DATA CELLS ──────────────────────────────────────────── */
+.dcell {
+  background: var(--shallow);
+  border-radius: var(--rad-sm);
+  padding: 12px 14px;
+  border: 1px solid var(--foam);
+}
+.dcell-lbl {
+  font-weight: 600;
+  font-size:14px;
+  color: var(--text3);
+  letter-spacing: 1.5px;
+  margin-bottom: 5px;
+  font-family: 'Courier New', monospace;
+}
+.dcell-val {
+  font-size:22px;
+  font-weight: 700;
+  color: var(--deep);
+  font-family: Georgia, serif;
+}
+
+/* ── SPEED GRID ──────────────────────────────────────────── */
+.speed-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.speed-pill {
+  padding: 11px 8px;
+  background: var(--shallow);
+  color: var(--text2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--rad-sm);
+  font-size:16px;
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.4;
+  transition: all .15s;
+}
+.speed-pill.active {
+  background: var(--water);
+  color: #fff;
+  border-color: var(--water);
+  font-weight: 700;
+}
+.sp-pace { font-size:18px; font-weight: 700; font-family: Georgia, serif; }
+.sp-ms { font-size:14px; opacity: .6; margin-top: 2px; font-family: 'Courier New', monospace; }
+
+/* ── COMPASS ─────────────────────────────────────────────── */
+.compass { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; max-width: 200px; margin: 0 auto; }
+.dir-btn {
+  padding: 10px 4px;
+  background: var(--shallow);
+  color: var(--text2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--rad-sm);
+  font-size:17px;
+  cursor: pointer;
+  text-align: center;
+  transition: all .15s;
+  font-weight: 700;
+}
+.dir-btn.active { background: var(--water); color: #fff; border-color: var(--water); }
+.dir-btn.center { background: transparent; border: none; color: var(--text3); font-size:22px; cursor: default; }
+
+/* ── SEARCH RESULTS ──────────────────────────────────────── */
+.search-box {
+  margin-top: 8px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--rad-sm);
+  overflow: hidden;
+  max-height: 280px;
+  overflow-y: auto;
+  background: #fff;
+}
+.sresult {
+  padding: 13px 16px;
+  font-size:17px;
+  color: var(--text);
+  cursor: pointer;
+  border-bottom: 1px solid var(--foam);
+  transition: background .12s;
+  line-height: 1.4;
+}
+.sresult:last-child { border-bottom: none; }
+.sresult:active, .sresult:hover { background: var(--shallow); }
+.sresult-name { font-weight: 700; color: var(--water2); font-size:18px; }
+.sresult-detail { font-size:15px; color: var(--text3); margin-top: 2px; }
+
+/* ── ALERTS ──────────────────────────────────────────────── */
+.alert {
+  padding: 12px 14px;
+  border-radius: var(--rad-sm);
+  font-size:17px;
+  margin-top: 10px;
+  line-height: 1.5;
+  display: none;
+}
+.alert-err { background: #FFF0F0; border: 1.5px solid #E08080; color: #802020; }
+.alert-ok  { background: #F0FFF8; border: 1.5px solid #60C090; color: #1A5A30; }
+
+/* ── FORECAST ────────────────────────────────────────────── */
+.forecast-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.forecast-row::-webkit-scrollbar { display: none; }
+.fc-slot {
+  flex-shrink: 0;
+  background: var(--shallow);
+  border: 1.5px solid var(--border);
+  border-radius: var(--rad-sm);
+  padding: 10px 8px;
+  text-align: center;
+  min-width: 72px;
+}
+.fc-slot.now { border-color: var(--water); background: #fff; }
+.fc-time { font-weight: 600; font-size:14px; color: var(--text3); margin-bottom: 5px; font-family: 'Courier New', monospace; }
+.fc-icon { font-size:24px; margin-bottom: 4px; }
+.fc-temp { font-size:20px; font-weight: 700; color: var(--deep); font-family: Georgia, serif; }
+.fc-wind { font-size:15px; color: var(--text2); margin-top: 3px; }
+.fc-water { font-size:15px; color: var(--water); margin-top: 2px; font-weight: 600; }
+
+/* ── WIND INFO ───────────────────────────────────────────── */
+.wind-info {
+  background: var(--shallow);
+  border: 1.5px solid var(--foam);
+  border-radius: var(--rad-sm);
+  padding: 10px 14px;
+  font-size:16px;
+  color: var(--text2);
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.wind-arrow { font-size:26px; transition: transform .3s; }
+
+/* ── WAVE BOX ────────────────────────────────────────────── */
+.wave-box {
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: var(--shallow);
+  border-radius: var(--rad-sm);
+  border-left: 3px solid var(--water);
+}
+.wave-box-title {
+  font-size:14px;
+  color: var(--text3);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  font-family: 'Courier New', monospace;
+}
+
+/* ── NET RESULT BLOCK ────────────────────────────────────── */
+.net-block {
+  border-radius: var(--rad);
+  padding: 28px 24px;
+  margin-bottom: 14px;
+  border: 2px solid;
+  text-align: center;
+}
+.net-label { font-size:14px; letter-spacing: 4px; margin-bottom: 10px; font-family: 'Courier New', monospace; font-weight: 700; }
+.net-value { font-size:72px; font-weight: 900; line-height: 1; margin-bottom: 4px; font-family: Georgia, serif; }
+.net-unit  { font-size:17px; opacity: .5; margin-bottom: 16px; font-family: 'Courier New', monospace; }
+.net-badge { display: inline-block; padding: 6px 20px; border-radius: 20px; font-size:16px; font-weight: 700; letter-spacing: 2px; color: #fff; }
+
+/* ── BALANCE ROWS ────────────────────────────────────────── */
+.brow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--foam);
+}
+.brow:last-child { border-bottom: none; }
+.brow.total { margin-top: 6px; padding-top: 14px; border-top: 2px solid var(--border); align-items: center; }
+.brow-name   { color: var(--text2); font-size:17px; }
+.brow-detail { font-weight: 500; font-size:15px; color: var(--text3); margin-top: 2px; font-family: 'Courier New', monospace; }
+.brow-val    { font-weight: 700; font-size:20px; white-space: nowrap; padding-left: 12px; flex-shrink: 0; font-family: Georgia, serif; }
+.pos { color: var(--ok); }
+.neg { color: var(--warn); }
+
+/* ── TIME BARS ───────────────────────────────────────────── */
+.tbar { margin-bottom: 14px; }
+.tbar-header { display: flex; justify-content: space-between; font-size:17px; margin-bottom: 6px; }
+.tbar-bg { background: var(--shallow); border-radius: 4px; height: 8px; overflow: hidden; border: 1px solid var(--foam); }
+.tbar-fill { height: 100%; border-radius: 4px; transition: width .8s ease; }
+
+/* ── RECOVERY BOX ────────────────────────────────────────── */
+.rec-box {
+  padding: 16px;
+  border-radius: var(--rad-sm);
+  border: 1.5px solid;
+  margin-top: 10px;
+}
+.rec-title { font-size:16px; letter-spacing: 2px; margin-bottom: 6px; font-weight: 700; font-family: 'Courier New', monospace; }
+.rec-text  { font-size:18px; line-height: 1.5; color: var(--text2); }
+
+/* ── BEACH STATUS ────────────────────────────────────────── */
+.beach-status {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  border-radius: var(--rad-sm);
+  border: 2px solid;
+  margin-bottom: 8px;
+}
+.beach-flag-icon { font-size:32px; flex-shrink: 0; line-height: 1; }
+.beach-info { flex: 1; }
+.beach-name { font-size:16px; font-weight: 700; color: var(--deep); margin-bottom: 4px; letter-spacing: 2px; font-family: 'Courier New', monospace; }
+.beach-safety-lbl { font-size:18px; font-weight: 700; margin-bottom: 4px; font-family: Georgia, serif; }
+.beach-cause {
+  font-size:16px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #FFF0F0;
+  border: 1px solid #E0A0A0;
+  color: #802020;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+.beach-meta { font-size:15px; color: var(--text3); margin-top: 6px; }
+.beach-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  background: var(--shallow);
+  border-radius: var(--rad-sm);
+  border: 1px solid var(--foam);
+  margin-bottom: 6px;
+}
+.beach-row-flag { font-size:22px; flex-shrink: 0; }
+.beach-row-name { font-size:17px; font-weight: 700; color: var(--deep); flex: 1; }
+.beach-row-status { font-size:16px; font-weight: 600; }
+.beach-row-health { font-size:15px; color: #802020; margin-top: 2px; }
+.beach-updated { font-size:15px; color: var(--text3); text-align: right; margin-top: 4px; font-family: 'Courier New', monospace; }
+
+/* ── PROFILE BAR ─────────────────────────────────────────── */
+.profile-bar {
+  padding: 11px 14px;
+  background: var(--shallow);
+  border: 1px solid var(--foam);
+  border-radius: var(--rad-sm);
+  font-size:17px;
+  color: var(--text2);
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ── MISC ────────────────────────────────────────────────── */
+.link-btn {
+  text-align: center;
+  margin-top: 12px;
+  font-size:17px;
+  color: var(--water);
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+.sep { height: 1px; background: var(--foam); margin: 16px 0; }
+/* ── REPORTS ─────────────────────────────────────────────── */
+.report-btn {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 16px; background: var(--water); color: #fff; border: none;
+  border-radius: var(--rad-sm); font-size: 15px; font-weight: 700;
+  letter-spacing: 1px; cursor: pointer; margin-bottom: 10px; transition: background .15s;
+}
+.report-btn:active { background: var(--water2); }
+.report-categories { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.report-cat {
+  padding: 14px 10px; background: var(--shallow); border: 2px solid var(--border);
+  border-radius: var(--rad-sm); text-align: center; cursor: pointer; transition: all .15s;
+}
+.report-cat.selected { border-color: var(--water); background: #fff; }
+.report-cat-icon { font-size: 28px; margin-bottom: 6px; }
+.report-cat-label { font-size: 13px; font-weight: 600; color: var(--text2); }
+.swim-question {
+  padding: 16px; background: var(--shallow); border-radius: var(--rad-sm);
+  margin-bottom: 14px; border: 1px solid var(--foam);
+}
+.swim-q-label { font-size: 15px; font-weight: 700; color: var(--deep); margin-bottom: 12px; }
+.swim-pills { display: flex; gap: 10px; }
+.swim-pill {
+  flex: 1; padding: 12px; text-align: center; background: #fff;
+  border: 2px solid var(--border); border-radius: var(--rad-sm);
+  font-size: 14px; font-weight: 600; cursor: pointer; transition: all .15s; color: var(--text2);
+}
+.swim-pill.yes.selected { border-color: var(--ok); background: #F0FFF8; color: var(--ok); }
+.swim-pill.no.selected  { border-color: var(--text3); background: var(--shallow); color: var(--text3); }
+.community-summary {
+  background: var(--shallow); border-radius: var(--rad-sm);
+  padding: 12px 14px; margin-bottom: 10px; border-left: 3px solid var(--water);
+}
+.community-swimmers { font-size: 17px; font-weight: 700; color: var(--deep); margin-bottom: 6px; font-family: Georgia, serif; }
+.community-reports { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.community-tag {
+  padding: 5px 10px; background: #fff; border: 1px solid var(--border);
+  border-radius: 12px; font-size: 13px; color: var(--text2); font-weight: 500;
+}
+.community-tag.alert { border-color: var(--danger); color: var(--danger); background: #FFF0F0; }
+.camera-link {
+  display: flex; align-items: center; gap: 10px; padding: 13px 16px;
+  background: var(--shallow); border: 1.5px solid var(--border); border-radius: var(--rad-sm);
+  text-decoration: none; color: var(--water); font-size: 14px; font-weight: 700;
+  margin-top: 8px; transition: background .15s;
+}
+.camera-link:active { background: #fff; }
+/* ── AUTH ────────────────────────────────────────────────── */
+.auth-modal {
+  position: fixed; inset: 0; background: rgba(26,74,107,.7);
+  backdrop-filter: blur(4px); z-index: 200;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.auth-box {
+  background: #fff; border-radius: var(--rad); padding: 32px 24px;
+  width: 100%; max-width: 360px; box-shadow: 0 20px 60px rgba(26,74,107,.3);
+}
+.auth-title { font-family: Georgia, serif; font-size: 24px; font-weight: 900; color: var(--deep); margin-bottom: 6px; letter-spacing: 2px; }
+.auth-sub { font-size: 14px; color: var(--text2); margin-bottom: 24px; line-height: 1.5; }
+.btn-google {
+  width: 100%; padding: 14px; background: #fff; border: 2px solid var(--border);
+  border-radius: var(--rad-sm); font-size: 14px; font-weight: 700; color: var(--text);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  gap: 10px; margin-bottom: 10px; transition: border-color .15s;
+}
+.btn-google:active { border-color: var(--water); }
+.user-badge {
+  display: flex; align-items: center; gap: 8px; padding: 6px 12px;
+  background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+  border-radius: 20px; color: #fff; font-size: 13px; cursor: pointer;
+}
+.user-avatar {
+  width: 24px; height: 24px; border-radius: 50%; background: var(--foam);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--deep); font-weight: 700;
+}
+/* ── STEP ────────────────────────────────────────────────── */
+.step { display: none; }
+.step.active { display: block; }
+.loc-label { font-size:16px; color: var(--text2); margin-top: 10px; }
+.min-row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+.min-row input { margin-bottom: 0; flex: 1; }
+.min-row .btn { width: auto; padding: 13px 20px; flex-shrink: 0; margin-bottom: 0; font-size:17px; }
+.spinner {
+  display: inline-block;
+  width: 12px; height: 12px;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── INFO PAGE ───────────────────────────────────────────── */
+.info-page { display: none; width: 100%; max-width: 460px; padding: 0 16px 40px; }
+.info-page.active { display: block; }
+.ih2 { font-size:15px; color: var(--water); letter-spacing: 3px; margin: 16px 0 8px; padding-bottom: 6px; border-bottom: 1px solid var(--foam); font-family: 'Courier New', monospace; font-weight: 700; }
+.ip { font-size:17px; color: var(--text2); line-height: 1.7; margin-bottom: 8px; }
+.fbox {
+  background: var(--deep);
+  color: #C8E8F8;
+  border-radius: var(--rad-sm);
+  padding: 14px 16px;
+  font-size:16px;
+  font-family: 'Courier New', monospace;
+  margin: 8px 0;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+.ref-pill {
+  display: inline-block;
+  padding: 5px 12px;
+  background: var(--shallow);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size:16px;
+  color: var(--text2);
+  margin: 3px 3px 3px 0;
+}
+.disclaimer {
+  background: #FFFDF0;
+  border: 1.5px solid #C0A020;
+  border-radius: var(--rad);
+  padding: 16px;
+  font-size:16px;
+  color: #604000;
+  line-height: 1.7;
+}
+.footer {
+  margin-top: 32px;
+  font-size:14px;
+  color: var(--text3);
+  text-align: center;
+  letter-spacing: 3px;
+  font-family: 'Courier New', monospace;
+}
+
+/* ── EQUIPMENT CHECKBOXES ────────────────────────────────────── */
+.equip-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+.equip-check {
+  display:flex; align-items:center; gap:10px;
+  padding:12px 14px; background:var(--shallow);
+  border:2px solid var(--border); border-radius:var(--rad-sm);
+  cursor:pointer; transition:all .15s; font-size:15px; color:var(--text2);
+  font-weight:500;
+}
+.equip-check.active { border-color:var(--water); background:#fff; color:var(--deep); font-weight:700; }
+.equip-icon { font-size:20px; }
+#equip-options { display:none; margin-top:10px; }
+
+/* ── CHARTS ──────────────────────────────────────────────────── */
+.chart-wrap {
+  background:#fff; border:1px solid var(--border);
+  border-radius:var(--rad-sm); padding:12px 8px 6px;
+  margin-bottom:14px; overflow:hidden;
+}
+.chart-title {
+  font-size:11px; color:var(--text3); letter-spacing:2px;
+  font-family:'Courier New',monospace; margin-bottom:6px;
+  font-weight:700;
+}
+.chart-legend {
+  display:flex; flex-wrap:wrap; gap:8px;
+  margin-top:8px; padding-top:8px;
+  border-top:1px solid var(--foam);
+}
+.legend-item {
+  display:flex; align-items:center; gap:5px;
+  font-size:12px; color:var(--text2);
+}
+.legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+/* ── HISTORICAL WATER TEMP ───────────────────────────────────── */
+.hist-water {
+  background:var(--shallow); border-radius:var(--rad-sm);
+  padding:10px 14px; margin-top:8px;
+  border-left:3px solid var(--water2);
+  font-size:15px; color:var(--text2);
+}
+.hist-water strong { color:var(--water2); font-family:Georgia,serif; font-size:18px; }
+
+/* ── 2-DAY FORECAST ─────────────────────────────────────────── */
+.forecast-day {
+  margin-bottom:10px;
+}
+.forecast-day-label {
+  font-size:11px; color:var(--text3); letter-spacing:2px;
+  font-family:'Courier New',monospace; margin-bottom:6px;
+  font-weight:700;
+}
+.forecast-day-row {
+  display:flex; gap:6px; overflow-x:auto;
+  scrollbar-width:none; padding-bottom:2px;
+}
+.forecast-day-row::-webkit-scrollbar { display:none; }
+
+/* ── SUGGESTED TIME ─────────────────────────────────────────── */
+.suggested-time {
+  text-align:center; padding:16px;
+  background:var(--shallow); border-radius:var(--rad-sm);
+  border:1.5px solid var(--border); margin-bottom:14px;
+}
+.suggested-time-val {
+  font-size:48px; font-weight:900; font-family:Georgia,serif;
+  color:var(--deep); line-height:1;
+}
+.suggested-time-lbl {
+  font-size:12px; color:var(--text3); letter-spacing:2px;
+  font-family:'Courier New',monospace; margin-top:4px;
+}
+
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ─────────────────────────────────────────────── -->
+<div class="app-header">
+  <div class="header-inner">
+    <div class="eyebrow">OPEN WATER THERMAL INTELLIGENCE</div>
+    <div class="app-title">NAUTA</div>
+    <div class="app-tagline" id="h-sub">Open Water Thermal Intelligence</div>
+  </div>
+  <!-- Signature wave horizon -->
+  <div class="wave-bar">
+    <svg class="wave-svg" viewBox="0 0 800 28" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,14 C50,4 100,24 150,14 C200,4 250,24 300,14 C350,4 400,24 450,14 C500,4 550,24 600,14 C650,4 700,24 750,14 C800,4 850,24 900,14 L900,28 L0,28 Z" fill="#F7F4EF" opacity=".15"/>
+      <path d="M0,18 C60,8 120,28 180,18 C240,8 300,28 360,18 C420,8 480,28 540,18 C600,8 660,28 720,18 C780,8 840,28 900,18 L900,28 L0,28 Z" fill="#F7F4EF" opacity=".3"/>
+      <path d="M0,22 C40,16 80,28 120,22 C160,16 200,28 240,22 C280,16 320,28 360,22 C400,16 440,28 480,22 C520,16 560,28 600,22 C640,16 680,28 720,22 C760,16 800,28 840,22 L900,28 L0,28 Z" fill="#F7F4EF" opacity=".6"/>
+      <path d="M0,26 C30,22 60,28 90,26 C120,22 150,28 180,26 C210,22 240,28 270,26 C300,22 330,28 360,26 C390,22 420,28 450,26 C480,22 510,28 540,26 C570,22 600,28 630,26 C660,22 690,28 720,26 C750,22 780,28 810,26 L900,28 L0,28 Z" fill="#F7F4EF"/>
+    </svg>
+  </div>
+  <!-- Controls -->
+  <div class="hdr-controls">
+    <div id="auth-status">
+      <button class="hdr-btn" id="btn-login" style="font-size:12px">👤 Login</button>
+    </div>
+    <button class="hdr-btn" id="btn-lang">ES</button>
+    <button class="hdr-btn icon" id="btn-info">ℹ</button>
+  </div>
+
+  <!-- Auth Modal -->
+  <div class="auth-modal" id="auth-modal" style="display:none">
+    <div class="auth-box">
+      <div class="auth-title">NAUTA</div>
+      <div class="auth-sub" id="t-auth-sub">Iniciá sesión para coordinar grupos de nado. Los reportes de condiciones no requieren cuenta.</div>
+      <button class="btn-google" id="btn-google-login">
+        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.31z"/></svg>
+        Continuar con Google
+      </button>
+      <button class="btn btn-ghost" id="btn-close-auth" style="margin-top:8px;font-size:14px">Cancelar</button>
+    </div>
+  </div>
+  <!-- Lang menu -->
+  <div class="lang-menu" id="lang-menu">
+    <div class="lang-opt active" data-lang="es">Español <span class="lang-code">ES</span></div>
+    <div class="lang-opt" data-lang="en">English <span class="lang-code">EN</span></div>
+    <div class="lang-opt" data-lang="it">Italiano <span class="lang-code">IT</span></div>
+    <div class="lang-opt" data-lang="fr">Français <span class="lang-code">FR</span></div>
+    <div class="lang-opt" data-lang="pt">Português <span class="lang-code">PT</span></div>
+  </div>
+</div>
+
+<!-- ── MAIN APP ────────────────────────────────────────────── -->
+<div class="container" id="main-app">
+
+  <!-- STEP 1: LOCATION -->
+  <div id="step-location" class="step active">
+    <!-- GPS card - hidden until permission granted -->
+    <div class="card" id="gps-card" style="display:none">
+      <div class="card-title" id="t-gps-title">UBICACIÓN GPS</div>
+      <div style="font-size:20px;font-weight:700;color:var(--deep);margin-bottom:4px" id="gps-name">📍 Detectando...</div>
+      <div style="font-size:16px;color:var(--text3);margin-bottom:20px;font-family:'Courier New',monospace" id="gps-coords"></div>
+      <button class="btn btn-primary" id="btn-fetch-gps">Obtener condiciones actuales</button>
+      <div class="link-btn" id="link-search">→ Buscar otra ubicación</div>
+    </div>
+    <!-- Search card - default view -->
+    <div class="card" id="search-card">
+      <div class="card-title" id="t-search-title">BUSCAR UBICACIÓN</div>
+      <div style="font-size:17px;color:var(--text3);margin-bottom:12px" id="t-search-hint">Playas, ríos, lagos, ciudades — cualquier lugar geográfico.</div>
+      <input type="text" id="search-input" placeholder="ej: Playa Ramírez Montevideo..." autocomplete="off"/>
+      <button class="btn btn-primary" id="btn-search">Buscar</button>
+      <div id="search-results" class="search-box" style="display:none"></div>
+      <div id="loc-confirmed" class="alert alert-ok"></div>
+      <button class="btn btn-primary" id="btn-fetch-search" style="display:none;margin-top:8px">Obtener condiciones actuales</button>
+    </div>
+    <div id="err-location" class="alert alert-err"></div>
+  </div>
+
+  <!-- STEP 2: PARAMS -->
+  <div id="step-params" class="step">
+
+    <!-- Current conditions -->
+    <div class="card">
+      <div class="card-title" id="t-now">AHORA</div>
+      <div class="grid2" id="weather-grid"></div>
+      <div id="wave-info"></div>
+      <div class="loc-label" id="loc-label"></div>
+    </div>
+
+    <!-- Historical water temp -->
+    <div class="hist-water" id="hist-water-temp" style="display:none"></div>
+
+    <!-- Forecast today -->
+    <div class="card" id="forecast-card" style="display:none">
+      <div class="card-title" id="t-forecast">PRONÓSTICO HOY</div>
+      <div class="forecast-row" id="forecast-row"></div>
+    </div>
+
+    <!-- 2-day forecast -->
+    <div class="card" id="forecast-2day-card" style="display:none">
+      <div class="card-title" id="t-forecast-2day">PRÓXIMOS 2 DÍAS</div>
+      <div id="forecast-2day"></div>
+    </div>
+
+    <!-- 2-day forecast -->
+    <div class="card" id="forecast2-card" style="display:none">
+      <div class="card-title" id="t-forecast2">PRÓXIMOS 2 DÍAS</div>
+      <div id="forecast2-content"></div>
+    </div>
+
+    <!-- Beach status -->
+    <div class="card" id="beach-card" style="display:none">
+      <div class="card-title" id="t-beach-title">ESTADO DE PLAYAS</div>
+      <div id="beach-content"></div>
+      <div class="beach-updated" id="beach-updated"></div>
+    </div>
+
+    <!-- Strava Heatmap link -->
+    <div id="strava-link-container" style="display:none;padding:4px 0 8px 0"></div>
+
+    <!-- Community reports card -->
+    <div class="card" id="report-card" style="display:none">
+      <div class="card-title" id="t-report-title">REPORTAR CONDICIONES</div>
+      <!-- Step 1: Swim question -->
+      <div class="swim-question" id="report-step-swim">
+        <div class="swim-q-label" id="t-swam-q">¿Nadaste hoy en esta playa?</div>
+        <div class="swim-pills">
+          <button class="swim-pill yes" id="swam-yes">🏊 Sí, nadé</button>
+          <button class="swim-pill no"  id="swam-no">👀 Solo observé</button>
+        </div>
+      </div>
+      <!-- Step 2: Category selector -->
+      <div id="report-step-cats" style="display:none">
+        <div style="font-size:14px;color:var(--text2);margin-bottom:12px" id="t-report-what">¿Qué querés reportar?</div>
+        <div class="report-categories" id="report-cats"></div>
+        <div id="report-value-area"></div>
+        <button class="btn btn-primary" id="btn-submit-report" style="margin-top:4px" id="t-submit-report">Enviar reporte</button>
+        <div id="report-feedback" style="display:none;padding:12px;background:#F0FFF8;border:1px solid var(--ok);border-radius:8px;font-size:14px;color:var(--ok);margin-top:10px;text-align:center">✅ ¡Reporte enviado! Gracias.</div>
+      </div>
+    </div>
+
+    <!-- Physical profile -->
+    <div class="card">
+      <div class="card-title" id="t-profile-title">PERFIL FÍSICO</div>
+      <div id="profile-bar" class="profile-bar" style="display:none">
+        <span id="profile-bar-text"></span>
+        <span style="color:var(--water);cursor:pointer;font-size:16px;font-weight:600" onclick="editProfile()" id="t-edit">Editar</span>
+      </div>
+      <div id="profile-form">
+        <div class="grid2">
+          <div><div class="lbl" id="t-height">ALTURA (cm)</div><input type="number" id="p-altura" placeholder="175" style="margin-bottom:0"></div>
+          <div><div class="lbl" id="t-weight">PESO (kg)</div><input type="number" id="p-peso" placeholder="70" style="margin-bottom:0"></div>
+        </div>
+        <div class="grid2" style="margin-top:10px">
+          <div><div class="lbl" id="t-age">EDAD</div><input type="number" id="p-edad" placeholder="35" style="margin-bottom:0"></div>
+          <div><div class="lbl" id="t-fat">% GRASA <span class="lbl-opt" id="t-optional">OPCIONAL</span></div><input type="number" id="p-grasa" placeholder="—" style="margin-bottom:0"></div>
+        </div>
+        <div class="lbl" id="t-sex" style="margin-top:14px">SEXO</div>
+        <div class="pills" id="sex-group">
+          <button class="pill active" data-value="1" id="t-male">Masculino</button>
+          <button class="pill" data-value="0" id="t-female">Femenino</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Session params -->
+    <div class="card">
+      <div class="card-title" id="t-session-title">PARÁMETROS DE SESIÓN</div>
+      <div class="lbl" id="t-speed-lbl">VELOCIDAD (min/100m)</div>
+      <div class="speed-grid" id="speed-group">
+        <button class="speed-pill" data-secs="80"><div class="sp-pace">&lt; 1:30</div><div class="sp-ms">≥ 1.25 m/s</div></button>
+        <button class="speed-pill" data-secs="97"><div class="sp-pace">1:30 – 1:45</div><div class="sp-ms">~1.05 m/s</div></button>
+        <button class="speed-pill" data-secs="112"><div class="sp-pace">1:45 – 2:00</div><div class="sp-ms">~0.91 m/s</div></button>
+        <button class="speed-pill active" data-secs="127"><div class="sp-pace">2:00 – 2:15</div><div class="sp-ms">~0.80 m/s</div></button>
+        <button class="speed-pill" data-secs="142"><div class="sp-pace">2:15 – 2:30</div><div class="sp-ms">~0.71 m/s</div></button>
+        <button class="speed-pill" data-secs="157"><div class="sp-pace">2:30 – 2:45</div><div class="sp-ms">~0.64 m/s</div></button>
+        <button class="speed-pill" data-secs="172"><div class="sp-pace">2:45 – 3:00</div><div class="sp-ms">~0.58 m/s</div></button>
+        <button class="speed-pill" data-secs="0" style="grid-column:span 2;border-color:var(--water2);background:var(--shallow)"><div class="sp-pace" id="t-immersion-label">🧘 Plancha / Inmersión</div><div class="sp-ms" id="t-immersion-sub">Sin nado · solo BMR</div></button>
+      </div>
+      <div class="lbl" id="t-suit-lbl" style="margin-top:16px">PROTECCIÓN</div>
+      <div class="pills" id="suit-group">
+        <button class="pill active" data-value="none" id="t-no-suit">Sin traje</button>
+        <button class="pill" data-value="standard" id="t-std-suit">Traje estándar</button>
+        <button class="pill" data-value="thermal" id="t-thermal-suit">Traje térmico</button>
+      </div>
+      <div id="equipment-extras" style="display:none;margin-top:12px;padding:12px 14px;background:var(--shallow);border-radius:var(--rad-sm);border:1px solid var(--foam)">
+        <div class="lbl" id="t-extras-lbl" style="margin:0 0 10px">EQUIPAMIENTO ADICIONAL</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <label style="display:flex;align-items:center;gap:10px;font-size:15px;color:var(--text2);cursor:pointer">
+            <input type="checkbox" id="eq-gloves" style="width:18px;height:18px;accent-color:var(--water)">
+            <span id="t-eq-gloves">🧤 Guantes de neopreno</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;font-size:15px;color:var(--text2);cursor:pointer">
+            <input type="checkbox" id="eq-hood" style="width:18px;height:18px;accent-color:var(--water)">
+            <span id="t-eq-hood">🧢 Gorra de neopreno</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;font-size:15px;color:var(--text2);cursor:pointer">
+            <input type="checkbox" id="eq-booties" style="width:18px;height:18px;accent-color:var(--water)">
+            <span id="t-eq-booties">🦶 Escarpines</span>
+          </label>
+        </div>
+      </div>
+      <!-- Equipment options — shown when thermal selected -->
+      <div id="equip-options">
+        <div class="lbl" id="t-equip-lbl" style="margin-top:12px">EQUIPAMIENTO ADICIONAL</div>
+        <div class="equip-grid">
+          <div class="equip-check" data-equip="gloves" onclick="toggleEquip(this)">
+            <span class="equip-icon">🧤</span><span id="t-gloves">Guantes</span>
+          </div>
+          <div class="equip-check" data-equip="hood" onclick="toggleEquip(this)">
+            <span class="equip-icon">🪖</span><span id="t-hood">Gorra neopreno</span>
+          </div>
+          <div class="equip-check" data-equip="booties" onclick="toggleEquip(this)">
+            <span class="equip-icon">🦶</span><span id="t-booties">Escarpines</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lbl" id="t-dir-lbl" style="margin-top:16px">DIRECCIÓN DE NADO <span class="lbl-opt" id="t-optional2">OPCIONAL</span></div>
+      <div style="font-size:16px;color:var(--text3);margin-bottom:10px" id="t-dir-hint">Si no la ingresás, se asume 45° respecto al viento.</div>
+      <div class="compass" id="dir-group">
+        <button class="dir-btn" data-deg="315">NO</button>
+        <button class="dir-btn" data-deg="0">N</button>
+        <button class="dir-btn" data-deg="45">NE</button>
+        <button class="dir-btn" data-deg="270">O</button>
+        <button class="dir-btn center">🧭</button>
+        <button class="dir-btn" data-deg="90">E</button>
+        <button class="dir-btn" data-deg="225">SO</button>
+        <button class="dir-btn" data-deg="180">S</button>
+        <button class="dir-btn" data-deg="135">SE</button>
+      </div>
+      <div class="wind-info" id="wind-info" style="display:none">
+        <span class="wind-arrow" id="wind-arrow">↑</span>
+        <span id="wind-info-text" style="font-size:16px;color:var(--text2)"></span>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="btn-calculate">Calcular balance térmico</button>
+    <div class="link-btn" id="link-back-loc">← Cambiar ubicación</div>
+  </div>
+
+  <!-- STEP 3: RESULT -->
+  <div id="step-result" class="step">
+
+    <!-- Initial balance summary -->
+    <div class="net-block" id="net-block">
+      <div class="net-label" id="net-lbl-text">BALANCE NETO</div>
+      <div class="net-value" id="net-value">—</div>
+      <div class="net-unit">Watts</div>
+      <div class="net-badge" id="net-badge">—</div>
+    </div>
+
+    <!-- Breakdown -->
+    <div class="card">
+      <div class="card-title" id="t-breakdown">DESGLOSE TÉRMICO</div>
+      <div id="balance-rows"></div>
+    </div>
+
+    <!-- Suggested time -->
+    <div class="card" id="suggested-card" style="display:none">
+      <div class="card-title" id="t-suggested-title">TIEMPO SUGERIDO EN AGUA</div>
+      <div class="suggested-time">
+        <div class="suggested-time-val" id="suggested-val">—</div>
+        <div class="suggested-time-lbl" id="t-suggested-lbl">MINUTOS HASTA 35°C</div>
+      </div>
+      <div style="font-size:14px;color:var(--text3);text-align:center" id="suggested-note"></div>
+    </div>
+
+    <!-- Session simulation — always 60 min -->
+    <div class="card">
+      <div class="card-title" id="t-sim-title">SIMULACIÓN 60 MINUTOS</div>
+      <div id="sim-result">
+        <!-- Chart 1: Temperatures -->
+        <div class="chart-wrap" id="chart-temp-wrap" style="display:none">
+          <div class="chart-title" id="t-chart-temp">TEMPERATURAS — MODELO DIFERENCIAL</div>
+          <svg id="chart-temp" width="100%" viewBox="0 0 340 130" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="chart-legend" id="legend-temp"></div>
+        </div>
+        <!-- Chart 2: Heat fluxes -->
+        <div class="chart-wrap" id="chart-flux-wrap" style="display:none">
+          <div class="chart-title" id="t-chart-flux">FLUJOS DE CALOR [W]</div>
+          <svg id="chart-flux" width="100%" viewBox="0 0 340 130" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="chart-legend" id="legend-flux"></div>
+        </div>
+        <!-- Recovery box -->
+        <div id="recovery-box"></div>
+        <!-- Disclaimer -->
+        <div id="ode-disclaimer-box"></div>
+      </div>
+    </div>
+
+    <button class="btn btn-ghost" id="btn-recalc">← Recalcular sesión</button>
+    <div class="link-btn" id="link-new-loc">→ Nueva ubicación</div>
+  </div>
+</div>
+
+<!-- ── INFO PAGE ───────────────────────────────────────────── -->
+<div class="info-page" id="info-page">
+  <div class="card" style="margin-top:8px">
+    <div class="card-title">NAUTA</div>
+    <p class="ip" id="t-about-desc">Open Water Thermal Intelligence — calcula el balance térmico real de un nadador en aguas abiertas, combinando física de transferencia de calor, fisiología del ejercicio en frío y astronomía solar.</p>
+    <p class="ip">Desarrollada por <strong style="color:var(--deep)">Martin Thomas</strong> × <strong style="color:var(--water)">Claude (Anthropic)</strong></p>
+    <a href="https://github.com/martin1homas/Impacto-termico" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:var(--shallow);border:1px solid var(--border);border-radius:var(--rad-sm);font-size:17px;color:var(--water);text-decoration:none;margin-top:8px">⚙ GitHub: martin1homas/Impacto-termico</a>
+  </div>
+  <div class="card">
+    <div class="card-title">EL MODELO FÍSICO</div>
+    <div class="ih2">1. ÁREA SUPERFICIAL — Du Bois (1916)</div>
+    <div class="fbox">A = 0.007184 × h^0.725 × m^0.425  [m²]
+A_sub = 0.82A  ·  A_aire = 0.10A  ·  A_sol = 0.14A</div>
+    <div class="ih2">2. COMPOSICIÓN CORPORAL — Deurenberg (1991)</div>
+    <div class="fbox">BF% = 1.20×BMI + 0.23×edad − 10.8×sexo − 5.4</div>
+    <div class="ih2">3. PRODUCCIÓN METABÓLICA</div>
+    <div class="fbox">C_sw(v) = 300 + 180v²  [J/m]
+Q_met   = C_sw × v × f_frío + 27W (NST)
+f_frío  = 1 − max(0, (24 − T_agua) × 0.012)</div>
+    <div class="ih2">4. PÉRDIDA AL AGUA</div>
+    <div class="fbox">h_w     = (120 + 200v) / f_grasa
+h_w_eff = 1/(1/h_w + R_traje)
+T_piel  = solved from energy balance
+Q_agua  = h_w_eff × (T_piel − T_agua) × A_sub</div>
+    <div class="ih2">5. PÉRDIDA AL AIRE + VIENTO — Mitchell (1974)</div>
+    <div class="fbox">f_dir = |cos θ|  (ángulo viento vs dirección nado)
+h_air = max(3.5, 8.3 × (v_ms × f_dir)^0.6)
+Q_aire = h_air × (T_piel − T_aire) × A_aire</div>
+    <div class="ih2">6. GANANCIA SOLAR — Meeus (1998)</div>
+    <div class="fbox">sinα calculado por coordenadas, fecha y hora
+I = 1361 × 0.7^(1/sinα) × sinα  [W/m²]
+Q_solar = I × A_sol × 0.70</div>
+    <div class="ih2">7. BALANCE NETO</div>
+    <div class="fbox">Q_neta = Q_met − Q_agua − Q_aire + Q_solar  [W]
+T_núcleo(t) = 37 − |Q_neta|×t×60 / (m_ef×3470)</div>
+  </div>
+  <div class="card">
+    <div class="card-title">FUENTES DE DATOS</div>
+    <p class="ip">Datos meteorológicos y oceánicos de fuentes abiertas sin costo:</p>
+    <div class="ref-pill">🌡 Open-Meteo Forecast API</div>
+    <div class="ref-pill">🌊 Open-Meteo Marine API</div>
+    <div class="ref-pill">📍 Open-Meteo Geocoding</div>
+    <div class="ref-pill">🏖 Montevideo API — Estado de playas</div>
+  </div>
+  <div class="card">
+    <div class="card-title">REFERENCIAS</div>
+    <div class="ref-pill">Du Bois & Du Bois (1916)</div>
+    <div class="ref-pill">Deurenberg et al. (1991)</div>
+    <div class="ref-pill">Pendergast et al. (1977)</div>
+    <div class="ref-pill">Mitchell (1974)</div>
+    <div class="ref-pill">Meeus (1998)</div>
+    <div class="ref-pill">Tipton et al. (2017)</div>
+    <div class="ref-pill">Castellani & Young (2016)</div>
+  </div>
+  <div class="card">
+    <div class="card-title">AVISO LEGAL</div>
+    <div class="disclaimer">
+      <strong>DISCLAIMER</strong> — NAUTA es una herramienta educativa. <strong>No constituye asesoramiento médico ni de seguridad acuática.</strong> La natación en aguas abiertas en agua fría conlleva riesgos reales. Nunca nade solo. Los autores no asumen responsabilidad por daños derivados del uso de esta herramienta. <em>This disclaimer applies internationally.</em>
+    </div>
+  </div>
+  <button class="btn btn-ghost" id="btn-close-info" style="margin-top:8px">← Volver</button>
+  <div class="footer" style="margin-top:24px">NAUTA · MARTIN THOMAS × CLAUDE (ANTHROPIC)</div>
+</div>
+
+<script>
+'use strict';
+
+// ── HELPERS ───────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const hide = id => { const e = $(id); if (e) e.style.display = 'none'; };
+const showErr = (id, msg) => { const e = $(id); e.innerHTML = '⚠️ ' + msg; e.style.display = 'block'; };
+const setBtn = (id, dis, html) => { const b = $(id); b.disabled = dis; b.innerHTML = html; };
+
+function safeGet(k) {
+  try { return JSON.parse(localStorage.getItem(k)); } catch { return null; }
+}
+function safeSet(k, v) {
+  try { localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v)); } catch {}
+}
+
+function wLabel(deg) {
+  const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSO','SO','OSO','O','ONO','NO','NNO'];
+  return dirs[Math.round((deg ?? 0) / 22.5) % 16];
+}
+function wArrow(deg) {
+  const flow = (deg ?? 0) % 360;
+  return ['↓','↙','←','↖','↑','↗','→','↘'][Math.round(flow / 45) % 8];
+}
+function dirLabel(deg) {
+  return { 0:'N',45:'NE',90:'E',135:'SE',180:'S',225:'SO',270:'O',315:'NO' }[deg] || deg + '°';
+}
+function suit2label(s) {
+  return { none: t('noSuit'), standard: t('stdSuit'), thermal: t('thermalSuit') }[s] || s;
+}
+function wDesc(c) {
+  if (c === 0)  return t('wClear');
+  if (c <= 3)   return t('wPartly');
+  if (c <= 49)  return t('wFog');
+  if (c <= 67)  return t('wRain');
+  if (c <= 77)  return t('wSnow');
+  if (c <= 82)  return t('wShowers');
+  return t('wStorm');
+}
+function wIcon(c) {
+  if (c === 0)  return '☀️';
+  if (c <= 3)   return '🌤';
+  if (c <= 49)  return '🌫';
+  if (c <= 67)  return '🌧';
+  if (c <= 77)  return '🌨';
+  if (c <= 82)  return '🌦';
+  return '⛈';
+}
+function fmtDate(iso) {
+  try { return new Date(iso).toLocaleDateString([], { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }); }
+  catch { return iso; }
+}
+
+// ── CONSTANTS ─────────────────────────────────────────────────────
+const METEO   = 'https://api.open-meteo.com/v1';
+const MARINE  = 'https://marine-api.open-meteo.com/v1';
+const GEO     = 'https://geocoding-api.open-meteo.com/v1';
+const NOM     = 'https://nominatim.openstreetmap.org';
+const BEACHES = 'https://martin1homas.github.io/Impacto-termico/beaches.json';
+// ── EQUIPMENT CONFIG ─────────────────────────────────────────────
+// R values calibrated from experimental data (Martin Thomas, Playa Ramírez, Jul 2026)
+// Orca Thermal: homóplato measurement at 10°C water, gradient +10°C → R=0.074 derived
+// from d=3mm Yamamoto neoprene k=0.050 W/m°C + Thermal X lining
+const SUIT_R = {
+  none:     0,
+  standard: 0.022,  // estimated literature 3mm standard neoprene
+  thermal:  0.074,  // calibrated: Orca Thermal (Yamamoto 39, 3mm torso + Thermal X lining)
+};
+
+// Equipment areas and additional R
+// Area fractions of Du Bois total surface area
+const EQUIP = {
+  gloves:  { A_fraction: 0.05, R_add: 0.030 },  // hands ~5% BSA
+  hood:    { A_fraction: 0.09, R_add: 0.030 },  // head ~9% BSA
+  booties: { A_fraction: 0.035, R_add: 0.025 }, // feet ~3.5% BSA
+};
+
+// State for equipment selection
+let S_equip = { gloves: false, hood: false, booties: false };
+
+function toggleEquip(el) {
+  const key = el.dataset.equip;
+  S_equip[key] = !S_equip[key];
+  el.classList.toggle('active', S_equip[key]);
+}
+
+// Get effective areas and R for current equipment
+function getEquipConfig(suit, A_total) {
+  // Base exposed area (without any equipment)
+  // Covered by suit (if thermal/standard): ~85% of body
+  // Exposed: face (~4%), hands (~5%), feet (~3.5%), head (~9% — under suit hood?)
+  let A_covered   = suit !== 'none' ? 0.85 * A_total : 0;
+  let A_face      = 0.04 * A_total;   // always exposed (no face gear)
+  let A_hands     = 0.05 * A_total;
+  let A_head      = 0.09 * A_total;
+  let A_feet      = 0.035 * A_total;
+  let R_head      = 0.002;  // silicone cap only (baseline)
+
+  if (suit === 'none') {
+    return { A_covered: 0, A_exposed: A_total, R_suit: 0, R_head, A_head };
+  }
+
+  const R_suit = SUIT_R[suit];
+
+  if (S_equip.gloves)  { A_covered += A_hands; A_hands = 0; }
+  if (S_equip.hood)    { A_covered += A_head;  R_head = R_suit; A_head = 0; }
+  if (S_equip.booties) { A_covered += A_feet;  A_feet = 0; }
+
+  const A_exposed = A_face + A_hands + A_feet;
+
+  return { A_covered, A_exposed, A_face, A_hands, A_feet, A_head, R_suit, R_head };
+}
+
+// ── I18N ─────────────────────────────────────────────────────────
+const T = {
+  es: {
+    gpsTitle:'UBICACIÓN GPS', gpsName:'Tu ubicación GPS',stravaHeatmap:'Ver recorridos de nadadores en Strava →',simExplain:'NAUTA calcula cómo evoluciona la temperatura de un cuerpo con las características seleccionadas, para las condiciones meteorológicas del día de hoy en la ubicación seleccionada. Las líneas de referencia indican cuándo podría comenzar el enfriamiento notable (36°C) o la hipotermia leve (35°C). Es una estimación teórica: la respuesta real depende de factores individuales. Usalo para comparar condiciones entre días, no como guía de cuánto tiempo nadar.',odeDisclaimer:'Este modelo es una estimación teórica. Tu respuesta real depende de factores individuales que no podemos medir. Lo que el sistema pretende es dar una cuantificación aproximada del impacto térmico debido a factores varios.',immersionLabel:'🧘 Plancha / Inmersión',immersionSub:'Sin nado · solo BMR',extrasLbl:'EQUIPAMIENTO ADICIONAL',eqGloves:'🧤 Guantes de neopreno',eqHood:'🧢 Gorra de neopreno',eqBooties:'🦶 Escarpines',forecast2:'PRÓXIMOS 2 DÍAS',histWaterTemp:'Hace un año en este lugar el agua estaba a',suggestedTime:'TIEMPO SUGERIDO EN EL AGUA',untilLimit:'hasta llegar a 35°C',noLimit:'Sin límite estimado para esta sesión',chartTemp:'TEMPERATURA CORPORAL ESTIMADA',chartFlows:'FLUJOS DE CALOR',qMet:'Producción metabólica',qWater:'Pérdida al agua (traje)',qAir:'Pérdida al aire',qExposed:'Pérdida zonas expuestas',qSolar:'Ganancia solar',qNet:'Balance neto',tCore:'T° núcleo',tSkinC:'T° piel cubierta',tSkinE:'T° piel expuesta',histWaterLabel:'Hace un año el agua estaba a',suggestedWarn:'Tiempo muy limitado — extrema precaución',suggestedCaution:'Tiempo moderado — salí antes de sentir frío',suggestedOk:'Tiempo disponible con este equipamiento',suggestedNoLimit:'Sin límite térmico para esta sesión',t35Label:'MINUTOS HASTA 35°C',forecast2day:'PRÓXIMOS 2 DÍAS',timeNow:'ahora mismo',timeMin:'hace {n} min',timeHour:'hace {n}h',msgLabel:'💬 Mensaje para otros nadadores',msgPlaceholder:'ej: Corriente fuerte en zona norte hoy...',reportTitle:'REPORTAR CONDICIONES',swamQ:'¿Nadaste hoy en esta playa?',swamYes:'🏊 Sí, nadé',swamNo:'👀 Solo observé',reportWhat:'¿Qué querés reportar?',submitReport:'Enviar reporte',reportSending:'Enviando...',reportSent:'✅ ¡Reporte enviado! Gracias.',swamAlert:'¿Nadaste hoy?',swimmersToday1:'nadador hoy',swimmersToday:'nadadores hoy',noSwims:'Sin nados reportados hoy',tempReported:'Temp. reportada:',lastReport:'Último reporte:',catTemperature:'Temperatura',catClarity:'Claridad',catColor:'Color',catSalinity:'Salinidad',catTide:'Marea',catJellyfish:'Aguavivas',catCyano:'Cianobacterias',catSmell:'Olor anormal',catPollution:'Contaminación',catWaves:'Oleaje',clarityLabels:'Cristalina,Clara,Turbia,Muy turbia,Opaca',salinityLabels:'Dulce,Normal,Muy salada',tideLabels:'Muy baja,Baja,Normal,Alta,Muy alta',jellyfishLabels:'Ninguna,Pocas,Muchas,Masivas',wavesLabels:'Calmo,Leve,Moderado,Agitado,Muy agitado',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Azul',colorGreen:'🟢 Verde',colorBrown:'🟤 Marrón',colorGrey:'⚪ Grisácea',colorYellow:'🟡 Amarilla',alertJellyfish:'🪼 Aguavivas',alertCyano:'🟢 Cianobacterias',alertSmell:'👃 Olor anormal',alertPollution:'⚠️ Contaminación',authSub:'Iniciá sesión para coordinar grupos de nado. Los reportes no requieren cuenta.',authCancel:'Cancelar',authGoogle:'Continuar con Google', gpsCoords:'Usando coordenadas GPS',
+    fetchWeather:'Obtener condiciones actuales', searchOther:'→ Buscar otra ubicación',
+    searchTitle:'BUSCAR UBICACIÓN', searchHint:'Playas, ríos, lagos, ciudades — cualquier lugar geográfico.',
+    searchPH:'ej: Playa Ramírez Montevideo...', searchBtn:'Buscar', searching:'Buscando...',
+    noResults:'Sin resultados — intentá ser más específico', fetchingData:'Obteniendo datos...',
+    now:'AHORA', forecast:'PRONÓSTICO HOY', forecastNow:'AHORA',
+    profileTitle:'PERFIL FÍSICO', edit:'Editar',
+    height:'ALTURA (cm)', weight:'PESO (kg)', age:'EDAD', fat:'% GRASA', optional:'OPCIONAL', sex:'SEXO',
+    male:'Masculino', female:'Femenino',
+    sessionTitle:'PARÁMETROS DE SESIÓN', speedLbl:'VELOCIDAD (min/100m)',
+    suitLbl:'PROTECCIÓN', noSuit:'Sin traje', stdSuit:'Traje estándar', thermalSuit:'Traje térmico',
+    dirLbl:'DIRECCIÓN DE NADO', dirHint:'Si no la ingresás, se asume 45° respecto al viento.',
+    calcBtn:'Calcular balance térmico', changeLocation:'← Cambiar ubicación',
+    netBalance:'BALANCE NETO', watts:'Watts',
+    stableCore:'NÚCLEO ESTABLE', equilibrium:'EQUILIBRIO',
+    mildCooling:'ENFRIAMIENTO LEVE', notableCooling:'ENFRIAMIENTO NOTABLE', severeCooling:'ENFRIAMIENTO SEVERO',
+    breakdown:'DESGLOSE TÉRMICO', thresholds:'TIEMPO HASTA UMBRALES',
+    mildHypo:'Hipotermia leve (35°C)', modHypo:'Hipotermia moderada (33°C)',
+    simTitle:'SIMULACIÓN 60 MINUTOS', simHint:'¿Cuántos minutos planificás nadar?', simBtn:'Simular',
+    recalc:'← Recalcular sesión', newLoc:'→ Nueva ubicación',
+    metabolic:'Producción metabólica', waterLoss:'Pérdida al agua',
+    airLoss:'Pérdida al aire + viento', solarGain:'Ganancia solar', netLbl:'BALANCE NETO',
+    noDeficit:'Sin déficit térmico', noDeficitD:'Balance positivo — núcleo estable.',
+    fastRec:'🟢 Recuperación rápida', fastRecD:'10–15 min con ropa seca y bebida tibia.',
+    modRec:'🟡 Recuperación moderada', modRecD:'20–40 min: ropa seca, bebida caliente, calor activo.',
+    longRec:'🟠 Recuperación larga', longRecD:'45–90 min con calor activo. Evitá la re-exposición al frío.',
+    danger:'🔴 Zona de riesgo', dangerD:'Más de 90 min de recuperación. Consultá asistencia médica.',
+    coreTemp:'T° NÚCLEO EST.', accumDef:'DÉFICIT ACUM.',
+    waterT:'TEMP. AGUA', airT:'TEMP. AIRE', wind:'VIENTO', sky:'CIELO', dir:'DIRECCIÓN',
+    beachTitle:'ESTADO DE PLAYAS', beachOpen:'HABILITADO', beachCaution:'PRECAUCIÓN',
+    beachClosed:'NO HABILITADO', beachHealth:'ALERTA SANITARIA', noHealthAlert:'✅ Sin alertas sanitarias',
+    beachUpdated:'Actualizado:', stationsTitle:'CASILLAS DE GUARDAVIDAS',nearestBeaches:'PLAYAS CERCANAS',seeAllBeaches:'Ver todas las playas', validUntil:'Válido hasta:',
+    noApiDept:'Estado de playas de', noApiDept2:'— consultá el sitio oficial:',
+    assumedDir:'dirección no ingresada, asumiendo 45°', profileAlert:'Ingresá altura, peso y edad.',
+    aboutDesc:'Open Water Thermal Intelligence — calcula el balance térmico real de un nadador en aguas abiertas.',
+    backToApp:'← Volver',
+    wClear:'☀️ Despejado', wPartly:'🌤 Parcial', wFog:'🌫 Neblina', wRain:'🌧 Lluvia',
+    wSnow:'🌨 Nieve', wShowers:'🌦 Chubascos', wStorm:'⛈ Tormenta',
+    waveCond:'OLEAJE', waveH:'ALTURA', wavePer:'PERÍODO', waveCurr:'CORRIENTE',
+    swellH:'Fondo', waveCalm:'Calma', waveLight:'Leve', waveMod:'Moderado',
+    waveRough:'Agitado', waveVery:'Muy agitado',
+    odeDisclaimer:'Modelo térmico teórico basado en física y fisiología. Los valores calculados son estimaciones y pueden diferir significativamente de la temperatura real del núcleo. No sustituye la percepción personal del frío ni el juicio del nadador. Nunca nades solo.',
+    exitRecTitle:'RECOMENDACIONES DE SALIDA',
+    exitRecBody:'La literatura científica indica salir del agua antes de experimentar estos síntomas:',
+    exitCue1:'Calambres o pérdida de coordinación en brazos/piernas',
+    exitCue2:'Dificultad para pensar con claridad o desorientación',
+    exitCue3:'Tiriteo intenso que no podés controlar',
+    exitCue4:'Sensación de adormecimiento en manos o pies',
+    exitSign1:'Agua ≤10°C — alta demanda cardiovascular',
+    exitSign2:'Hipotermia leve estimada en',
+    exitSign3:'Agua templada (16°C) por más de 20 min — la fatiga acumulada también enfría',exitRecSource:'Basado en estudios de fisiología de natación en aguas frías.',
+  },
+  en: {
+    gpsTitle:'GPS LOCATION', gpsName:'Your GPS location',stravaHeatmap:'View swimmer routes on Strava →',simExplain:'NAUTA calculates how the temperature of a body with the selected characteristics evolves, for today\'s weather conditions at the selected location. Reference lines show when notable cooling (36°C) or mild hypothermia (35°C) might begin. This is a theoretical estimate: the real response depends on individual factors. Use it to compare conditions day to day, not as a guide for how long to swim.',odeDisclaimer:'This model is a theoretical estimate. Your real response depends on individual factors we cannot measure. The purpose of this system is to provide an approximate quantification of thermal impact due to various factors.',immersionLabel:'🧘 Float / Immersion',immersionSub:'No swimming · BMR only',extrasLbl:'ADDITIONAL EQUIPMENT',eqGloves:'🧤 Neoprene gloves',eqHood:'🧢 Neoprene cap',eqBooties:'🦶 Booties',forecast2:'NEXT 2 DAYS',histWaterTemp:'One year ago water temperature here was',suggestedTime:'SUGGESTED TIME IN WATER',untilLimit:'until reaching 35°C',noLimit:'No estimated limit for this session',chartTemp:'ESTIMATED BODY TEMPERATURE',chartFlows:'HEAT FLOWS',qMet:'Metabolic production',qWater:'Water heat loss (wetsuit)',qAir:'Air heat loss',qExposed:'Exposed zones heat loss',qSolar:'Solar gain',qNet:'Net balance',tCore:'Core temp',tSkinC:'Covered skin temp',tSkinE:'Exposed skin temp',histWaterLabel:'One year ago the water was',suggestedWarn:'Very limited time — extreme caution',suggestedCaution:'Moderate time — exit before feeling cold',suggestedOk:'Time available with this equipment',suggestedNoLimit:'No thermal limit for this session',t35Label:'MINUTES TO 35°C',forecast2day:'NEXT 2 DAYS',timeNow:'just now',timeMin:'{n} min ago',timeHour:'{n}h ago',msgLabel:'💬 Message for other swimmers',msgPlaceholder:'e.g.: Strong current in north area today...',reportTitle:'REPORT CONDITIONS',swamQ:'Did you swim here today?',swamYes:'🏊 Yes, I swam',swamNo:'👀 Just observed',reportWhat:'What do you want to report?',submitReport:'Submit report',reportSending:'Sending...',reportSent:'✅ Report submitted! Thank you.',swamAlert:'Did you swim today?',swimmersToday1:'swimmer today',swimmersToday:'swimmers today',noSwims:'No swims reported today',tempReported:'Reported temp:',lastReport:'Last report:',catTemperature:'Temperature',catClarity:'Clarity',catColor:'Color',catSalinity:'Salinity',catTide:'Tide',catJellyfish:'Jellyfish',catCyano:'Cyanobacteria',catSmell:'Unusual smell',catPollution:'Pollution',catWaves:'Waves',clarityLabels:'Crystal clear,Clear,Murky,Very murky,Opaque',salinityLabels:'Fresh,Normal,Very salty',tideLabels:'Very low,Low,Normal,High,Very high',jellyfishLabels:'None,Few,Many,Massive',wavesLabels:'Calm,Light,Moderate,Rough,Very rough',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Blue',colorGreen:'🟢 Green',colorBrown:'🟤 Brown',colorGrey:'⚪ Grey',colorYellow:'🟡 Yellow',alertJellyfish:'🪼 Jellyfish',alertCyano:'🟢 Cyanobacteria',alertSmell:'👃 Unusual smell',alertPollution:'⚠️ Pollution',authSub:'Sign in to coordinate swim groups. Reports do not require an account.',authCancel:'Cancel',authGoogle:'Continue with Google', gpsCoords:'Using GPS coordinates',
+    fetchWeather:'Get current conditions', searchOther:'→ Search another location',
+    searchTitle:'SEARCH LOCATION', searchHint:'Beaches, rivers, lakes, cities — any geographic location.',
+    searchPH:'e.g.: Brighton Beach, Dover...', searchBtn:'Search', searching:'Searching...',
+    noResults:'No results — try being more specific', fetchingData:'Getting data...',
+    now:'NOW', forecast:"TODAY'S FORECAST", forecastNow:'NOW',
+    profileTitle:'PHYSICAL PROFILE', edit:'Edit',
+    height:'HEIGHT (cm)', weight:'WEIGHT (kg)', age:'AGE', fat:'% BODY FAT', optional:'OPTIONAL', sex:'SEX',
+    male:'Male', female:'Female',
+    sessionTitle:'SESSION PARAMETERS', speedLbl:'SPEED (min/100m)',
+    suitLbl:'PROTECTION', noSuit:'No wetsuit', stdSuit:'Standard wetsuit', thermalSuit:'Thermal wetsuit',
+    dirLbl:'SWIM DIRECTION', dirHint:'If not entered, 45° relative to wind is assumed.',
+    calcBtn:'Calculate thermal balance', changeLocation:'← Change location',
+    netBalance:'NET BALANCE', watts:'Watts',
+    stableCore:'STABLE CORE', equilibrium:'EQUILIBRIUM',
+    mildCooling:'MILD COOLING', notableCooling:'NOTABLE COOLING', severeCooling:'SEVERE COOLING',
+    breakdown:'THERMAL BREAKDOWN', thresholds:'TIME TO THRESHOLDS',
+    mildHypo:'Mild hypothermia (35°C)', modHypo:'Moderate hypothermia (33°C)',
+    simTitle:'60-MINUTE SIMULATION', simHint:'How many minutes are you planning to swim?', simBtn:'Simulate',
+    recalc:'← Recalculate session', newLoc:'→ New location',
+    metabolic:'Metabolic production', waterLoss:'Water heat loss',
+    airLoss:'Air + wind heat loss', solarGain:'Solar gain', netLbl:'NET BALANCE',
+    noDeficit:'No thermal deficit', noDeficitD:'Positive balance — core stable.',
+    fastRec:'🟢 Fast recovery', fastRecD:'10–15 min with dry clothes and warm drink.',
+    modRec:'🟡 Moderate recovery', modRecD:'20–40 min: dry clothes, hot drink, warm environment.',
+    longRec:'🟠 Long recovery', longRecD:'45–90 min with active heat. Avoid re-exposure to cold.',
+    danger:'🔴 Danger zone', dangerD:'More than 90 min recovery. Consider medical assistance.',
+    coreTemp:'EST. CORE TEMP.', accumDef:'ACCUM. DEFICIT',
+    waterT:'WATER TEMP', airT:'AIR TEMP', wind:'WIND', sky:'SKY', dir:'DIRECTION',
+    beachTitle:'BEACH STATUS', beachOpen:'OPEN', beachCaution:'CAUTION',
+    beachClosed:'CLOSED', beachHealth:'HEALTH ALERT', noHealthAlert:'✅ No health alerts',
+    beachUpdated:'Updated:', stationsTitle:'LIFEGUARD STATIONS',nearestBeaches:'NEARBY BEACHES',seeAllBeaches:'See all beaches', validUntil:'Valid until:',
+    noApiDept:'Beach status for', noApiDept2:'— check the official site:',
+    assumedDir:'direction not entered, assuming 45°', profileAlert:'Please enter height, weight and age.',
+    aboutDesc:'Open Water Thermal Intelligence — calculates real thermal balance for open water swimmers.',
+    backToApp:'← Back',
+    wClear:'☀️ Clear', wPartly:'🌤 Partly cloudy', wFog:'🌫 Fog', wRain:'🌧 Rain',
+    wSnow:'🌨 Snow', wShowers:'🌦 Showers', wStorm:'⛈ Thunderstorm',
+    waveCond:'WAVES', waveH:'HEIGHT', wavePer:'PERIOD', waveCurr:'CURRENT',
+    swellH:'Swell', waveCalm:'Calm', waveLight:'Light', waveMod:'Moderate',
+    waveRough:'Rough', waveVery:'Very rough',
+    odeDisclaimer:'Theoretical thermal model based on physics and physiology. Calculated values are estimates and may differ significantly from actual core temperature. Does not replace personal cold perception or swimmer judgment. Never swim alone.',
+    exitRecTitle:'EXIT RECOMMENDATIONS',
+    exitRecBody:'Scientific literature indicates leaving the water before experiencing these symptoms:',
+    exitCue1:'Muscle cramps or loss of coordination in arms/legs',
+    exitCue2:'Difficulty thinking clearly or disorientation',
+    exitCue3:'Intense shivering you cannot control',
+    exitCue4:'Numbness in hands or feet',
+    exitSign1:'Water ≤10°C — high cardiovascular demand',
+    exitSign2:'Mild hypothermia estimated at',
+    exitSign3:'Mild water (16°C) over 20 min — accumulated fatigue also cools you down',exitRecSource:'Based on cold-water swimming physiology research.',
+  },
+  it: {
+    gpsTitle:'POSIZIONE GPS', gpsName:'La tua posizione GPS',stravaHeatmap:'Visualizza percorsi nuotatori su Strava →',simExplain:'NAUTA calcola come evolve la temperatura di un corpo con le caratteristiche selezionate, per le condizioni meteorologiche di oggi nella posizione selezionata. Le linee di riferimento indicano quando potrebbe iniziare un raffreddamento notevole (36°C) o un\'ipotermia lieve (35°C). È una stima teorica: la risposta reale dipende da fattori individuali. Usalo per confrontare le condizioni giorno per giorno, non come guida su quanto tempo nuotare.',odeDisclaimer:"Questo modello è una stima teorica. La tua risposta reale dipende da fattori individuali che non possiamo misurare. Lo scopo del sistema è fornire una quantificazione approssimativa dell'impatto termico dovuto a vari fattori.",immersionLabel:'🧘 Galleggiamento / Immersione',immersionSub:'Senza nuoto · solo BMR',extrasLbl:'EQUIPAGGIAMENTO AGGIUNTIVO',eqGloves:'🧤 Guanti in neoprene',eqHood:'🧢 Cuffia in neoprene',eqBooties:'🦶 Calzari',forecast2:'PROSSIMI 2 GIORNI',histWaterTemp:"Un anno fa la temperatura dell'acqua qui era",suggestedTime:'TEMPO CONSIGLIATO IN ACQUA',untilLimit:'fino a raggiungere 35°C',noLimit:'Nessun limite stimato per questa sessione',chartTemp:'TEMPERATURA CORPOREA STIMATA',chartFlows:'FLUSSI DI CALORE',qMet:'Produzione metabolica',qWater:'Perdita in acqua (muta)',qAir:'Perdita in aria',qExposed:'Perdita zone esposte',qSolar:'Guadagno solare',qNet:'Bilancio netto',tCore:'Temp. nucleo',tSkinC:'Temp. pelle coperta',tSkinE:'Temp. pelle esposta',histWaterLabel:'Un anno fa l\'acqua era a',suggestedWarn:'Tempo molto limitato — massima cautela',suggestedCaution:'Tempo moderato — uscire prima del freddo',suggestedOk:'Tempo disponibile con questo equipaggiamento',suggestedNoLimit:'Nessun limite termico per questa sessione',t35Label:'MINUTI A 35°C',forecast2day:'PROSSIMI 2 GIORNI',timeNow:'adesso',timeMin:'{n} min fa',timeHour:'{n}h fa',msgLabel:'💬 Messaggio per altri nuotatori',msgPlaceholder:'es: Corrente forte nella zona nord oggi...',reportTitle:'SEGNALA CONDIZIONI',swamQ:'Hai nuotato qui oggi?',swamYes:'🏊 Sì, ho nuotato',swamNo:'👀 Solo osservato',reportWhat:'Cosa vuoi segnalare?',submitReport:'Invia segnalazione',reportSending:'Invio...',reportSent:'✅ Segnalazione inviata! Grazie.',swamAlert:'Hai nuotato oggi?',swimmersToday1:'nuotatore oggi',swimmersToday:'nuotatori oggi',noSwims:'Nessun nuoto segnalato oggi',tempReported:'Temp. segnalata:',lastReport:'Ultima segnalazione:',catTemperature:'Temperatura',catClarity:'Chiarezza',catColor:'Colore',catSalinity:'Salinità',catTide:'Marea',catJellyfish:'Meduse',catCyano:'Cianobatteri',catSmell:'Odore anomalo',catPollution:'Inquinamento',catWaves:'Moto ondoso',clarityLabels:'Cristallina,Chiara,Torbida,Molto torbida,Opaca',salinityLabels:'Dolce,Normale,Molto salata',tideLabels:'Molto bassa,Bassa,Normale,Alta,Molto alta',jellyfishLabels:'Nessuna,Poche,Molte,Massive',wavesLabels:'Calmo,Lieve,Moderato,Mosso,Molto mosso',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Blu',colorGreen:'🟢 Verde',colorBrown:'🟤 Marrone',colorGrey:'⚪ Grigia',colorYellow:'🟡 Gialla',alertJellyfish:'🪼 Meduse',alertCyano:'🟢 Cianobatteri',alertSmell:'👃 Odore anomalo',alertPollution:'⚠️ Inquinamento',authSub:'Accedi per coordinare gruppi di nuoto. Le segnalazioni non richiedono account.',authCancel:'Annulla',authGoogle:'Continua con Google', gpsCoords:'Usando coordinate GPS',
+    fetchWeather:'Ottieni condizioni attuali', searchOther:'→ Cerca un\'altra posizione',
+    searchTitle:'CERCA POSIZIONE', searchHint:'Spiagge, fiumi, laghi, città — qualsiasi luogo geografico.',
+    searchPH:'es: Spiaggia di Ostia, Roma...', searchBtn:'Cerca', searching:'Cercando...',
+    noResults:'Nessun risultato — prova a essere più specifico', fetchingData:'Recupero dati...',
+    now:'ORA', forecast:'PREVISIONI OGGI', forecastNow:'ORA',
+    profileTitle:'PROFILO FISICO', edit:'Modifica',
+    height:'ALTEZZA (cm)', weight:'PESO (kg)', age:'ETÀ', fat:'% GRASSO', optional:'OPZIONALE', sex:'SESSO',
+    male:'Maschio', female:'Femmina',
+    sessionTitle:'PARAMETRI DI SESSIONE', speedLbl:'VELOCITÀ (min/100m)',
+    suitLbl:'PROTEZIONE', noSuit:'Senza muta', stdSuit:'Muta standard', thermalSuit:'Muta termica',
+    dirLbl:'DIREZIONE DI NUOTO', dirHint:'Se non inserita, si assume 45° rispetto al vento.',
+    calcBtn:'Calcola bilancio termico', changeLocation:'← Cambia posizione',
+    netBalance:'BILANCIO NETTO', watts:'Watt',
+    stableCore:'NUCLEO STABILE', equilibrium:'EQUILIBRIO',
+    mildCooling:'RAFFREDDAMENTO LIEVE', notableCooling:'RAFFREDDAMENTO NOTEVOLE', severeCooling:'RAFFREDDAMENTO GRAVE',
+    breakdown:'ANALISI TERMICA', thresholds:'TEMPO AI LIMITI',
+    mildHypo:'Ipotermia lieve (35°C)', modHypo:'Ipotermia moderata (33°C)',
+    simTitle:'SIMULAZIONE 60 MINUTI', simHint:'Quanti minuti pianifichi di nuotare?', simBtn:'Simula',
+    recalc:'← Ricalcola sessione', newLoc:'→ Nuova posizione',
+    metabolic:'Produzione metabolica', waterLoss:'Perdita in acqua',
+    airLoss:'Perdita in aria + vento', solarGain:'Guadagno solare', netLbl:'BILANCIO NETTO',
+    noDeficit:'Nessun deficit termico', noDeficitD:'Bilancio positivo — nucleo stabile.',
+    fastRec:'🟢 Recupero rapido', fastRecD:'10–15 min con vestiti asciutti e bevanda calda.',
+    modRec:'🟡 Recupero moderato', modRecD:'20–40 min: vestiti asciutti, bevanda calda, caldo attivo.',
+    longRec:'🟠 Recupero lungo', longRecD:'45–90 min con calore attivo. Evitare la ri-esposizione al freddo.',
+    danger:'🔴 Zona di pericolo', dangerD:'Più di 90 min di recupero. Assistenza medica consigliata.',
+    coreTemp:'TEMP. NUCLEO ST.', accumDef:'DEFICIT ACCUM.',
+    waterT:'TEMP. ACQUA', airT:'TEMP. ARIA', wind:'VENTO', sky:'CIELO', dir:'DIREZIONE',
+    beachTitle:'STATO DELLE SPIAGGE', beachOpen:'ABILITATO', beachCaution:'ATTENZIONE',
+    beachClosed:'NON ABILITATO', beachHealth:'ALLERTA SANITARIA', noHealthAlert:'✅ Nessuna allerta sanitaria',
+    beachUpdated:'Aggiornato:', stationsTitle:'POSTAZIONI BAGNINI',nearestBeaches:'SPIAGGE VICINE',seeAllBeaches:'Vedi tutte le spiagge', validUntil:'Valido fino a:',
+    noApiDept:'Stato spiagge di', noApiDept2:'— consulta il sito ufficiale:',
+    assumedDir:'direzione non inserita, assunto 45°', profileAlert:'Inserisci altezza, peso ed età.',
+    aboutDesc:'Open Water Thermal Intelligence — calcola il bilancio termico reale per nuotatori in acque libere.',
+    backToApp:'← Torna',
+    wClear:'☀️ Sereno', wPartly:'🌤 Parziale', wFog:'🌫 Nebbia', wRain:'🌧 Pioggia',
+    wSnow:'🌨 Neve', wShowers:'🌦 Rovesci', wStorm:'⛈ Temporale',
+    waveCond:'MOTO ONDOSO', waveH:'ALTEZZA', wavePer:'PERIODO', waveCurr:'CORRENTE',
+    swellH:'Fondo', waveCalm:'Calma', waveLight:'Lieve', waveMod:'Moderato',
+    waveRough:'Mosso', waveVery:'Molto mosso',
+    odeDisclaimer:'Modello termico teorico basato su fisica e fisiologia. I valori calcolati sono stime e possono differire significativamente dalla temperatura reale del nucleo. Non sostituisce la percezione personale del freddo. Non nuotare mai da soli.',
+    exitRecTitle:'RACCOMANDAZIONI DI USCITA',
+    exitRecBody:"La letteratura scientifica indica di uscire dall'acqua prima di sperimentare questi sintomi:",
+    exitCue1:'Crampi o perdita di coordinazione in braccia/gambe',
+    exitCue2:'Difficoltà a pensare chiaramente o disorientamento',
+    exitCue3:'Tremore intenso che non riesci a controllare',
+    exitCue4:'Intorpidimento di mani o piedi',
+    exitSign1:'Acqua ≤10°C — alta domanda cardiovascolare',
+    exitSign2:'Ipotermia lieve stimata a',
+    exitSign3:'Acqua mite (16°C) oltre 20 min — la fatica accumulata raffredda anch\'essa',exitRecSource:'Basato su studi di fisiologia del nuoto in acque fredde.',
+  },
+  fr: {
+    gpsTitle:'POSITION GPS', gpsName:'Votre position GPS',stravaHeatmap:'Voir les parcours des nageurs sur Strava →',simExplain:'NAUTA calcule comment évolue la température d\'un corps avec les caractéristiques sélectionnées, pour les conditions météorologiques d\'aujourd\'hui à l\'emplacement sélectionné. Les lignes de référence indiquent quand un refroidissement notable (36°C) ou une hypothermie légère (35°C) pourrait commencer. Il s\'agit d\'une estimation théorique : la réponse réelle dépend de facteurs individuels. Utilisez-le pour comparer les conditions jour après jour, et non comme guide sur la durée de nage.',odeDisclaimer:"Ce modèle est une estimation théorique. Votre réponse réelle dépend de facteurs individuels que nous ne pouvons pas mesurer. L'objectif du système est de fournir une quantification approximative de l'impact thermique dû à divers facteurs.",immersionLabel:'🧘 Flottaison / Immersion',immersionSub:'Sans nage · BMR uniquement',extrasLbl:'ÉQUIPEMENT SUPPLÉMENTAIRE',eqGloves:'🧤 Gants en néoprène',eqHood:'🧢 Bonnet en néoprène',eqBooties:'🦶 Chaussons',forecast2:'2 PROCHAINS JOURS',histWaterTemp:"Il y a un an la température de l'eau ici était de",suggestedTime:"TEMPS SUGGÉRÉ DANS L'EAU",untilLimit:"jusqu'à atteindre 35°C",noLimit:'Aucune limite estimée pour cette session',chartTemp:'TEMPÉRATURE CORPORELLE ESTIMÉE',chartFlows:'FLUX DE CHALEUR',qMet:'Production métabolique',qWater:"Perte dans l'eau (combinaison)",qAir:"Perte dans l'air",qExposed:'Perte zones exposées',qSolar:'Apport solaire',qNet:'Bilan net',tCore:'Temp. noyau',tSkinC:'Temp. peau couverte',tSkinE:'Temp. peau exposée',histWaterLabel:'Il y a un an l\'eau était à',suggestedWarn:'Temps très limité — extrême prudence',suggestedCaution:'Temps modéré — sortez avant de sentir le froid',suggestedOk:'Temps disponible avec cet équipement',suggestedNoLimit:'Aucune limite thermique pour cette session',t35Label:'MINUTES JUSQU\'À 35°C',forecast2day:'2 PROCHAINS JOURS',timeNow:'à l\'instant',timeMin:'il y a {n} min',timeHour:'il y a {n}h',msgLabel:'💬 Message pour les autres nageurs',msgPlaceholder:'ex: Fort courant dans la zone nord aujourd\'hui...',reportTitle:'SIGNALER LES CONDITIONS',swamQ:"Avez-vous nagé ici aujourd'hui?",swamYes:"🏊 Oui, j'ai nagé",swamNo:'👀 Juste observé',reportWhat:'Que voulez-vous signaler?',submitReport:'Envoyer le signalement',reportSending:'Envoi...',reportSent:'✅ Signalement envoyé ! Merci.',swamAlert:"Avez-vous nagé aujourd'hui?",swimmersToday1:"nageur aujourd'hui",swimmersToday:"nageurs aujourd'hui",noSwims:"Aucune nage signalée aujourd'hui",tempReported:'Temp. signalée:',lastReport:'Dernier signalement:',catTemperature:'Température',catClarity:'Clarté',catColor:'Couleur',catSalinity:'Salinité',catTide:'Marée',catJellyfish:'Méduses',catCyano:'Cyanobactéries',catSmell:'Odeur anormale',catPollution:'Pollution',catWaves:'Houle',clarityLabels:'Cristalline,Claire,Trouble,Très trouble,Opaque',salinityLabels:'Douce,Normale,Très salée',tideLabels:'Très basse,Basse,Normale,Haute,Très haute',jellyfishLabels:'Aucune,Peu,Beaucoup,Massive',wavesLabels:'Calme,Légère,Modérée,Agitée,Très agitée',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Bleu',colorGreen:'🟢 Vert',colorBrown:'🟤 Brun',colorGrey:'⚪ Grise',colorYellow:'🟡 Jaune',alertJellyfish:'🪼 Méduses',alertCyano:'🟢 Cyanobactéries',alertSmell:'👃 Odeur anormale',alertPollution:'⚠️ Pollution',authSub:'Connectez-vous pour coordonner des groupes de nage. Les signalements ne nécessitent pas de compte.',authCancel:'Annuler',authGoogle:'Continuer avec Google', gpsCoords:'Utilisant les coordonnées GPS',
+    fetchWeather:'Obtenir les conditions actuelles', searchOther:'→ Chercher un autre lieu',
+    searchTitle:'RECHERCHER UN LIEU', searchHint:'Plages, rivières, lacs, villes — tout lieu géographique.',
+    searchPH:'ex: Plage de Nice, Côte d\'Azur...', searchBtn:'Chercher', searching:'Recherche...',
+    noResults:'Aucun résultat — essayez d\'être plus précis', fetchingData:'Récupération des données...',
+    now:'MAINTENANT', forecast:"PRÉVISIONS AUJOURD'HUI", forecastNow:'MAINT.',
+    profileTitle:'PROFIL PHYSIQUE', edit:'Modifier',
+    height:'TAILLE (cm)', weight:'POIDS (kg)', age:'ÂGE', fat:'% GRAISSE', optional:'OPTIONNEL', sex:'SEXE',
+    male:'Masculin', female:'Féminin',
+    sessionTitle:'PARAMÈTRES DE SESSION', speedLbl:'VITESSE (min/100m)',
+    suitLbl:'PROTECTION', noSuit:'Sans combinaison', stdSuit:'Combinaison standard', thermalSuit:'Combinaison thermique',
+    dirLbl:'DIRECTION DE NAGE', dirHint:'Si non renseignée, 45° par rapport au vent est supposé.',
+    calcBtn:'Calculer le bilan thermique', changeLocation:'← Changer de lieu',
+    netBalance:'BILAN NET', watts:'Watts',
+    stableCore:'NOYAU STABLE', equilibrium:'ÉQUILIBRE',
+    mildCooling:'REFROIDISSEMENT LÉGER', notableCooling:'REFROIDISSEMENT NOTABLE', severeCooling:'REFROIDISSEMENT SÉVÈRE',
+    breakdown:'BILAN THERMIQUE DÉTAILLÉ', thresholds:'TEMPS AVANT SEUILS',
+    mildHypo:'Hypothermie légère (35°C)', modHypo:'Hypothermie modérée (33°C)',
+    simTitle:'SIMULATION 60 MINUTES', simHint:'Combien de minutes prévoyez-vous de nager?', simBtn:'Simuler',
+    recalc:'← Recalculer la session', newLoc:'→ Nouveau lieu',
+    metabolic:'Production métabolique', waterLoss:'Perte dans l\'eau',
+    airLoss:'Perte air + vent', solarGain:'Apport solaire', netLbl:'BILAN NET',
+    noDeficit:'Pas de déficit thermique', noDeficitD:'Bilan positif — noyau stable.',
+    fastRec:'🟢 Récupération rapide', fastRecD:'10–15 min avec vêtements secs et boisson chaude.',
+    modRec:'🟡 Récupération modérée', modRecD:'20–40 min: vêtements secs, boisson chaude, chaleur active.',
+    longRec:'🟠 Longue récupération', longRecD:'45–90 min avec chaleur active. Évitez la ré-exposition au froid.',
+    danger:'🔴 Zone de danger', dangerD:'Plus de 90 min. Envisager une assistance médicale.',
+    coreTemp:'TEMP. NOYAU EST.', accumDef:'DÉFICIT ACCUM.',
+    waterT:'TEMP. EAU', airT:'TEMP. AIR', wind:'VENT', sky:'CIEL', dir:'DIRECTION',
+    beachTitle:'ÉTAT DES PLAGES', beachOpen:'AUTORISÉ', beachCaution:'ATTENTION',
+    beachClosed:'FERMÉ', beachHealth:'ALERTE SANITAIRE', noHealthAlert:'✅ Aucune alerte sanitaire',
+    beachUpdated:'Mis à jour:', stationsTitle:'POSTES DE SAUVETAGE',nearestBeaches:'PLAGES PROCHES',seeAllBeaches:'Voir toutes les plages', validUntil:'Valable jusqu\'au:',
+    noApiDept:'État des plages de', noApiDept2:'— consultez le site officiel:',
+    assumedDir:'direction non renseignée, 45° supposé', profileAlert:'Veuillez entrer taille, poids et âge.',
+    aboutDesc:'Open Water Thermal Intelligence — calcule le bilan thermique réel pour les nageurs en eaux libres.',
+    backToApp:'← Retour',
+    wClear:'☀️ Dégagé', wPartly:'🌤 Partiel', wFog:'🌫 Brouillard', wRain:'🌧 Pluie',
+    wSnow:'🌨 Neige', wShowers:'🌦 Averses', wStorm:'⛈ Orage',
+    waveCond:'HOULE', waveH:'HAUTEUR', wavePer:'PÉRIODE', waveCurr:'COURANT',
+    swellH:'Fond', waveCalm:'Calme', waveLight:'Légère', waveMod:'Modérée',
+    waveRough:'Agitée', waveVery:'Très agitée',
+    odeDisclaimer:'Modèle thermique théorique basé sur la physique et la physiologie. Les valeurs calculées sont des estimations et peuvent différer significativement de la température réelle du noyau. Ne remplace pas la perception personnelle du froid. Ne nagez jamais seul.',
+    exitRecTitle:'RECOMMANDATIONS DE SORTIE',
+    exitRecBody:"La littérature scientifique indique de sortir de l'eau avant d'éprouver ces symptômes:",
+    exitCue1:'Crampes ou perte de coordination des bras/jambes',
+    exitCue2:'Difficulté à penser clairement ou désorientation',
+    exitCue3:'Frissons intenses que vous ne pouvez pas contrôler',
+    exitCue4:'Engourdissement des mains ou des pieds',
+    exitSign1:'Eau ≤10°C — demande cardiovasculaire élevée',
+    exitSign2:'Hypothermie légère estimée à',
+    exitSign3:'Eau tempérée (16°C) au-delà de 20 min — la fatigue accumulée refroidit aussi',exitRecSource:'Basé sur des études de physiologie de la nage en eau froide.',
+  },
+  pt: {
+    gpsTitle:'LOCALIZAÇÃO GPS', gpsName:'A sua localização GPS',stravaHeatmap:'Ver percursos de nadadores no Strava →',simExplain:'NAUTA calcula como evolui a temperatura de um corpo com as características selecionadas, para as condições meteorológicas de hoje na localização selecionada. As linhas de referência indicam quando pode começar um arrefecimento notável (36°C) ou hipotermia leve (35°C). É uma estimativa teórica: a resposta real depende de fatores individuais. Use-o para comparar condições dia a dia, não como guia de quanto tempo nadar.',odeDisclaimer:'Este modelo é uma estimativa teórica. A sua resposta real depende de fatores individuais que não podemos medir. O objetivo do sistema é fornecer uma quantificação aproximada do impacto térmico devido a vários fatores.',immersionLabel:'🧘 Prancha / Imersão',immersionSub:'Sem nado · apenas BMR',extrasLbl:'EQUIPAMENTO ADICIONAL',eqGloves:'🧤 Luvas de neoprene',eqHood:'🧢 Touca de neoprene',eqBooties:'🦶 Sapatilhas',forecast2:'PRÓXIMOS 2 DIAS',histWaterTemp:'Há um ano a temperatura da água aqui era de',suggestedTime:'TEMPO SUGERIDO NA ÁGUA',untilLimit:'até atingir 35°C',noLimit:'Sem limite estimado para esta sessão',chartTemp:'TEMPERATURA CORPORAL ESTIMADA',chartFlows:'FLUXOS DE CALOR',qMet:'Produção metabólica',qWater:'Perda na água (fato)',qAir:'Perda no ar',qExposed:'Perda zonas expostas',qSolar:'Ganho solar',qNet:'Balanço líquido',tCore:'Temp. núcleo',tSkinC:'Temp. pele coberta',tSkinE:'Temp. pele exposta',histWaterLabel:'Há um ano a água estava a',suggestedWarn:'Tempo muito limitado — extrema cautela',suggestedCaution:'Tempo moderado — sair antes de sentir frio',suggestedOk:'Tempo disponível com este equipamento',suggestedNoLimit:'Sem limite térmico para esta sessão',t35Label:'MINUTOS ATÉ 35°C',forecast2day:'PRÓXIMOS 2 DIAS',timeNow:'agora mesmo',timeMin:'há {n} min',timeHour:'há {n}h',msgLabel:'💬 Mensagem para outros nadadores',msgPlaceholder:'ex: Corrente forte na zona norte hoje...',reportTitle:'REPORTAR CONDIÇÕES',swamQ:'Nadou aqui hoje?',swamYes:'🏊 Sim, nadei',swamNo:'👀 Só observei',reportWhat:'O que quer reportar?',submitReport:'Enviar relatório',reportSending:'Enviando...',reportSent:'✅ Relatório enviado! Obrigado.',swamAlert:'Nadou hoje?',swimmersToday1:'nadador hoje',swimmersToday:'nadadores hoje',noSwims:'Sem nados reportados hoje',tempReported:'Temp. reportada:',lastReport:'Último relatório:',catTemperature:'Temperatura',catClarity:'Clareza',catColor:'Cor',catSalinity:'Salinidade',catTide:'Maré',catJellyfish:'Medusas',catCyano:'Cianobactérias',catSmell:'Cheiro anormal',catPollution:'Contaminação',catWaves:'Ondulação',clarityLabels:'Cristalina,Clara,Turva,Muito turva,Opaca',salinityLabels:'Doce,Normal,Muito salgada',tideLabels:'Muito baixa,Baixa,Normal,Alta,Muito alta',jellyfishLabels:'Nenhuma,Poucas,Muitas,Massiva',wavesLabels:'Calmo,Leve,Moderado,Agitado,Muito agitado',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Azul',colorGreen:'🟢 Verde',colorBrown:'🟤 Castanho',colorGrey:'⚪ Cinzenta',colorYellow:'🟡 Amarela',alertJellyfish:'🪼 Medusas',alertCyano:'🟢 Cianobactérias',alertSmell:'👃 Cheiro anormal',alertPollution:'⚠️ Contaminação',authSub:'Inicie sessão para coordenar grupos de natação. Os relatórios não requerem conta.',authCancel:'Cancelar',authGoogle:'Continuar com Google', gpsCoords:'Usando coordenadas GPS',
+    fetchWeather:'Obter condições atuais', searchOther:'→ Procurar outro local',
+    searchTitle:'PESQUISAR LOCALIZAÇÃO', searchHint:'Praias, rios, lagos, cidades — qualquer lugar geográfico.',
+    searchPH:'ex: Praia de Copacabana, Rio...', searchBtn:'Pesquisar', searching:'Pesquisando...',
+    noResults:'Sem resultados — tente ser mais específico', fetchingData:'Obtendo dados...',
+    now:'AGORA', forecast:'PREVISÃO HOJE', forecastNow:'AGORA',
+    profileTitle:'PERFIL FÍSICO', edit:'Editar',
+    height:'ALTURA (cm)', weight:'PESO (kg)', age:'IDADE', fat:'% GORDURA', optional:'OPCIONAL', sex:'SEXO',
+    male:'Masculino', female:'Feminino',
+    sessionTitle:'PARÂMETROS DE SESSÃO', speedLbl:'VELOCIDADE (min/100m)',
+    suitLbl:'PROTEÇÃO', noSuit:'Sem fato', stdSuit:'Fato padrão', thermalSuit:'Fato térmico',
+    dirLbl:'DIREÇÃO DE NADO', dirHint:'Se não inserida, assume-se 45° em relação ao vento.',
+    calcBtn:'Calcular balanço térmico', changeLocation:'← Alterar localização',
+    netBalance:'BALANÇO LÍQUIDO', watts:'Watts',
+    stableCore:'NÚCLEO ESTÁVEL', equilibrium:'EQUILÍBRIO',
+    mildCooling:'ARREFECIMENTO LEVE', notableCooling:'ARREFECIMENTO NOTÁVEL', severeCooling:'ARREFECIMENTO SEVERO',
+    breakdown:'ANÁLISE TÉRMICA', thresholds:'TEMPO ATÉ LIMIARES',
+    mildHypo:'Hipotermia leve (35°C)', modHypo:'Hipotermia moderada (33°C)',
+    simTitle:'SIMULAÇÃO 60 MINUTOS', simHint:'Quantos minutos planeja nadar?', simBtn:'Simular',
+    recalc:'← Recalcular sessão', newLoc:'→ Nova localização',
+    metabolic:'Produção metabólica', waterLoss:'Perda para a água',
+    airLoss:'Perda ar + vento', solarGain:'Ganho solar', netLbl:'BALANÇO LÍQUIDO',
+    noDeficit:'Sem déficit térmico', noDeficitD:'Balanço positivo — núcleo estável.',
+    fastRec:'🟢 Recuperação rápida', fastRecD:'10–15 min com roupas secas e bebida morna.',
+    modRec:'🟡 Recuperação moderada', modRecD:'20–40 min: roupas secas, bebida quente, calor ativo.',
+    longRec:'🟠 Recuperação longa', longRecD:'45–90 min com calor ativo. Evite re-exposição ao frio.',
+    danger:'🔴 Zona de risco', dangerD:'Mais de 90 min de recuperação. Considere assistência médica.',
+    coreTemp:'TEMP. NÚCLEO EST.', accumDef:'DÉFICIT ACUM.',
+    waterT:'TEMP. ÁGUA', airT:'TEMP. AR', wind:'VENTO', sky:'CÉU', dir:'DIREÇÃO',
+    beachTitle:'ESTADO DAS PRAIAS', beachOpen:'HABILITADO', beachCaution:'PRECAUÇÃO',
+    beachClosed:'NÃO HABILITADO', beachHealth:'ALERTA SANITÁRIA', noHealthAlert:'✅ Sem alertas sanitárias',
+    beachUpdated:'Atualizado:', stationsTitle:'POSTOS DE SALVA-VIDAS',nearestBeaches:'PRAIAS PRÓXIMAS',seeAllBeaches:'Ver todas as praias', validUntil:'Válido até:',
+    noApiDept:'Estado das praias de', noApiDept2:'— consulte o site oficial:',
+    assumedDir:'direção não inserida, assumindo 45°', profileAlert:'Insira altura, peso e idade.',
+    aboutDesc:'Open Water Thermal Intelligence — calcula o balanço térmico real para nadadores em águas abertas.',
+    backToApp:'← Voltar',
+    wClear:'☀️ Limpo', wPartly:'🌤 Parcial', wFog:'🌫 Névoa', wRain:'🌧 Chuva',
+    wSnow:'🌨 Neve', wShowers:'🌦 Aguaceiros', wStorm:'⛈ Trovoada',
+    waveCond:'ONDAS', waveH:'ALTURA', wavePer:'PERÍODO', waveCurr:'CORRENTE',
+    swellH:'Fundo', waveCalm:'Calmo', waveLight:'Leve', waveMod:'Moderado',
+    waveRough:'Agitado', waveVery:'Muito agitado',
+    odeDisclaimer:'Modelo térmico teórico baseado em física e fisiologia. Os valores calculados são estimativas e podem diferir significativamente da temperatura real do núcleo. Não substitui a perceção pessoal do frio. Nunca nade sozinho.',
+    exitRecTitle:'RECOMENDAÇÕES DE SAÍDA',
+    exitRecBody:'A literatura científica indica sair da água antes de experimentar estes sintomas:',
+    exitCue1:'Cãibras ou perda de coordenação nos braços/pernas',
+    exitCue2:'Dificuldade em pensar claramente ou desorientação',
+    exitCue3:'Tremores intensos que não consegue controlar',
+    exitCue4:'Dormência nas mãos ou nos pés',
+    exitSign1:'Água ≤10°C — alta demanda cardiovascular',
+    exitSign2:'Hipotermia leve estimada em',
+    exitSign3:'Água amena (16°C) por mais de 20 min — a fadiga acumulada também arrefece',exitRecSource:'Baseado em estudos de fisiologia da natação em águas frias.',
+  },
+};
+
+// ── LANG SYSTEM ───────────────────────────────────────────────────
+const LANGS = ['es','en','it','fr','pt'];
+let LANG = (() => {
+  const saved = safeGet('nauta_lang');
+  if (saved && LANGS.includes(saved)) return saved;
+  const b = (navigator.language || 'en').split('-')[0].toLowerCase();
+  return LANGS.includes(b) ? b : 'en';
+})();
+const t = k => T[LANG]?.[k] ?? T.en[k] ?? k;
+
+function applyLang() {
+  // Update button
+  $('btn-lang').textContent = LANG.toUpperCase();
+  document.querySelectorAll('.lang-opt').forEach(o =>
+    o.classList.toggle('active', o.dataset.lang === LANG)
+  );
+  // All static text mappings (id → key)
+  const map = {
+     't-gps-title':'gpsTitle', 'btn-fetch-gps':'fetchWeather',
+    'link-search':'searchOther', 't-search-title':'searchTitle', 't-search-hint':'searchHint',
+    'btn-search':'searchBtn', 'btn-fetch-search':'fetchWeather', 't-now':'now',
+    't-forecast':'forecast', 't-beach-title':'beachTitle', 't-profile-title':'profileTitle',
+    't-edit':'edit', 't-height':'height', 't-weight':'weight', 't-age':'age',
+    't-fat':'fat', 't-optional':'optional', 't-optional2':'optional',
+    't-sex':'sex', 't-male':'male', 't-female':'female',
+    't-session-title':'sessionTitle', 't-speed-lbl':'speedLbl',
+    't-suit-lbl':'suitLbl', 't-no-suit':'noSuit', 't-std-suit':'stdSuit', 't-thermal-suit':'thermalSuit',
+    't-dir-lbl':'dirLbl', 't-dir-hint':'dirHint', 'btn-calculate':'calcBtn',
+    'link-back-loc':'changeLocation', 'net-lbl-text':'netBalance',
+    't-breakdown':'breakdown', 't-thresholds':'thresholds',
+    't-sim-title':'simTitle', 't-sim-hint':'simHint', 'btn-sim':'simBtn',
+    't-report-title':'reportTitle', 't-forecast-2day':'forecast2day',
+    'btn-recalc':'recalc', 'link-new-loc':'newLoc',
+    't-about-desc':'aboutDesc', 'btn-close-info':'backToApp',
+  };
+  Object.entries(map).forEach(([id, key]) => {
+    const el = $(id);
+    if (el) el.textContent = t(key);
+  });
+  // Placeholder
+  $('search-input').placeholder = t('searchPH');
+  // Re-render dynamic content
+  if (S.weather) renderWeatherGrid();
+  if (S.weather) render2DayForecast();
+  if (S.result)  renderResult(S.result);
+  if (S.result)  renderODEResult(S.result, 60);
+  // Re-render historical water temp label if visible
+  const hist = $('hist-water-temp');
+  if (hist && hist.style.display !== 'none') loadHistoricalWaterTemp();
+}
+
+// ── STATE ─────────────────────────────────────────────────────────
+const S = {
+  coords: null, locName: '', weather: null,
+  suit: 'none', speedSecs: 127, sex: 1, swimDir: null,
+  result: null,
+  profile: safeGet('nauta_profile'),
+};
+
+
+// ── TIMEZONE TABLE (offset in hours, no DST correction needed ±1h tolerance) ──
+const TZ_OFFSETS = {
+  // Americas
+  'UY':-3,'AR':-3,'BR':-3,'CL':-4,'PY':-4,'BO':-4,'PE':-5,'CO':-5,'EC':-5,
+  'VE':-4,'GY':-4,'SR':-3,'PA':-5,'CR':-6,'GT':-6,'HN':-6,'SV':-6,'NI':-6,
+  'MX':-6,'CU':-5,'DO':-4,'PR':-4,'US':-5,'CA':-5,
+  // Europe
+  'ES':1,'FR':1,'IT':1,'PT':0,'GB':0,'DE':1,'NL':1,'BE':1,'CH':1,'AT':1,
+  'GR':2,'TR':3,'NO':1,'SE':1,'DK':1,'FI':2,'PL':1,'RU':3,
+  // Oceania / Asia
+  'AU':10,'NZ':12,'JP':9,'CN':8,'IN':5.5,'ZA':2,
+};
+
+function getBeachTzOffset(lat, lon) {
+  // Simple longitude-based estimate (15° per hour)
+  // Good enough for ±1h tolerance — avoids needing a TZ API
+  return Math.round(lon / 15);
+}
+
+function midnightExpiryForCoords(lat, lon) {
+  const offsetHours = getBeachTzOffset(lat, lon);
+  const now = new Date();
+  // Current time in beach local time
+  const localNow = new Date(now.getTime() + offsetHours * 3600000);
+  // Next midnight in beach local time
+  const localMidnight = new Date(localNow);
+  localMidnight.setUTCHours(24, 0, 0, 0);
+  // Convert back to UTC
+  const utcMidnight = new Date(localMidnight.getTime() - offsetHours * 3600000);
+  return utcMidnight.toISOString();
+}
+
+// ── SUPABASE ──────────────────────────────────────────────────────
+const SUPA_URL = 'https://hbhlnbxfjeqvznjqzame.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhiaGxuYnhmamVxdnpuanF6YW1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwMjc4NTcsImV4cCI6MjA5ODYwMzg1N30.M15D62jun8VOJeExCpraxBykkC53N81ccFaesh7ASaY';
+let supa = null;
+try {
+  if (typeof supabase !== 'undefined') {
+    supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+  }
+} catch(e) { console.log('Supabase unavailable:', e.message); }
+
+// ── PWA ───────────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/Impacto-termico/sw.js')
+      .then(reg => {
+        // Force check for updates on every load
+        reg.update();
+      })
+      .catch(() => {});
+  });
+}
+
+// ── AUTH ──────────────────────────────────────────────────────────
+let currentUser = null;
+
+async function initAuth() {
+  try {
+    if (!supa) return;
+    const { data: { session } } = await supa.auth.getSession();
+    if (session?.user) setUser(session.user);
+    supa.auth.onAuthStateChange((_event, session) => setUser(session?.user || null));
+  } catch(e) { console.log('Auth init error:', e.message); }
+}
+
+function setUser(user) {
+  currentUser = user;
+  const statusEl = $('auth-status');
+  if (!statusEl) return;
+  if (user) {
+    const initial = (user.user_metadata?.full_name || user.email || '?')[0].toUpperCase();
+    const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Usuario';
+    statusEl.innerHTML = `<div class="user-badge" onclick="handleAuthClick()">
+      <div class="user-avatar">${initial}</div>
+      <span style="font-size:12px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</span>
+    </div>`;
+  } else {
+    statusEl.innerHTML = `<button class="hdr-btn" style="font-size:12px" onclick="handleAuthClick()">👤 Login</button>`;
+  }
+  // Trigger message area update when login state changes
+  updateMessageArea();
+}
+
+function updateMessageArea() {
+  const msgArea = $('message-area');
+  if (msgArea) msgArea.style.display = currentUser ? 'block' : 'none';
+}
+
+function handleAuthClick() {
+  if (currentUser) {
+    if (confirm('¿Cerrar sesión?') && supa) supa.auth.signOut();
+  } else {
+    $('auth-modal').style.display = 'flex';
+  }
+}
+
+document.getElementById('btn-close-auth').addEventListener('click', () => {
+  $('auth-modal').style.display = 'none';
+});
+
+document.getElementById('btn-google-login').addEventListener('click', async () => {
+  if (!supa) { alert('Login no disponible'); return; }
+  await supa.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: 'https://martin1homas.github.io/Impacto-termico/' }
+  });
+});
+
+// ── REPORT CATEGORIES ─────────────────────────────────────────────
+function getReportCats(swam) {
+  // All categories
+  const all = [
+    { id:'temperature', icon:'🌡', label:t('catTemperature'), input:'number', placeholder:'11.5', unit:'°C', min:0, max:35, swimOnly:true },
+    { id:'clarity',     icon:'💧', label:t('catClarity'),     input:'scale',  labels:t('clarityLabels').split(','), swimOnly:false },
+    { id:'color',       icon:'🎨', label:t('catColor'),       input:'choice', options:t('colorOptions').split(','), swimOnly:false },
+    { id:'salinity',    icon:'🧂', label:t('catSalinity'),    input:'scale',  labels:t('salinityLabels').split(','), swimOnly:true },
+    { id:'tide',        icon:'🌊', label:t('catTide'),        input:'scale',  labels:t('tideLabels').split(','), swimOnly:false },
+    { id:'jellyfish',   icon:'🪼', label:t('catJellyfish'),   input:'scale',  labels:t('jellyfishLabels').split(','), swimOnly:false },
+    { id:'waves',       icon:'🏄', label:t('catWaves'),       input:'scale',  labels:t('wavesLabels').split(','), swimOnly:true },
+    { id:'cyano',       icon:'🟢', label:t('catCyano'),       input:'yesno', swimOnly:false },
+    { id:'smell',       icon:'👃', label:t('catSmell'),       input:'yesno', swimOnly:false },
+    { id:'pollution',   icon:'⚠️',  label:t('catPollution'),   input:'yesno', swimOnly:false },
+  ];
+  // If swam===null show all; if swam===false hide swimOnly
+  if (swam === false) return all.filter(c => !c.swimOnly);
+  return all;
+}
+
+const BEACH_CAMERAS = {
+  'pocitos':  { url:'https://anteltv.com.uy/camaras', label:'Cámara Pocitos — Antel TV' },
+  'ramirez':  { url:'https://anteltv.com.uy/camaras', label:'Cámara Rambla — Antel TV' },
+  'malvin':   { url:'https://lineup.surf/spots/uruguay/montevideo/playa-honda', label:'Cámara Malvín — Lineup' },
+  'honda':    { url:'https://lineup.surf/spots/uruguay/montevideo/playa-honda', label:'Cámara Honda — Lineup' },
+};
+
+let RS = { swam: null, selectedCats: new Set(), values: {} };
+
+function initReportUI() {
+  const grid = $('report-cats');
+  if (!grid) return;
+  grid.innerHTML = getReportCats(RS.swam).map(c =>
+    `<div class="report-cat" data-cat="${c.id}" onclick="toggleCat('${c.id}')">
+      <div class="report-cat-icon">${c.icon}</div>
+      <div class="report-cat-label">${c.label}</div>
+    </div>`
+  ).join('');
+}
+
+function toggleCat(catId) {
+  const el = document.querySelector(`.report-cat[data-cat="${catId}"]`);
+  if (RS.selectedCats.has(catId)) {
+    RS.selectedCats.delete(catId);
+    el?.classList.remove('selected');
+  } else {
+    RS.selectedCats.add(catId);
+    el?.classList.add('selected');
+  }
+  renderValueInputs();
+}
+
+function renderValueInputs() {
+  const area = $('report-value-area');
+  if (!area) return;
+  let html = '';
+  RS.selectedCats.forEach(catId => {
+    const cat = getReportCats(RS.swam).find(c => c.id === catId);
+    if (!cat) return;
+    html += `<div style="margin-bottom:14px;padding:12px;background:var(--shallow);border-radius:8px">
+      <div style="font-size:14px;font-weight:700;color:var(--deep);margin-bottom:10px">${cat.icon} ${cat.label}</div>`;
+    if (cat.input === 'number') {
+      html += `<div style="display:flex;align-items:center;gap:8px">
+        <input type="number" id="val-${catId}" placeholder="${cat.placeholder}"
+          min="${cat.min}" max="${cat.max}" style="margin-bottom:0;flex:1"
+          oninput="RS.values['${catId}']=this.value">
+        <span style="font-size:14px;color:var(--text3)">${cat.unit}</span>
+      </div>`;
+    } else if (cat.input === 'yesno') {
+      html += `<div class="swim-pills">
+        <button class="swim-pill yes" onclick="setVal('${catId}','si',this)">✅ Sí</button>
+        <button class="swim-pill no"  onclick="setVal('${catId}','no',this)">❌ No</button>
+      </div>`;
+    } else if (cat.input === 'choice') {
+      html += `<div style="display:flex;flex-wrap:wrap;gap:8px">
+        ${cat.options.map(o => `<button class="pill" onclick="setVal('${catId}','${o}',this)">${o}</button>`).join('')}
+      </div>`;
+    } else if (cat.input === 'scale') {
+      html += `<div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${cat.labels.map((l,i) =>
+          `<button class="pill" style="flex:1;min-width:55px;text-align:center;font-size:12px;padding:8px 4px"
+            onclick="setVal('${catId}','${i+1}:${l}',this)">
+            <div style="font-weight:700">${i+1}</div>
+            <div style="font-size:10px;margin-top:2px">${l}</div>
+          </button>`
+        ).join('')}
+      </div>`;
+    }
+    html += '</div>';
+  });
+  area.innerHTML = html;
+}
+
+function setVal(catId, value, btn) {
+  // For color choices, store the neutral key (last word after space)
+  // e.g. "🔵 blue" -> "blue"
+  const cat = getReportCats(RS.swam).find(c => c.id === catId);
+  if (cat?.input === 'choice' && catId === 'color') {
+    RS.values[catId] = value.split(' ').pop().toLowerCase();
+  } else {
+    RS.values[catId] = value;
+  }
+  const parent = btn.closest('div');
+  parent.querySelectorAll('.pill,.swim-pill').forEach(b => {
+    b.classList.remove('active','selected');
+    b.style.background = '';
+    b.style.borderColor = '';
+  });
+  btn.classList.add('active');
+  btn.style.background = 'var(--water)';
+  btn.style.color = '#fff';
+  btn.style.borderColor = 'var(--water)';
+}
+
+// Swim question
+document.getElementById('swam-yes').addEventListener('click', () => {
+  RS.swam = true;
+  $('swam-yes').classList.add('selected');
+  $('swam-no').classList.remove('selected');
+  $('report-step-cats').style.display = 'block';
+  initReportUI(); // re-render with swimOnly cats visible
+});
+document.getElementById('swam-no').addEventListener('click', () => {
+  RS.swam = false;
+  $('swam-no').classList.add('selected');
+  $('swam-yes').classList.remove('selected');
+  $('report-step-cats').style.display = 'block';
+  // Clear any swimOnly selections that may have been made
+  RS.selectedCats.forEach(id => {
+    const cat = getReportCats(null).find(c => c.id === id);
+    if (cat?.swimOnly) RS.selectedCats.delete(id);
+  });
+  RS.values = Object.fromEntries(Object.entries(RS.values).filter(([k]) =>
+    !getReportCats(null).find(c => c.id === k)?.swimOnly
+  ));
+  initReportUI(); // re-render without swimOnly cats
+});
+
+// Submit
+// Message character counter
+document.addEventListener('input', e => {
+  if (e.target.id === 'report-message') {
+    const remaining = 140 - e.target.value.length;
+    const counter = $('msg-counter');
+    if (counter) {
+      counter.textContent = remaining;
+      counter.style.color = remaining < 20 ? 'var(--warn)' : 'var(--text3)';
+    }
+  }
+});
+
+document.getElementById('btn-submit-report').addEventListener('click', async () => {
+  if (RS.swam === null) { alert(t('swamAlert')); return; }
+  const lat = S.coords?.lat, lon = S.coords?.lon;
+  if (!lat || !lon) { alert('No se detectó ubicación.'); return; }
+  const beachName = S.locName || 'Desconocida';
+
+  setBtn('btn-submit-report', true, `<span class="spinner"></span> ${t('reportSending')}`);
+  try {
+    const expiresAt = midnightExpiryForCoords(lat, lon);
+    const inserts = [{ lat, lon, beach_name: beachName, report_type:'swim', value: RS.swam?'si':'no', swam: RS.swam, expires_at: expiresAt }];
+    RS.selectedCats.forEach(catId => {
+      const val = RS.values[catId];
+      const cat = getReportCats(RS.swam).find(c => c.id === catId);
+      // Skip numeric inputs without a value
+      if (cat?.input === 'number' && (!val || isNaN(parseFloat(val)))) return;
+      inserts.push({ lat, lon, beach_name: beachName, report_type: catId, value: val ? String(val) : 'si', swam: RS.swam, expires_at: expiresAt });
+    });
+    // Add message if logged in and has content
+    const msgInput = $('report-message');
+    if (currentUser && msgInput?.value?.trim()) {
+      inserts.push({
+        lat, lon, beach_name: beachName,
+        report_type: 'message',
+        value: msgInput.value.trim(),
+        swam: RS.swam,
+        expires_at: expiresAt,
+      });
+      msgInput.value = '';
+      const counter = $('msg-counter');
+      if (counter) counter.textContent = '140';
+    }
+    if (!supa) { alert('Reportes no disponibles'); return; }
+    const { error } = await supa.from('reports').insert(inserts);
+    if (error) throw error;
+
+    $('report-feedback').textContent = t('reportSent'); $('report-feedback').style.display = 'block';
+    setTimeout(() => {
+      $('report-feedback').style.display = 'none';
+      RS = { swam: null, selectedCats: new Set(), values: {} };
+      $('swam-yes').classList.remove('selected');
+      $('swam-no').classList.remove('selected');
+      $('report-step-cats').style.display = 'none';
+      document.querySelectorAll('.report-cat').forEach(e => e.classList.remove('selected'));
+      $('report-value-area').innerHTML = '';
+    }, 2500);
+    loadCommunityReports();
+  } catch(e) { alert('Error: ' + e.message); }
+  setBtn('btn-submit-report', false, t('submitReport'));
+});
+
+// ── COMMUNITY REPORTS (load from Supabase) ────────────────────────
+async function loadCommunityReports() {
+  if (!S.coords) return;
+
+  try {
+    // Use expires_at to get only today's valid reports
+    const now = new Date().toISOString();
+    if (!supa) return;
+    const { data, error } = await supa
+      .from('reports')
+      .select('*')
+      .gt('expires_at', now)
+      .gte('lat', S.coords.lat - 0.05)
+      .lte('lat', S.coords.lat + 0.05)
+      .gte('lon', S.coords.lon - 0.05)
+      .lte('lon', S.coords.lon + 0.05)
+      .order('created_at', { ascending: false });
+
+    if (error) { console.log('Community load error:', error.message); return; }
+    if (!data?.length) {
+      // No reports yet — still show report card
+      showReportCardOnly();
+      return;
+    }
+    renderCommunityReports(data);
+  } catch(e) { console.log('Community load error:', e.message); }
+}
+
+function showReportCardOnly() {
+  const dept = detectDept(S.locName);
+  if (dept === 'montevideo') {
+    $('report-card').style.display = 'block';
+    updateMessageArea();
+  }
+}
+
+
+// Translate stored condition values (neutral keys) to current language
+function translateCondValue(type, value) {
+  if (!value || value === 'si' || value === 'no') return null;
+
+  // Color: stored as "blue", "green", etc.
+  if (type === 'color') {
+    const colorMap = {
+      blue: t('colorBlue'), green: t('colorGreen'), brown: t('colorBrown'),
+      grey: t('colorGrey'), yellow: t('colorYellow'),
+    };
+    return colorMap[value] || value;
+  }
+
+  // Scale values: stored as "3:Label" — extract the number and re-translate
+  if (value.includes(':')) {
+    const idx = parseInt(value.split(':')[0]) - 1;
+    const scaleMap = {
+      clarity:  t('clarityLabels').split(','),
+      salinity: t('salinityLabels').split(','),
+      tide:     t('tideLabels').split(','),
+      waves:    t('wavesLabels').split(','),
+      jellyfish:t('jellyfishLabels').split(','),
+    };
+    if (scaleMap[type] && scaleMap[type][idx]) {
+      return scaleMap[type][idx];
+    }
+  }
+
+  return value; // fallback: show as-is
+}
+
+function renderCommunityReports(reports) {
+  if (!reports?.length) return;
+
+  // Remove old summary wherever it is
+  const oldSum = document.getElementById('community-sum');
+  if (oldSum) oldSum.remove();
+
+  // Try beach-content first, fall back to top of report-card
+  const beachContent = $('beach-content');
+  const insertTarget = beachContent || $('report-card');
+  if (!insertTarget) return;
+  
+  // Make sure report card is visible
+  $('report-card').style.display = 'block';
+  updateMessageArea();
+
+  // Swimmers
+  const swimmers = reports.filter(r => r.report_type === 'swim' && r.swam).length;
+
+  // Temperature average
+  const tempR = reports.filter(r => r.report_type === 'temperature' && r.value && !isNaN(r.value));
+  const avgTemp = tempR.length
+    ? (tempR.reduce((s,r) => s+parseFloat(r.value),0)/tempR.length).toFixed(1) : null;
+
+  // Alerts (jellyfish, cyano, smell, pollution)
+  const alertLabels = {
+    jellyfish: t('alertJellyfish'), cyano: t('alertCyano'),
+    smell: t('alertSmell'), pollution: t('alertPollution')
+  };
+  const alerts = {};
+  reports.forEach(r => {
+    if (alertLabels[r.report_type] && r.value && r.value !== 'no') {
+      if (!alerts[r.report_type]) alerts[r.report_type] = { count:0, time: r.created_at };
+      alerts[r.report_type].count++;
+    }
+  });
+
+  // Condition tags — latest value per type (color, clarity, tide, waves, salinity)
+  const condTypes = ['color','clarity','tide','waves','salinity'];
+  const latestCond = {};
+  reports.forEach(r => {
+    if (condTypes.includes(r.report_type) && r.value && r.value !== 'si' && r.value !== 'no' && !latestCond[r.report_type]) {
+      latestCond[r.report_type] = r;
+    }
+  });
+
+  // User messages
+  const messages = reports.filter(r => r.report_type === 'message' && r.value);
+
+  // Last report time
+  const lastTime = reports[0]?.created_at ? timeSince(new Date(reports[0].created_at)) : null;
+
+  // Build HTML
+  let html = `<div id="community-sum" class="community-summary">
+    <div class="community-swimmers">🏊 ${swimmers > 0
+      ? swimmers + (swimmers===1 ? ' '+t('swimmersToday1') : ' '+t('swimmersToday'))
+      : '👀 '+t('noSwims')}</div>`;
+
+  // Temperature
+  if (avgTemp) {
+    const tTime = tempR[0]?.created_at ? ' · <span style="font-size:11px;color:var(--text3)">'+timeSince(new Date(tempR[0].created_at))+'</span>' : '';
+    html += `<div style="font-size:14px;color:var(--text2);margin-top:4px">🌡 ${t('tempReported')} <strong>${avgTemp}°C</strong>${tTime}</div>`;
+  }
+
+  // Condition tags
+  if (Object.keys(latestCond).length) {
+    html += `<div class="community-reports" style="margin-top:6px">`;
+    Object.entries(latestCond).forEach(([type, r]) => {
+      const val = translateCondValue(type, r.value);
+      if (!val) return;
+      const ago = timeSince(new Date(r.created_at));
+      html += `<span class="community-tag">${val} <span style="font-size:10px;color:var(--text3)">· ${ago}</span></span>`;
+    });
+    html += `</div>`;
+  }
+
+  // Alerts
+  if (Object.keys(alerts).length) {
+    html += `<div class="community-reports" style="margin-top:4px">`;
+    Object.entries(alerts).forEach(([type, info]) => {
+      const ago = timeSince(new Date(info.time));
+      html += `<span class="community-tag alert">${alertLabels[type]} (${info.count}) <span style="font-size:10px">· ${ago}</span></span>`;
+    });
+    html += `</div>`;
+  }
+
+  // User messages
+  if (messages.length) {
+    messages.slice(0,3).forEach(m => {
+      html += `<div style="margin-top:8px;padding:8px 10px;background:#fff;border-radius:6px;border:1px solid var(--foam);font-size:13px;color:var(--text2)">
+        💬 ${m.value} <span style="font-size:10px;color:var(--text3)">· ${timeSince(new Date(m.created_at))}</span>
+      </div>`;
+    });
+  }
+
+  // Last report time
+  if (lastTime) {
+    html += `<div style="font-size:12px;color:var(--text3);margin-top:6px">${t('lastReport')} ${lastTime}</div>`;
+  }
+
+  html += '</div>';
+  if (beachContent) {
+    beachContent.insertAdjacentHTML('afterbegin', html);
+  } else {
+    // No beach card — show community summary at top of report card
+    const reportContent = $('report-content') || $('report-step-swim');
+    if (reportContent) reportContent.insertAdjacentHTML('beforebegin', html);
+  }
+
+  // Camera link
+  const norm = normalize(S.locName);
+  const camKey = Object.keys(BEACH_CAMERAS).find(k => norm.includes(k));
+  if (camKey && !$('cam-link') && beachContent) {
+    const cam = BEACH_CAMERAS[camKey];
+    beachContent.insertAdjacentHTML('beforeend',
+      `<a href="${cam.url}" target="_blank" class="camera-link" id="cam-link">📷 ${cam.label}</a>`);
+  }
+
+  // Strava Heatmap link — centered on current location
+  if (!$('strava-link') && beachContent && S.coords) {
+    const { lat, lon } = S.coords;
+    // Zoom 15 is ideal for beach-level view
+    const stravaUrl = `https://www.strava.com/heatmap#15/${lon}/${lat}/hot/all`;
+    beachContent.insertAdjacentHTML('beforeend',
+      `<a href="${stravaUrl}" target="_blank" class="camera-link" id="strava-link" style="border-color:#FC4C02;color:#FC4C02">
+        🔥 ${t('stravaHeatmap')}
+      </a>`);
+  }
+}
+
+function timeSince(date) {
+  const m = Math.round((Date.now()-date)/60000);
+  if (m<1)  return t('timeNow');
+  if (m<60) return t('timeMin').replace('{n}', m);
+  return t('timeHour').replace('{n}', Math.floor(m/60));
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  applyLang();
+  loadProfile();
+  initAuth();
+  initReportUI();
+  // GPS — show card only if permission granted
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      S.coords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+      S.locName = t('gpsName');
+      $('gps-name').textContent = '📍 ' + S.locName;
+      $('gps-coords').textContent = pos.coords.latitude.toFixed(4) + ', ' + pos.coords.longitude.toFixed(4);
+      $('gps-card').style.display = 'block';
+    }, () => { /* No GPS — search card stays visible */ });
+  }
+});
+
+// ── LANG MENU ─────────────────────────────────────────────────────
+$('btn-lang').addEventListener('click', e => {
+  e.stopPropagation();
+  $('lang-menu').classList.toggle('open');
+});
+document.addEventListener('click', () => $('lang-menu').classList.remove('open'));
+$('lang-menu').addEventListener('click', e => {
+  const opt = e.target.closest('.lang-opt');
+  if (!opt) return;
+  LANG = opt.dataset.lang;
+  safeSet('nauta_lang', LANG);
+  $('lang-menu').classList.remove('open');
+  applyLang();
+});
+
+// ── LOCATION ──────────────────────────────────────────────────────
+$('link-search').addEventListener('click', () => {
+  $('gps-card').style.display = 'none';
+  $('search-card').style.display = 'block';
+});
+$('search-input').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+$('btn-search').addEventListener('click', doSearch);
+
+async function doSearch() {
+  const q = $('search-input').value.trim();
+  if (!q) return;
+  setBtn('btn-search', true, `<span class="spinner"></span>${t('searching')}`);
+  hide('err-location');
+  $('search-results').style.display = 'none';
+
+  let results = [];
+
+  // Primary: Nominatim — better for specific place names, beaches, local geography
+  try {
+    const res = await fetch(
+      `${NOM}/search?q=${encodeURIComponent(q)}&format=json&limit=8&addressdetails=1&accept-language=${LANG}`,
+      { signal: AbortSignal.timeout(6000) }
+    );
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.length) results = data;
+    }
+  } catch (e) { /* timeout or network error — try fallback */ }
+
+  // Fallback: Open-Meteo Geocoding (no CORS issues, good for cities)
+  if (!results.length) {
+    try {
+      const res = await fetch(
+        `${GEO}/search?name=${encodeURIComponent(q)}&count=8&language=${LANG}&format=json`,
+        { signal: AbortSignal.timeout(6000) }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        if (data.results?.length) {
+          results = data.results.map(r => ({
+            lat: r.latitude, lon: r.longitude,
+            name: r.name,
+            display_name: [r.name, r.admin1, r.admin2, r.country].filter(Boolean).join(', '),
+          }));
+        }
+      }
+    } catch (e) { /* both failed */ }
+  }
+
+  if (results.length) {
+    renderResults(results);
+  } else {
+    showErr('err-location', t('noResults'));
+  }
+  setBtn('btn-search', false, t('searchBtn'));
+}
+
+function renderResults(results) {
+  const box = $('search-results');
+  box.innerHTML = '';
+  if (!results?.length) {
+    box.innerHTML = `<div class="sresult" style="color:var(--text3)">${t('noResults')}</div>`;
+    box.style.display = 'block';
+    return;
+  }
+  results.forEach(r => {
+    const d = document.createElement('div');
+    d.className = 'sresult';
+    const name = r.name || r.display_name?.split(',')[0] || '?';
+    const detail = r.display_name || '';
+    d.innerHTML = `<div class="sresult-name">📍 ${name}</div><div class="sresult-detail">${detail}</div>`;
+    d.addEventListener('click', () => {
+      S.coords = { lat: parseFloat(r.lat ?? r.latitude), lon: parseFloat(r.lon ?? r.longitude) };
+      S.locName = name + (detail ? ' — ' + detail.split(',').slice(1, 3).join(',').trim() : '');
+      box.style.display = 'none';
+      const c = $('loc-confirmed');
+      c.innerHTML = `✓ <strong>${name}</strong><br><span style="font-size:15px;opacity:.7">${detail}</span>`;
+      c.style.display = 'block';
+      $('btn-fetch-search').style.display = 'block';
+    });
+    box.appendChild(d);
+  });
+  box.style.display = 'block';
+}
+
+// ── WEATHER FETCH ─────────────────────────────────────────────────
+$('btn-fetch-gps').addEventListener('click', fetchWeather);
+$('btn-fetch-search').addEventListener('click', fetchWeather);
+
+async function fetchWeather() {
+  if (!S.coords) return;
+  const fromGPS = $('gps-card').style.display !== 'none';
+  const btnId = fromGPS ? 'btn-fetch-gps' : 'btn-fetch-search';
+  setBtn(btnId, true, `<span class="spinner"></span>${t('fetchingData')}`);
+  hide('err-location');
+  try {
+    const { lat, lon } = S.coords;
+    const [meteo, marine] = await Promise.all([
+      fetch(`${METEO}/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,shortwave_radiation,weather_code&hourly=temperature_2m,wind_speed_10m,wind_direction_10m,weather_code,shortwave_radiation&forecast_days=3&timezone=auto`)
+        .then(r => { if (!r.ok) throw new Error('Meteo HTTP ' + r.status); return r.json(); }),
+      fetch(`${MARINE}/marine?latitude=${lat}&longitude=${lon}&current=sea_surface_temperature,wave_height,wave_direction,wave_period,swell_wave_height,ocean_current_velocity&timezone=auto`)
+        .then(r => r.ok ? r.json() : {}).catch(() => ({})),
+    ]);
+    if (!meteo.current) {
+      console.log('Meteo response:', JSON.stringify(meteo).slice(0, 300));
+      throw new Error('No weather data — ' + (meteo.reason || meteo.error || JSON.stringify(meteo).slice(0,100)));
+    }
+    S.weather = {
+      airTemp:   meteo.current.temperature_2m,
+      windSpeed: meteo.current.wind_speed_10m,
+      windDir:   meteo.current.wind_direction_10m,
+      solarRad:  meteo.current.shortwave_radiation ?? 0,
+      code:      meteo.current.weather_code ?? 0,
+      waterTemp: marine.current?.sea_surface_temperature ?? null,
+      waveH:     marine.current?.wave_height ?? null,
+      waveDir:   marine.current?.wave_direction ?? null,
+      wavePer:   marine.current?.wave_period ?? null,
+      swellH:    marine.current?.swell_wave_height ?? null,
+      currentV:  marine.current?.ocean_current_velocity ?? null,
+      tz:        meteo.utc_offset_seconds ?? 0,
+      hourly:    meteo.hourly,
+    };
+    renderWeatherGrid();
+    renderForecast();
+    render2DayForecast();
+    updateWindInfo();
+    loadBeachStatus();
+    loadHistoricalWaterTemp();
+
+    // Strava Heatmap link — always show after location confirmed
+    // Independent of beaches.json loading
+    const stravaContainer = $('strava-link-container');
+    if (stravaContainer && S.coords) {
+      const { lat, lon } = S.coords;
+      stravaContainer.innerHTML =
+        `<a href="https://www.strava.com/heatmap#15/${lon}/${lat}/hot/all"
+            target="_blank" class="camera-link"
+            style="border-color:#FC4C02;color:#FC4C02;width:100%;box-sizing:border-box;text-align:center;display:block">
+          🔥 ${t('stravaHeatmap')}
+        </a>`;
+      stravaContainer.style.display = 'block';
+    }
+
+    showStep('params');
+  } catch (e) {
+    showErr('err-location', 'Error: ' + e.message);
+  }
+  setBtn(btnId, false, t('fetchWeather'));
+}
+
+function renderWeatherGrid() {
+  const w = S.weather;
+  $('weather-grid').innerHTML = `
+    <div class="dcell"><div class="dcell-lbl">${t('waterT')}</div>
+      <div class="dcell-val">${w.waterTemp != null ? w.waterTemp.toFixed(1) + '°C' : '—'}</div></div>
+    <div class="dcell"><div class="dcell-lbl">${t('airT')}</div>
+      <div class="dcell-val">${w.airTemp.toFixed(1)}°C</div></div>
+    <div class="dcell"><div class="dcell-lbl">${t('wind')}</div>
+      <div class="dcell-val">${w.windSpeed.toFixed(1)} km/h</div></div>
+    <div class="dcell"><div class="dcell-lbl">${t('dir')}</div>
+      <div class="dcell-val">${wLabel(w.windDir)} ${wArrow(w.windDir)}</div></div>
+    <div class="dcell" style="grid-column:span 2"><div class="dcell-lbl">${t('sky')}</div>
+      <div class="dcell-val">${wDesc(w.code)}</div></div>`;
+
+  // Wave info
+  const wi = $('wave-info');
+  if (w.waveH != null) {
+    const wc = w.waveH < 0.5 ? '#0A7A4A' : w.waveH < 1.0 ? '#C07000' : w.waveH < 1.5 ? '#C05000' : '#B02020';
+    const wl = w.waveH < 0.3 ? t('waveCalm') : w.waveH < 0.7 ? t('waveLight') : w.waveH < 1.2 ? t('waveMod') : w.waveH < 2.0 ? t('waveRough') : t('waveVery');
+    wi.innerHTML = `<div class="wave-box">
+      <div class="wave-box-title">${t('waveCond')}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div><div style="font-size:14px;color:var(--text3);font-family:'Courier New',monospace">${t('waveH')}</div>
+          <div style="font-size:26px;font-weight:700;color:${wc};font-family:Georgia,serif">${w.waveH.toFixed(1)}m</div>
+          <div style="font-size:15px;color:${wc};font-weight:600">${wl}</div></div>
+        ${w.wavePer ? `<div><div style="font-size:14px;color:var(--text3);font-family:'Courier New',monospace">${t('wavePer')}</div>
+          <div style="font-size:26px;font-weight:700;color:var(--deep);font-family:Georgia,serif">${w.wavePer.toFixed(0)}s</div></div>` : ''}
+        ${w.currentV ? `<div><div style="font-size:14px;color:var(--text3);font-family:'Courier New',monospace">${t('waveCurr')}</div>
+          <div style="font-size:22px;font-weight:700;color:var(--deep);font-family:Georgia,serif">${(w.currentV * 3.6).toFixed(1)}<span style="font-size:15px"> km/h</span></div></div>` : ''}
+      </div>
+      ${w.swellH > 0.2 ? `<div style="margin-top:8px;font-size:16px;color:var(--text2)">🌊 ${t('swellH')}: ${w.swellH.toFixed(1)}m ${w.waveDir != null ? wArrow(w.waveDir) : ''}</div>` : ''}
+    </div>`;
+  } else {
+    wi.innerHTML = '';
+  }
+  $('loc-label').textContent = '📍 ' + S.locName;
+}
+
+function renderForecast() {
+  const w = S.weather;
+  if (!w.hourly) return;
+  const now = new Date();
+  const times = w.hourly.time || [];
+  const temps = w.hourly.temperature_2m || [];
+  const winds = w.hourly.wind_speed_10m || [];
+  const wdirs = w.hourly.wind_direction_10m || [];
+  const codes = w.hourly.weather_code || [];
+  let html = '', count = 0;
+  for (let i = 0; i < times.length && count < 8; i++) {
+    if (new Date(times[i]) < now - 3600000) continue;
+    const isNow = count === 0;
+    const h = new Date(times[i]).getHours();
+    html += `<div class="fc-slot${isNow ? ' now' : ''}">
+      <div class="fc-time">${isNow ? t('forecastNow') : h + ':00'}</div>
+      <div class="fc-icon">${wIcon(codes[i])}</div>
+      <div class="fc-temp">${temps[i]?.toFixed(0) ?? '?'}°</div>
+      <div class="fc-wind">${winds[i]?.toFixed(0) ?? '?'}km/h ${wArrow(wdirs[i])}</div>
+      ${w.waterTemp ? `<div class="fc-water">≈${w.waterTemp.toFixed(0)}°</div>` : ''}
+    </div>`;
+    count++;
+  }
+  if (html) {
+    $('forecast-row').innerHTML = html;
+    $('forecast-card').style.display = 'block';
+  }
+}
+
+// ── COMPASS ───────────────────────────────────────────────────────
+$('dir-group').addEventListener('click', e => {
+  const btn = e.target.closest('.dir-btn');
+  if (!btn || btn.classList.contains('center')) return;
+  const deg = Number(btn.dataset.deg);
+  if (S.swimDir === deg) {
+    btn.classList.remove('active');
+    S.swimDir = null;
+  } else {
+    document.querySelectorAll('.dir-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    S.swimDir = deg;
+  }
+  updateWindInfo();
+});
+
+function updateWindInfo() {
+  if (!S.weather) return;
+  const { windDir, windSpeed } = S.weather;
+  const wflow = (windDir + 180) % 360;
+  let fAvg, desc;
+  if (S.swimDir === null) {
+    fAvg = 0.71;
+    desc = `${wLabel(windDir)} ${wArrow(windDir)} · ${t('assumedDir')} (f=0.71)`;
+  } else {
+    const fi = Math.abs(Math.cos(rad(angleDiff(wflow, S.swimDir))));
+    const fr = Math.abs(Math.cos(rad(angleDiff(wflow, (S.swimDir + 180) % 360))));
+    fAvg = (fi + fr) / 2;
+    desc = `${wLabel(windDir)} ${wArrow(windDir)} · exposición ${Math.round(fAvg * 100)}% (f=${fAvg.toFixed(2)})`;
+  }
+  $('wind-arrow').textContent = wArrow(wflow);
+  $('wind-arrow').style.transform = `rotate(${wflow}deg)`;
+  $('wind-info-text').textContent = desc;
+  $('wind-info').style.display = 'flex';
+}
+
+// ── PILLS ─────────────────────────────────────────────────────────
+function setupPills(groupId, key, numeric) {
+  $(groupId).addEventListener('click', e => {
+    const b = e.target.closest('.pill');
+    if (!b) return;
+    $(groupId).querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    b.classList.add('active');
+    S[key] = numeric ? Number(b.dataset.value) : b.dataset.value;
+  });
+}
+setupPills('suit-group', 'suit', false);
+// Show/hide equipment extras based on suit
+$('suit-group').addEventListener('click', e => {
+  const b = e.target.closest('.pill');
+  if (!b) return;
+  const showExtras = b.dataset.value === 'thermal' || b.dataset.value === 'standard';
+  $('equipment-extras').style.display = showExtras ? 'block' : 'none';
+});
+
+// Show/hide equipment options when thermal/standard selected
+$('suit-group').addEventListener('click', () => {
+  const equipDiv = $('equip-options');
+  if (S.suit === 'none') {
+    equipDiv.style.display = 'none';
+    S_equip = { gloves:false, hood:false, booties:false };
+    document.querySelectorAll('.equip-check').forEach(e => e.classList.remove('active'));
+  } else {
+    equipDiv.style.display = 'block';
+  }
+});
+setupPills('sex-group', 'sex', true);
+$('speed-group').addEventListener('click', e => {
+  const b = e.target.closest('.speed-pill');
+  if (!b) return;
+  document.querySelectorAll('.speed-pill').forEach(p => p.classList.remove('active'));
+  b.classList.add('active');
+  S.speedSecs = Number(b.dataset.secs);
+});
+
+// ── PROFILE ───────────────────────────────────────────────────────
+function loadProfile() {
+  const p = S.profile;
+  if (!p) return;
+  if (p.altura) $('p-altura').value = p.altura;
+  if (p.peso)   $('p-peso').value = p.peso;
+  if (p.edad)   $('p-edad').value = p.edad;
+  if (p.grasa)  $('p-grasa').value = p.grasa;
+  S.sex = p.sex ?? 1;
+  $(p.sex === 0 ? 't-female' : 't-male').classList.add('active');
+  $(p.sex === 0 ? 't-male' : 't-female').classList.remove('active');
+  showProfileBar();
+}
+function saveProfile() {
+  S.profile = {
+    altura: parseFloat($('p-altura').value) || null,
+    peso:   parseFloat($('p-peso').value)   || null,
+    edad:   parseFloat($('p-edad').value)   || null,
+    grasa:  parseFloat($('p-grasa').value)  || null,
+    sex:    S.sex,
+  };
+  safeSet('nauta_profile', JSON.stringify(S.profile));
+}
+function showProfileBar() {
+  const p = S.profile;
+  if (!p?.altura || !p?.peso || !p?.edad) return;
+  const bmi = (p.peso / ((p.altura / 100) ** 2)).toFixed(1);
+  const bf  = p.grasa ? p.grasa + '%' : estBF(bmi, p.edad, p.sex).toFixed(1) + '%*';
+  $('profile-bar-text').textContent = `${p.altura}cm · ${p.peso}kg · BMI ${bmi} · ${t('fat').replace('%','')} ${bf}`;
+  $('profile-bar').style.display = 'flex';
+  $('profile-form').style.display = 'none';
+}
+function editProfile() {
+  $('profile-bar').style.display = 'none';
+  $('profile-form').style.display = 'block';
+}
+
+// ── PHYSICS ───────────────────────────────────────────────────────
+function rad(d) { return d * Math.PI / 180; }
+function angleDiff(a, b) { const d = Math.abs(a - b) % 360; return Math.min(d, 360 - d); }
+function estBF(bmi, age, sex) { return Math.max(5, Math.min(45, 1.20 * bmi + 0.23 * age - 10.8 * sex - 5.4)); }
+
+function solarSin(lat, lon, date, tzSec) {
+  const doy = Math.ceil((date - new Date(date.getFullYear(), 0, 1)) / 864e5);
+  const decl = 23.45 * Math.sin(rad(360 / 365 * (doy - 81)));
+  const B = rad(360 / 365 * (doy - 81));
+  const eot = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
+  const tzH = tzSec / 3600;
+  const noon = 12 - (lon - tzH * 15) / 15 - eot / 60;
+  const lh = date.getHours() + date.getMinutes() / 60;
+  const H = (lh - noon) * 15;
+  const sinA = Math.sin(rad(lat)) * Math.sin(rad(decl)) + Math.cos(rad(lat)) * Math.cos(rad(decl)) * Math.cos(rad(H));
+  return Math.max(0, sinA);
+}
+
+// ── EQUIPMENT CONFIGURATION ───────────────────────────────────────
+function getEquipment() {
+  const suit = S.suit;
+  const gloves  = (suit === 'thermal' || suit === 'standard') && document.getElementById('eq-gloves')?.checked;
+  const hood    = (suit === 'thermal' || suit === 'standard') && document.getElementById('eq-hood')?.checked;
+  const booties = (suit === 'thermal' || suit === 'standard') && document.getElementById('eq-booties')?.checked;
+
+  // Thermal resistance [m²°C/W] calibrated from Martin Thomas / Playa Ramírez 2026
+  // Orca Thermal 3mm Yamamoto: R = d/k = 0.003/0.050 + 0.0005/0.035 = 0.074
+  const R_suit = { none: 0, standard: 0.022, thermal: 0.074 }[suit] || 0;
+  const R_hood_neo = hood ? 0.030 : 0.003;
+
+  // Reference body area proportions (adult male, ~1.80m²)
+  const A_face  = 0.040, A_head = 0.090;
+  const A_hands = 0.050, A_feet = 0.035;
+  const A_trunk = 0.630, A_arms = 0.252, A_legs = 0.612;
+
+  let A_exp = A_face; // always exposed
+  if (!gloves)  A_exp += A_hands;
+  if (!booties) A_exp += A_feet;
+  if (suit === 'none') A_exp += A_hands + A_feet;
+
+  let A_cov = suit === 'none' ? 0 : A_trunk + A_arms + A_legs;
+  if (gloves)  A_cov += A_hands;
+  if (booties) A_cov += A_feet;
+
+  return { R_suit, R_hood_neo, A_exp, A_cov, A_head, gloves, hood, booties };
+}
+
+// ── DUAL CHART RENDERER ───────────────────────────────────────────
+function buildDualCharts(curve, durationMin) {
+  if (!curve || curve.length < 2) return '';
+  const W = 320, PAD = { t:8, r:12, b:24, l:42 };
+  const iW = W - PAD.l - PAD.r;
+
+  const xS = tv => PAD.l + (tv / durationMin) * iW;
+  const xStep = durationMin <= 20 ? 5 : durationMin <= 40 ? 10 : 15;
+  const H = 130, iH = H - PAD.t - PAD.b;
+  const xTicksArr = Array.from({length: Math.floor(durationMin/xStep)+1}, (_,i) => i*xStep);
+  const xTicksSVG = xTicksArr.map(v => `<text x="${xS(v).toFixed(1)}" y="${H-6}" text-anchor="middle" font-size="8" fill="#7AAABB">${v}'</text>`).join('');
+
+  // Chart 1: Temperatures
+  const Tmin = Math.min(34, Math.min(...curve.map(p => p.Tc)) - 0.5);
+  const Tmax = Math.max(37.5, Math.max(...curve.map(p => p.Tsc)) + 0.3);
+  const yT = T => PAD.t + (1 - (T-Tmin)/(Tmax-Tmin)) * iH;
+  const mkTpath = key => curve.map((p,i) => (i===0?'M':'L')+xS(p.t).toFixed(1)+','+yT(p[key]).toFixed(1)).join(' ');
+  const yTicksT = [33,34,35,36,37].filter(v=>v>=Tmin&&v<=Tmax).map(v => {
+    const col = v===35 ? '#C05000' : v===36 ? '#C09000' : '#D4E9F2';
+    const w   = (v===35||v===36) ? 1.5 : 0.5;
+    const dash = (v===35||v===36) ? 'stroke-dasharray="3,2"' : '';
+    return `<line x1="${PAD.l}" y1="${yT(v).toFixed(1)}" x2="${W-PAD.r}" y2="${yT(v).toFixed(1)}" stroke="${col}" stroke-width="${w}" ${dash}/>
+     <text x="${PAD.l-4}" y="${yT(v).toFixed(1)}" text-anchor="end" font-size="8" fill="${col}" dominant-baseline="middle">${v}°</text>`;
+  }).join('');
+
+  const chart1 = `
+    <div style="font-size:11px;color:var(--text3);margin-bottom:6px;display:flex;gap:12px;flex-wrap:wrap">
+      <span>● <span style="color:#1A4A6B">${t('tCore')}</span></span>
+      <span>● <span style="color:#0092B8">${t('tSkinC')}</span></span>
+      <span>– <span style="color:#90BBCC">${t('tSkinE')}</span></span>
+    </div>
+    <svg width="100%" viewBox="0 0 ${W} ${H}">
+      ${yTicksT}
+      ${xTicksSVG}
+      <path d="${mkTpath('Tse')}" fill="none" stroke="#90BBCC" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <path d="${mkTpath('Tsc')}" fill="none" stroke="#0092B8" stroke-width="2"/>
+      <path d="${mkTpath('Tc')}"  fill="none" stroke="#1A4A6B" stroke-width="2.5"/>
+      <circle cx="${xS(curve[curve.length-1].t).toFixed(1)}" cy="${yT(curve[curve.length-1].Tc).toFixed(1)}" r="3" fill="#1A4A6B"/>
+    </svg>`;
+
+  // Chart 2: Heat flows
+  const allQ = curve.flatMap(p => [p.qMet, -p.qWater, -p.qAir, -p.qExposed, p.qSolar, p.qNet]);
+  const Qmin = Math.min(-50, Math.min(...allQ)*1.1);
+  const Qmax = Math.max(50,  Math.max(...allQ)*1.1);
+  const yQ = Q => PAD.t + (1 - (Q-Qmin)/(Qmax-Qmin)) * iH;
+  const mkQpath = (key, sign=1) => curve.map((p,i) => (i===0?'M':'L')+xS(p.t).toFixed(1)+','+yQ(p[key]*sign).toFixed(1)).join(' ');
+  const yTicksQ = [-300,-200,-100,0,100,200,300].filter(v=>v>=Qmin&&v<=Qmax).map(v =>
+    `<line x1="${PAD.l}" y1="${yQ(v).toFixed(1)}" x2="${W-PAD.r}" y2="${yQ(v).toFixed(1)}" stroke="${v===0?'#90BBCC':'#D4E9F2'}" stroke-width="${v===0?1:0.5}"/>
+     <text x="${PAD.l-4}" y="${yQ(v).toFixed(1)}" text-anchor="end" font-size="7" fill="#7AAABB" dominant-baseline="middle">${v}W</text>`
+  ).join('');
+
+  const chart2 = `
+    <div style="font-size:11px;color:var(--text3);margin-bottom:6px;display:flex;gap:8px;flex-wrap:wrap">
+      <span style="color:#0A7A4A">▲${t('qMet')}</span>
+      <span style="color:#0092B8">▼${t('qWater')}</span>
+      <span style="color:#C07000">▼${t('qAir')}</span>
+      <span style="color:#B02020">▼${t('qExposed')}</span>
+    </div>
+    <svg width="100%" viewBox="0 0 ${W} ${H}">
+      ${yTicksQ}
+      ${xTicksSVG}
+      <path d="${mkQpath('qSolar')}"      fill="none" stroke="#F0A000" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <path d="${mkQpath('qExposed',-1)}" fill="none" stroke="#B02020" stroke-width="1.5"/>
+      <path d="${mkQpath('qAir',-1)}"    fill="none" stroke="#C07000" stroke-width="1.5"/>
+      <path d="${mkQpath('qWater',-1)}"  fill="none" stroke="#0092B8" stroke-width="1.5"/>
+      <path d="${mkQpath('qMet')}"       fill="none" stroke="#0A7A4A" stroke-width="1.5"/>
+      <path d="${mkQpath('qNet')}"       fill="none" stroke="#1A4A6B" stroke-width="2.5"/>
+    </svg>`;
+
+  return `
+    <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px 8px;margin:10px 0">
+      <div style="font-size:10px;color:var(--water);letter-spacing:3px;font-family:'Courier New',monospace;margin-bottom:8px;font-weight:700">${t('chartTemp')}</div>
+      ${chart1}
+    </div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px 8px;margin:10px 0">
+      <div style="font-size:10px;color:var(--water);letter-spacing:3px;font-family:'Courier New',monospace;margin-bottom:8px;font-weight:700">${t('chartFlows')}</div>
+      ${chart2}
+    </div>`;
+}
+
+// ── SUGGESTED TIME ────────────────────────────────────────────────
+function renderSuggestedTime(result) {
+  if (result.t_35 !== null) {
+    const mins = Math.round(result.t_35);
+    const col = mins < 20 ? '#B02020' : mins < 40 ? '#C05000' : '#C07000';
+    return `<div style="padding:14px 16px;background:${col}10;border:2px solid ${col};border-radius:var(--rad-sm);margin-bottom:12px;text-align:center">
+      <div style="font-size:11px;color:${col};letter-spacing:3px;font-weight:700;font-family:'Courier New',monospace;margin-bottom:6px">${t('suggestedTime')}</div>
+      <div style="font-size:48px;font-weight:900;color:${col};font-family:Georgia,serif;line-height:1">${mins}</div>
+      <div style="font-size:13px;color:${col};margin-top:4px">${t('untilLimit')}</div>
+    </div>`;
+  }
+  return `<div style="padding:12px 16px;background:#F0FFF8;border:1.5px solid var(--ok);border-radius:var(--rad-sm);margin-bottom:12px;font-size:14px;color:var(--ok);text-align:center">✅ ${t('noLimit')}</div>`;
+}
+
+function runUnifiedModel(profile, speedSecs, suit, swimDir, weather, coords, durationMin) {
+  const { altura, peso, edad, sex, grasa } = profile;
+  const { airTemp, windSpeed, windDir, tz } = weather;
+  const waterTemp = weather.waterTemp ?? 15;
+
+  // ── ANTHROPOMETRY ────────────────────────────────────────────
+  const bmi    = peso / ((altura/100)**2);
+  const bf     = (grasa > 0) ? grasa : estBF(bmi, edad, sex);
+  const A      = 0.007184 * (altura**0.725) * (peso**0.425);
+  const fatAdj = Math.max(1, 1 + (bf-15)*0.006);
+
+  // ── EQUIPMENT CONFIG ─────────────────────────────────────────
+  const eq = getEquipConfig(suit, A);
+
+  // ── COMPARTMENT MASSES & CAPACITIES ─────────────────────────
+  const m_core = peso * (1 - bf/100) * 0.82;
+  const m_skin = peso * 0.08;
+  const C_core = m_core * 3470;   // J/°C
+  const C_skin = m_skin * 3500;   // J/°C
+
+  // ── METABOLIC PRODUCTION ────────────────────────────────────
+  // Immersion mode (speedSecs=0): only BMR + cold-induced NST
+  // BMR ≈ 80W for 66kg male, NST adds 20-40W in cold water
+  // Total immersion Q_met ≈ 80-120W (vs 280-320W swimming)
+  const isImmersion = speedSecs === 0;
+  const v      = isImmersion ? 0 : 100 / speedSecs;
+  const C_sw   = 300 + 180 * v*v;
+  const f_cold = 1 - Math.max(0, (24 - waterTemp) * 0.012);
+  // BMR for immersion: weight-based estimate
+  const BMR    = 80 * (peso/70) * Math.pow(altura/175, 0.5);
+  const NST    = 27 + Math.max(0, (20 - waterTemp) * 1.5);  // NST increases in cold
+  const Q_met0 = isImmersion
+    ? BMR + NST           // immersion: ~100-120W
+    : C_sw * v * f_cold + 27;  // swimming: ~280-320W
+
+  // ── WIND DIRECTION FACTOR ────────────────────────────────────
+  const wflow = (windDir + 180) % 360;
+  let fAvg;
+  if (swimDir === null) { fAvg = 0.71; }
+  else {
+    const fi = Math.abs(Math.cos(rad(angleDiff(wflow, swimDir))));
+    const fr = Math.abs(Math.cos(rad(angleDiff(wflow, (swimDir+180)%360))));
+    fAvg = (fi + fr) / 2;
+  }
+  const vMs  = windSpeed / 3.6;
+  const hAir = Math.max(3.5, 8.3 * Math.pow(vMs * fAvg, 0.6));
+
+  // ── WATER CONVECTION through suit ────────────────────────────
+  // In immersion mode: no swimming velocity → lower h_water
+  const hW_swim = (120 + 200*v) / fatAdj;
+  const hW_still = 50 / fatAdj;  // still water natural convection
+  const hW    = isImmersion ? hW_still : hW_swim;
+  const hWcov = eq.R_suit > 0 ? 1/(1/hW + eq.R_suit) : hW;
+
+  // ── SOLAR ────────────────────────────────────────────────────
+  const A_sol    = 0.14 * A;
+  const sinAlpha = solarSin(coords.lat, coords.lon, new Date(), tz);
+  const I        = sinAlpha > 0.01 ? 1361 * Math.pow(0.7, 1/sinAlpha) * sinAlpha : 0;
+  const Q_solar  = I * A_sol * 0.70;
+
+  // ── TISSUE CONDUCTIVITY core→skin ───────────────────────────
+  // Vasoconstrictive: reduces blood flow to periphery in cold water
+  const f_vaso  = Math.max(0.2, 1 - Math.max(0, (20 - waterTemp) * 0.04));
+  const k_cond  = 10 * f_vaso;   // W/m²°C, covered zones
+
+  // ── EXPOSED ZONE LOSSES ──────────────────────────────────────
+  // Three distinct mechanisms:
+  //
+  // 1. Face (always exposed): tissue conduction core→face→water
+  //    Face T_piel → T_agua, gradient is internal (core→skin)
+  //    k_face = low (vasoconstricted, small area)
+  //
+  // 2. Hands (exposed if no gloves): HIGH convection
+  //    Hands move through water at swim speed → full hW applies
+  //    T_piel_hands → T_agua quickly
+  //    Loss = hW × A_hands × (T_core - T_agua)  [simplified: direct to core]
+  //
+  // 3. Feet (exposed if no booties): moderate convection
+  //    Less movement than hands
+  //
+  const A_face   = 0.04 * A;   // always exposed
+  const A_hands  = S_equip.gloves  ? 0 : 0.05 * A;
+  const A_feet   = S_equip.booties ? 0 : 0.035 * A;
+
+  // Face + feet: tissue conduction pathway (k_exp)
+  const k_exp    = 3.0;  // W/m²°C core→face/feet tissue
+  const tau_exp  = 300;  // s — skin equilibration time constant
+
+  // Hands: direct high convection when no gloves (dominant loss)
+  // h_hands ≈ hW (moving through water) but limited by tissue
+  // Use geometric mean of hW and tissue conduction
+  const h_hands  = S_equip.gloves ? 0 : Math.sqrt(hW * 20);  // ~75 W/m²°C typically
+
+  // ── INITIAL CONDITIONS ───────────────────────────────────────
+  const dt   = 5;   // seconds
+  const nMax = Math.round((durationMin || 1) * 60 / dt);
+  let T_core = 37.0;
+  let T_skin = 33.0;   // warm skin under suit (pre-immersion)
+  let T_exp  = 33.0;   // exposed skin starts warm, decays to waterTemp
+
+  const curve = [{ t:0, Tc:T_core, Ts:T_skin, Te:T_exp,
+    Qmet:Q_met0, Qw:0, Qa:0, Qs:Q_solar, Qexp:0, Qnet:0 }];
+
+  let t_35 = null;
+
+  for (let i = 0; i < nMax; i++) {
+    const t_sec = (i+1) * dt;
+
+    // ── MUSCLE TEMPERATURE ────────────────────────────────────
+    // Muscle under suit warms to skin temperature
+    // Muscle exposed to water cools toward waterTemp
+    // This is the key coupling: cold muscles → less power → less heat
+    const T_muscle = suit !== 'none' ? T_skin : waterTemp;
+
+    // ── f_muscle: muscular efficiency as function of T_muscle ──
+    // Based on Hill (1938) Q10 effect on muscle contraction speed
+    // At 37°C → f=1.0 (full power)
+    // At 20°C → f≈0.796 (under wetsuit, warm water)
+    // At 10°C → f≈0.652 (exposed, very cold water)
+    // At  8°C → f≈0.628 (Arena in winter — explains your experience)
+    // Floor at 0.5 (shivering takes over, coordination fails)
+    const f_muscle = isImmersion
+      ? 1.0   // immersion: no propulsive muscle work anyway
+      : Math.max(0.5, 1 - Math.max(0, (37 - T_muscle) * 0.012));
+
+    // ── METABOLIC PRODUCTION ──────────────────────────────────
+    // Q_met decreases as muscles cool — the feedback loop:
+    // T_skin↓ → T_muscle↓ → f_muscle↓ → Q_met↓ → T_core↓ faster
+    const Q_met = Q_met0 * f_muscle;
+
+    // ── VASOCONSTRICTIVE COUPLING core → covered skin ─────────
+    // Thermoregulation above 37.5°C: vasodilation amplifies Q_cs
+    const f_thermo = T_core > 37.5
+      ? 1 + (T_core - 37.5) * 2.0
+      : 1.0;
+    const Q_cs = k_cond * f_thermo * eq.A_covered * (T_core - T_skin);
+
+    // ── COVERED SKIN → WATER (through suit) ──────────────────
+    // Only relevant when there IS a suit
+    const Q_water_cov = suit !== 'none'
+      ? hWcov * eq.A_covered * (T_skin - waterTemp)
+      : 0;
+
+    // ── NO SUIT: subcutaneous fat as natural insulator ───────────
+    // Key insight from literature: without a wetsuit, heat loss is
+    // dominated by the resistance of subcutaneous fat, not direct
+    // convection from core to water.
+    //
+    // Fat layer thickness (Clarys et al., Pendergast et al.):
+    //   d_fat = (bf * peso * 0.80) / (A * 900)
+    //   80% of body fat is subcutaneous; 900 kg/m³ adipose density
+    //
+    // Thermal conductivity of adipose tissue:
+    //   k_fat ≈ 0.20 W/m°C (Fiala et al., 1999)
+    //
+    // R_fat varies with BMI/BF:
+    //   BF=12% (lean athlete): R_fat ≈ 0.019 m²°C/W
+    //   BF=18% (average):      R_fat ≈ 0.029 m²°C/W
+    //   BF=25% (higher BF):    R_fat ≈ 0.040 m²°C/W
+    //
+    // Effective conductance skin→water without suit:
+    //   hEff = 1 / (R_fat + 1/hW)
+    //   This is much lower than hW alone — explains why
+    //   swimmers don't lose heat as fast as raw convection predicts
+    const A_body_main = A - A_face - A_hands - A_feet;
+    const d_fat   = (bf/100 * peso * 0.80) / (A * 900);  // meters
+    const R_fat   = d_fat / 0.20;  // m²°C/W, k_fat=0.20 W/m°C
+    const hEff_ns = 1 / (R_fat + 1/hW);  // effective conductance skin→water
+
+    // Q_nosuit: heat from CORE through tissue+fat to water
+    // Flows from core → (vasoconstrictive tissue) → fat layer → water
+    // Using hEff_ns on the core→water gradient via skin compartment
+    const Q_nosuit = suit === 'none'
+      ? hEff_ns * A_body_main * (T_core - waterTemp) * 0.20
+      // 0.20 factor = additional tissue resistance between core and fat surface
+      : 0;
+
+    // ── COVERED SKIN → AIR ───────────────────────────────────
+    const Q_air = hAir * 0.10 * A * (T_skin - airTemp);
+
+    // ── EXPOSED SKIN EQUILIBRATION (Eq. 3) ───────────────────
+    const dTe = -(T_exp - waterTemp) / tau_exp * dt;
+
+    // ── CORE → EXPOSED ZONES (face, feet, hands) ─────────────
+    const A_exp_tissue = A_face + A_feet;
+    const Q_exp_tissue = k_exp * A_exp_tissue * (T_core - T_exp);
+    const Q_exp_hands  = h_hands * A_hands * (T_core - waterTemp);
+    const Q_exp        = Q_exp_tissue + Q_exp_hands;
+
+    // ── DIFFERENTIALS ─────────────────────────────────────────
+    // Eq. 1: Core loses to skin coupling, exposed zones, and no-suit direct loss
+    const dTc = (Q_met - Q_cs - Q_exp - Q_nosuit) / C_core * dt;
+
+    // Eq. 2: Covered skin — gains from core, loses to water/air
+    // No-suit: skin loses heat through fat layer to water
+    const Q_skin_to_water = suit !== 'none'
+      ? Q_water_cov
+      : hEff_ns * A_body_main * (T_skin - waterTemp);
+    const dTs = (Q_cs - Q_skin_to_water - Q_air + Q_solar) / C_skin * dt;
+
+    // Eq. 3: Exposed skin — decays to waterTemp (above)
+
+    T_core = Math.max(28, Math.min(40, T_core + dTc));
+    T_skin = Math.max(waterTemp - 1, Math.min(37, T_skin + dTs));
+    T_exp  = Math.max(waterTemp, Math.min(37, T_exp + dTe));
+
+    if (T_core <= 35.0 && t_35 === null) t_35 = t_sec / 60;
+
+    if (i % 6 === 0) {
+      const Q_net_inst = Q_met - Q_water_cov - Q_air - Q_exp - Q_nosuit + Q_solar;
+      curve.push({
+        t:    t_sec / 60,
+        Tc:   T_core,
+        Ts:   T_skin,
+        Te:   T_exp,
+        Tm:   T_muscle,
+        fm:   f_muscle,
+        Qmet: Q_met,
+        Qw:   Q_water_cov,
+        Qa:   Q_air,
+        Qs:   Q_solar,
+        Qexp: Q_exp,
+        Qnet: Q_net_inst,
+      });
+    }
+  }
+
+  // ── INITIAL BALANCE ───────────────────────────────────────────
+  const settled = curve.find(p => p.t >= 5) || curve[curve.length-1];
+  const Q_net_ss = settled?.Qnet ?? Q_met0;
+
+  return {
+    Q_met:   Q_met0,
+    Q_water: settled?.Qw   ?? 0,
+    Q_aire:  settled?.Qa   ?? 0,
+    Q_solar: Q_solar,
+    Q_exp:   settled?.Qexp ?? 0,
+    Q_net:   Q_net_ss,
+    curve, T_core_final: T_core, T_skin_final: T_skin,
+    t_35,
+    waterTemp, airTemp, windSpeed, windDir, suit,
+    v, fAvg, sinAlpha, I,
+    eq, hWcov, hAir, bf, A, fatAdj, k_cond, k_exp,
+  };
+}
+
+// Backwards compatibility alias
+function calcThermal(profile, speedSecs, suit, swimDir, weather, coords) {
+  const r = runUnifiedModel(profile, speedSecs, suit, swimDir, weather, coords, 1);
+  r.Tskin = r.T_skin_final;
+  r.effMass = profile.peso * (1 - (profile.grasa || r.bf)/100) * 0.82;
+  return r;
+}
+
+function runODE(profile, speedSecs, suit, swimDir, weather, coords, durationMin) {
+  return runUnifiedModel(profile, speedSecs, suit, swimDir, weather, coords, durationMin);
+}
+
+
+
+// ── SVG CHART ENGINE ─────────────────────────────────────────────
+function buildSVGChart(svgId, series, durationMin, opts={}) {
+  const svg = document.getElementById(svgId);
+  if (!svg) return;
+  const W=340, H=130;
+  const PAD = { t:8, r:32, b:22, l:38 };
+  const iW = W - PAD.l - PAD.r;
+  const iH = H - PAD.t - PAD.b;
+
+  // Value ranges
+  const allY = series.flatMap(s => s.data.map(p => p.y));
+  let yMin = opts.yMin ?? Math.min(...allY);
+  let yMax = opts.yMax ?? Math.max(...allY);
+  const yPad = (yMax - yMin) * 0.08 || 5;
+  yMin -= yPad; yMax += yPad;
+
+  const xScale = t => PAD.l + (t / durationMin) * iW;
+  const yScale = v => PAD.t + (1 - (v - yMin)/(yMax - yMin)) * iH;
+
+  let html = '';
+
+  // Grid lines & Y labels
+  const nTicks = 4;
+  for (let i = 0; i <= nTicks; i++) {
+    const v = yMin + (yMax - yMin) * i / nTicks;
+    const y = yScale(v).toFixed(1);
+    html += `<line x1="${PAD.l}" y1="${y}" x2="${W-PAD.r}" y2="${y}" stroke="#D4E9F2" stroke-width="0.5"/>`;
+    html += `<text x="${PAD.l-3}" y="${y}" text-anchor="end" font-size="8" fill="#7AAABB" dominant-baseline="middle">${v.toFixed(0)}${opts.unit||''}</text>`;
+  }
+
+  // Reference lines (horizontal thresholds)
+  (opts.refs || []).forEach(ref => {
+    if (ref.v >= yMin && ref.v <= yMax) {
+      const y = yScale(ref.v).toFixed(1);
+      html += `<line x1="${PAD.l}" y1="${y}" x2="${W-PAD.r}" y2="${y}" stroke="${ref.color}" stroke-width="1" stroke-dasharray="3,2"/>`;
+      html += `<text x="${W-PAD.r+2}" y="${y}" font-size="7" fill="${ref.color}" dominant-baseline="middle">${ref.label}</text>`;
+    }
+  });
+
+  // X labels
+  const xStep = durationMin <= 15 ? 5 : durationMin <= 30 ? 10 : durationMin <= 60 ? 15 : 20;
+  for (let x = 0; x <= durationMin; x += xStep) {
+    html += `<text x="${xScale(x).toFixed(1)}" y="${H-5}" text-anchor="middle" font-size="8" fill="#7AAABB">${x}'</text>`;
+  }
+
+  // Zero line if needed
+  if (yMin < 0 && yMax > 0) {
+    const y0 = yScale(0).toFixed(1);
+    html += `<line x1="${PAD.l}" y1="${y0}" x2="${W-PAD.r}" y2="${y0}" stroke="#999" stroke-width="0.8"/>`;
+  }
+
+  // Series paths
+  series.forEach(s => {
+    const pts = s.data.filter(p => p.t <= durationMin);
+    if (pts.length < 2) return;
+    const path = pts.map((p, i) =>
+      (i===0?'M':'L') + xScale(p.t).toFixed(1) + ',' + yScale(p.y).toFixed(1)
+    ).join(' ');
+    html += `<path d="${path}" fill="none" stroke="${s.color}" stroke-width="${s.width||1.8}" stroke-linecap="round" stroke-linejoin="round" ${s.dash?`stroke-dasharray="${s.dash}"`:''}/>`;
+    // End dot
+    const last = pts[pts.length-1];
+    html += `<circle cx="${xScale(last.t).toFixed(1)}" cy="${yScale(last.y).toFixed(1)}" r="2.5" fill="${s.color}"/>`;
+  });
+
+  svg.innerHTML = html;
+
+  // Legend
+  const legendEl = document.getElementById(svgId.replace('chart-','legend-'));
+  if (legendEl) {
+    legendEl.innerHTML = series.map(s =>
+      `<div class="legend-item"><div class="legend-dot" style="background:${s.color}"></div>${s.label}</div>`
+    ).join('');
+  }
+}
+
+function renderSessionCharts(r, durationMin) {
+  if (!r.curve || r.curve.length < 2) return;
+
+  const tempWrap = document.getElementById('chart-temp-wrap');
+  const fluxWrap = document.getElementById('chart-flux-wrap');
+  if (!tempWrap || !fluxWrap) return; // elements inside sim-result may not exist yet
+
+  // ── CHART 1: TEMPERATURES ──────────────────────────────────────
+  tempWrap.style.display = 'block';
+  buildSVGChart('chart-temp', [
+    { label: 'T núcleo',      color:'#1A4A6B', width:2.5, data: r.curve.map(p=>({t:p.t, y:p.Tc})) },
+    { label: 'T piel (traje)',color:'#0092B8', width:1.5, data: r.curve.map(p=>({t:p.t, y:p.Ts})) },
+    { label: 'T piel expuesta',color:'#C07000', width:1.5, dash:'3,2', data: r.curve.map(p=>({t:p.t, y:p.Te})) },
+  ], durationMin, {
+    unit: '°C',
+    yMin: Math.min(r.waterTemp - 1, 34),
+    yMax: 37.5,
+    refs: [
+      { v:37.0, color:'#40A040', label:'37°' },
+      { v:35.0, color:'#C05000', label:'35°' },
+    ]
+  });
+
+  // ── CHART 2: HEAT FLUXES ───────────────────────────────────────
+  fluxWrap.style.display = 'block';
+  buildSVGChart('chart-flux', [
+    { label: 'Q_met',  color:'#0A7A4A', width:2,   data: r.curve.map(p=>({t:p.t, y:p.Qmet||0})) },
+    { label: 'Q_agua', color:'#0092B8', width:1.8, data: r.curve.map(p=>({t:p.t, y:-(p.Qw||0)})) },
+    { label: 'Q_aire', color:'#356088', width:1.5, data: r.curve.map(p=>({t:p.t, y:-(p.Qa||0)})) },
+    { label: 'Q_exp',  color:'#C07000', width:1.5, dash:'3,2', data: r.curve.map(p=>({t:p.t, y:-(p.Qexp||0)})) },
+    { label: 'Q_solar',color:'#E08000', width:1.2, data: r.curve.map(p=>({t:p.t, y:p.Qs||0})) },
+    { label: 'Q_neto', color:'#B02020', width:2.2, data: r.curve.map(p=>({t:p.t, y:p.Qnet||0})) },
+  ], durationMin, {
+    unit: 'W',
+    refs: [{ v:0, color:'#999', label:'0' }]
+  });
+}
+
+// ── CALCULATE ─────────────────────────────────────────────────────
+$('btn-calculate').addEventListener('click', () => {
+  const altura = parseFloat($('p-altura').value);
+  const peso   = parseFloat($('p-peso').value);
+  const edad   = parseFloat($('p-edad').value);
+  if (!altura || !peso || !edad) { alert(t('profileAlert')); return; }
+  const grasa = parseFloat($('p-grasa').value) || 0;
+  const profile = { altura, peso, edad, grasa, sex: S.sex };
+  saveProfile();
+  showProfileBar();
+  // Run 60min simulation automatically — always
+  const r = runUnifiedModel(profile, S.speedSecs, S.suit, S.swimDir, S.weather, S.coords, 60);
+  S.result = r;
+  S.profile = profile;
+  renderResult(r);
+  renderSuggestedTime(r);
+  // Auto-render 60min simulation in sim-result
+  renderODEResult(r, 60);
+  showStep('result');
+});
+
+
+function renderSuggestedTime(r) {
+  // Suggested time removed — thresholds shown in simulation instead
+  const card = $('suggested-card');
+  if (card) card.style.display = 'none';
+}
+
+function renderResult(r) {
+  const net = r.Q_net;
+  let bg, border, badge, label;
+  if      (net >  60)  { bg='#F0FFF8'; border='#0A7A4A'; badge='#0A7A4A'; label=t('stableCore'); }
+  else if (net >  10)  { bg='#F4FFF0'; border='#40A040'; badge='#40A040'; label=t('equilibrium'); }
+  else if (net > -60)  { bg='#FFFBF0'; border='#C07000'; badge='#C07000'; label=t('mildCooling'); }
+  else if (net > -150) { bg='#FFF4EC'; border='#C05000'; badge='#C05000'; label=t('notableCooling'); }
+  else                 { bg='#FFF0F0'; border='#B02020'; badge='#B02020'; label=t('severeCooling'); }
+
+  const nb = $('net-block');
+  nb.style.background = bg;
+  nb.style.borderColor = border;
+  $('net-lbl-text').style.color = border;
+  $('net-value').style.color = border;
+  $('net-value').textContent = (net >= 0 ? '+' : '') + Math.round(net);
+  const bd = $('net-badge');
+  bd.textContent = label;
+  bd.style.background = badge;
+
+  const paceLbl = document.querySelector('.speed-pill.active .sp-pace')?.textContent || '';
+  const sunDeg  = (Math.asin(Math.min(1, r.sinAlpha ?? r.sinA ?? 0)) * 180 / Math.PI).toFixed(1);
+  const swimDir = (r.swimDir === undefined || r.swimDir === null) ? null : r.swimDir;
+  const dirDesc = swimDir === null
+    ? t('assumedDir')
+    : dirLabel(swimDir) + ` (f=${(r.fAvg??0.71).toFixed(2)})`;
+  const Tskin = r.T_skin_final ?? r.Tskin ?? 20;
+  const effMass = r.effMass ?? (S.profile?.peso ?? 70) * (1 - (r.bf ?? 20)/100) * 0.82;
+
+  // For no-suit: total water loss = Q_water + Q_nosuit + Q_exp
+  const isNoSuit = r.suit === 'none';
+  const Q_water_display = isNoSuit
+    ? (r.Q_water??0) + (r.Q_exp??0) + Math.abs(r.Q_net - (r.Q_met??0) + (r.Q_aire??0) - (r.Q_solar??0))
+    : (r.Q_water??0);
+  // Simpler: just show Q_net components correctly
+  // Q_water_total = Q_met - Q_net - Q_aire + Q_solar (by definition)
+  const Q_water_total = Math.max(0, (r.Q_met??0) - (r.Q_net??0) - (r.Q_aire??0) + (r.Q_solar??0));
+  const T_skin_display = isNoSuit ? (r.waterTemp??10) : Tskin;
+  const h_display = isNoSuit
+    ? `R_fat=${(r.bf??15/100*0.024).toFixed ? (0.024).toFixed(3) : '~0.024'}`
+    : `h_ef=${(r.hWcov??0).toFixed(0)}`;
+
+  $('balance-rows').innerHTML = [
+    { icon:'⚡', name:`${t('metabolic')} (${paceLbl}/100m)`,
+      detail:`${Math.round((r.Q_met??0) - 27)}W base × f_frío · +27W NST`, val: r.Q_met??0, sign: 1 },
+    { icon:'💧', name:`${t('waterLoss')} (${(r.waterTemp??15).toFixed(1)}°C · T_piel ${T_skin_display.toFixed(1)}°C)`,
+      detail:`${h_display} · ${suit2label(r.suit)}`, val: Q_water_total, sign: -1 },
+    { icon:'💨', name:`${t('airLoss')} (${(r.windSpeed??0).toFixed(1)} km/h ${wLabel(r.windDir??0)} ${wArrow(r.windDir??0)})`,
+      detail:`nado: ${dirDesc}`, val: r.Q_aire??0, sign: -1 },
+    { icon:'☀️', name:`${t('solarGain')} (${sunDeg}°)`,
+      detail:`I=${Math.round(r.I??0)} W/m²`, val: r.Q_solar??0, sign: 1 },
+  ].map(row => {
+    const v = Math.round(Math.abs(row.val));
+    const cls = row.sign === 1 ? 'pos' : 'neg';
+    const pfx = row.sign === 1 ? '+' : '−';
+    return `<div class="brow">
+      <div><div class="brow-name">${row.icon} ${row.name}</div>
+           <div class="brow-detail">${row.detail}</div></div>
+      <span class="brow-val ${cls}">${pfx}${v}W</span></div>`;
+  }).join('') +
+  `<div class="brow total">
+    <span class="brow-name">${t('netLbl')}</span>
+    <span class="brow-val" style="color:${border}">${net >= 0 ? '+' : ''}${Math.round(net)}W</span>
+  </div>`;
+
+  if (net < 0 && Math.abs(net) > 5) {
+    const timeCard = $('time-card');
+    if (timeCard) {
+      timeCard.style.display = 'block';
+      const abs = Math.abs(net);
+      const tM  = effMass * 3470 * 2 / abs / 60;
+      const tMo = effMass * 3470 * 4 / abs / 60;
+      $('time-bars').innerHTML = tBar(t('mildHypo'), tM, '#C05000') + tBar(t('modHypo'), tMo, '#B02020');
+    }
+  } else {
+    const timeCard = $('time-card');
+    if (timeCard) timeCard.style.display = 'none';
+  }
+  const simMinEl = $('sim-min');
+  if (simMinEl) simMinEl.value = '';
+  $('sim-result').innerHTML = '';
+}
+
+function tBar(label, minutes, color) {
+  const m = Math.round(minutes);
+  const pct = Math.min(100, m / 120 * 100);
+  return `<div class="tbar">
+    <div class="tbar-header">
+      <span style="font-size:17px;color:var(--text2)">${label}</span>
+      <span style="font-size:18px;font-weight:700;color:var(--deep);font-family:Georgia,serif">~${m} min</span>
+    </div>
+    <div class="tbar-bg"><div class="tbar-fill" style="width:${pct}%;background:${color}"></div></div>
+  </div>`;
+}
+
+// ── SIMULATOR ─────────────────────────────────────────────────────
+// Simulator now automatic — no manual input needed
+
+function renderODEResult(r, durationMin) {
+  if (!r) r = runUnifiedModel(S.profile, S.speedSecs, S.suit, S.swimDir, S.weather, S.coords, durationMin);
+  const Tn = r.T_core_final;
+  const deficit = Math.abs(37 - Tn) *
+    (S.profile.peso * (1 - (S.profile.grasa||estBF(
+      S.profile.peso/((S.profile.altura/100)**2), S.profile.edad, S.sex
+    ))/100) * 0.82) * 3470 / 1000;
+
+  // Core temp color
+  const tempCol = Tn > 36.5 ? '#0A7A4A' : Tn > 35.5 ? '#C07000' : Tn > 35 ? '#C05000' : '#B02020';
+
+  // Find t_36 and t_35 from curve
+  let t_36 = null, t_35 = null;
+  for (const p of r.curve) {
+    if (t_36 === null && p.Tc <= 36.0) t_36 = p.t;
+    if (t_35 === null && p.Tc <= 35.0) t_35 = p.t;
+  }
+
+  // Threshold display
+  const thresholdHTML = `
+    <div class="grid2" style="margin-bottom:12px">
+      <div class="dcell">
+        <div class="dcell-lbl">T° núcleo (${durationMin} min)</div>
+        <div class="dcell-val" style="color:${tempCol}">${Tn.toFixed(1)}°C</div>
+      </div>
+      <div class="dcell">
+        <div class="dcell-lbl">${t('accumDef')}</div>
+        <div class="dcell-val">${deficit.toFixed(0)} kJ</div>
+      </div>
+    </div>
+    <div style="background:var(--shallow);border-radius:8px;padding:12px 14px;margin-bottom:12px">
+      <div style="font-size:11px;letter-spacing:2px;color:var(--text3);font-family:'Courier New',monospace;margin-bottom:8px">UMBRALES TÉRMICOS</div>
+      <div style="display:flex;gap:8px">
+        <div style="flex:1;padding:10px;background:#fff;border-radius:6px;border:2px solid ${t_36 ? '#C09000' : '#40A040'};text-align:center">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:2px">T_core ≤ 36°C</div>
+          <div style="font-size:10px;color:var(--text3);margin-bottom:6px;font-style:italic">Enfriamiento notable</div>
+          <div style="font-size:24px;font-weight:900;font-family:Georgia,serif;color:${t_36 ? '#C09000' : '#40A040'}">
+            ${t_36 ? Math.round(t_36)+"'" : ">No aplica"}
+          </div>
+        </div>
+        <div style="flex:1;padding:10px;background:#fff;border-radius:6px;border:2px solid ${t_35 ? '#B02020' : '#40A040'};text-align:center">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:2px">T_core ≤ 35°C</div>
+          <div style="font-size:10px;color:var(--text3);margin-bottom:6px;font-style:italic">Hipotermia leve</div>
+          <div style="font-size:24px;font-weight:900;font-family:Georgia,serif;color:${t_35 ? '#B02020' : '#40A040'}">
+            ${t_35 ? Math.round(t_35)+"'" : ">No aplica"}
+          </div>
+        </div>
+      </div>
+
+    </div>`;
+
+  // Charts
+  const adaptedCurve = r.curve.map(p => ({
+    t: p.t, Tc: p.Tc, Tsc: p.Ts, Tse: p.Te,
+    qMet: p.Qmet, qWater: p.Qw, qAir: p.Qa,
+    qExposed: p.Qexp, qSolar: p.Qs,
+    qNet: p.Qnet ?? (p.Qmet - p.Qw - p.Qa - p.Qexp + p.Qs),
+  }));
+  const svgCurve = buildDualCharts(adaptedCurve, durationMin);
+
+  // Recovery
+  let col, rl, rd;
+  if (Tn > 36.5)      { col='#0A7A4A'; rl=t('noDeficit');  rd=t('noDeficitD'); }
+  else if (Tn > 36.0) { col='#0A7A4A'; rl=t('fastRec');    rd=t('fastRecD'); }
+  else if (Tn > 35.5) { col='#C07000'; rl=t('modRec');     rd=t('modRecD'); }
+  else if (Tn > 35.0) { col='#C05000'; rl=t('longRec');    rd=t('longRecD'); }
+  else                 { col='#B02020'; rl=t('danger');      rd=t('dangerD'); }
+
+  const exitRec = getExitRec(r, S.weather.waterTemp ?? 15, durationMin);
+
+  $('sim-result').innerHTML = `
+    ${thresholdHTML}
+    ${svgCurve}
+    ${exitRec}
+    <div class="rec-box" style="border-color:${col};background:${col}12;margin-top:10px">
+      <div class="rec-title" style="color:${col}">${rl}</div>
+      <div class="rec-text">${rd}</div>
+    </div>
+    <div style="margin-top:14px;padding:14px 16px;background:var(--shallow);border:1px solid var(--border);border-radius:10px;font-size:13px;color:var(--text2);line-height:1.65">
+      ${t('simExplain')}
+    </div>
+    <div style="margin-top:10px;padding:12px 16px;background:#FFFBF0;border:1.5px solid #C0A020;border-radius:10px;font-size:13px;color:#604000;line-height:1.65">
+      ⚠️ ${t('odeDisclaimer')}
+    </div>
+  `;
+
+  // Also update the new chart containers if they exist
+  renderSessionCharts(r, durationMin);
+}
+
+function buildThermalCurve(curve, durationMin) {
+  if (!curve || curve.length < 2) return '';
+
+  const W = 320, H = 120, PAD = { t:8, r:8, b:24, l:42 };
+  const iW = W - PAD.l - PAD.r;
+  const iH = H - PAD.t - PAD.b;
+
+  const temps = curve.map(p => p.Tc);
+  const tMin  = Math.min(33, Math.min(...temps) - 0.2);
+  const tMax  = Math.max(37.2, Math.max(...temps) + 0.1);
+
+  const xScale = t => PAD.l + (t / durationMin) * iW;
+  const yScale = T => PAD.t + (1 - (T - tMin)/(tMax - tMin)) * iH;
+
+  // Build path
+  let path = curve.map((p, i) =>
+    (i === 0 ? 'M' : 'L') + xScale(p.t).toFixed(1) + ',' + yScale(p.Tc).toFixed(1)
+  ).join(' ');
+
+  // Threshold lines
+  const y35 = yScale(35).toFixed(1);
+  const y36 = yScale(36.5).toFixed(1);
+
+  // Y axis labels
+  const yTicks = [33, 34, 35, 36, 37].filter(v => v >= tMin && v <= tMax);
+  const yTicksSVG = yTicks.map(v =>
+    `<text x="${PAD.l - 4}" y="${yScale(v).toFixed(1)}" text-anchor="end" font-size="8" fill="#7AAABB" dominant-baseline="middle">${v}°</text>
+     <line x1="${PAD.l}" y1="${yScale(v).toFixed(1)}" x2="${W - PAD.r}" y2="${yScale(v).toFixed(1)}" stroke="#D4E9F2" stroke-width="0.5"/>`
+  ).join('');
+
+  // X axis labels
+  const xStep = durationMin <= 20 ? 5 : durationMin <= 40 ? 10 : 15;
+  const xTicks = [];
+  for (let x = 0; x <= durationMin; x += xStep) xTicks.push(x);
+  const xTicksSVG = xTicks.map(v =>
+    `<text x="${xScale(v).toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="8" fill="#7AAABB">${v}'</text>`
+  ).join('');
+
+  return `<div style="margin:12px 0;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 8px 4px;overflow:hidden">
+    <div style="font-size:14px;color:var(--text3);letter-spacing:2px;font-family:'Courier New',monospace;margin-bottom:4px">T° NÚCLEO ESTIMADA — MODELO DIFERENCIAL</div>
+    <svg width="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+      ${yTicksSVG}
+      ${xTicksSVG}
+      ${35 >= tMin ? `<line x1="${PAD.l}" y1="${y35}" x2="${W-PAD.r}" y2="${y35}" stroke="#C05000" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="${W-PAD.r+2}" y="${y35}" font-size="7" fill="#C05000" dominant-baseline="middle">35°</text>` : ''}
+      ${36.5 >= tMin ? `<line x1="${PAD.l}" y1="${y36}" x2="${W-PAD.r}" y2="${y36}" stroke="#C07000" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <text x="${W-PAD.r+2}" y="${y36}" font-size="7" fill="#C07000" dominant-baseline="middle">36.5°</text>` : ''}
+      <path d="${path}" fill="none" stroke="#0092B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="${xScale(curve[curve.length-1].t).toFixed(1)}" cy="${yScale(curve[curve.length-1].Tc).toFixed(1)}" r="3" fill="#0092B8"/>
+    </svg>
+  </div>`;
+}
+
+function getExitRec(r, waterTemp, durationMin) {
+  // Evidence-based exit recommendations
+  // Sources: Tipton et al. (2017), Castellani & Young (2016),
+  //          Open Science review OWS thermoregulation (2024), Loughborough 2024
+  const signs = [];
+
+  if (waterTemp <= 10) {
+    signs.push(t('exitSign1'));  // High cardiac demand
+  }
+  if (r.t_mild !== null && r.t_mild < durationMin) {
+    signs.push(`${t('exitSign2')} ~${Math.round(r.t_mild)} min`);
+  }
+  if (waterTemp < 16 && durationMin > 20) {
+    signs.push(t('exitSign3'));  // OWS threshold
+  }
+
+  const warnCol = r.t_mild !== null && r.t_mild < durationMin ? '#B02020' :
+                  waterTemp <= 10 ? '#C05000' : '#C07000';
+
+  return `<div style="margin-top:10px;padding:12px 14px;background:${warnCol}08;border:1.5px solid ${warnCol}33;border-radius:8px">
+    <div style="font-size:14px;color:${warnCol};letter-spacing:2px;font-weight:700;font-family:'Courier New',monospace;margin-bottom:8px">
+      ${t('exitRecTitle')}
+    </div>
+    <div style="font-size:17px;color:var(--text2);line-height:1.6;margin-bottom:8px">
+      ${t('exitRecBody')}
+    </div>
+    <ul style="font-size:16px;color:var(--text2);line-height:1.7;padding-left:16px">
+      <li>${t('exitCue1')}</li>
+      <li>${t('exitCue2')}</li>
+      <li>${t('exitCue3')}</li>
+      <li>${t('exitCue4')}</li>
+    </ul>
+    ${signs.length ? `<div style="margin-top:8px;font-size:16px;color:${warnCol};font-weight:600">⚠️ ${signs.join(' · ')}</div>` : ''}
+    <div style="margin-top:8px;font-size:13px;color:var(--text3)">
+      ${t('exitRecSource')}
+    </div>
+  </div>`;
+}
+
+
+// ── HISTORICAL WATER TEMP (1 year ago) ───────────────────────────
+async function loadHistoricalWaterTemp() {
+  if (!S.coords) return;
+  const { lat, lon } = S.coords;
+
+  // Date exactly 1 year ago
+  const d = new Date();
+  d.setFullYear(d.getFullYear() - 1);
+  const dateStr = d.toISOString().split('T')[0];
+
+  try {
+    const res = await fetch(
+      `https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}` +
+      `&daily=sea_surface_temperature_max,sea_surface_temperature_min` +
+      `&start_date=${dateStr}&end_date=${dateStr}&timezone=auto`
+    );
+    if (!res.ok) return;
+    const data = await res.json();
+    const tmax = data.daily?.sea_surface_temperature_max?.[0];
+    const tmin = data.daily?.sea_surface_temperature_min?.[0];
+    if (tmax == null && tmin == null) return;
+    const avg = tmax != null && tmin != null ? ((tmax+tmin)/2).toFixed(1) : (tmax??tmin).toFixed(1);
+    const hist = document.getElementById('hist-water-temp');
+    if (hist) {
+      const dateLabel = d.toLocaleDateString([], { day:'numeric', month:'long' });
+      hist.innerHTML = `🕐 ${t('histWaterLabel')} <strong>${avg}°C</strong> <span style="font-size:12px;color:var(--text3)"> (${dateLabel} ${d.getFullYear()})</span>`;
+      hist.style.display = 'block';
+    }
+  } catch(e) { /* silent fail */ }
+}
+
+// ── 2-DAY FORECAST ────────────────────────────────────────────────
+function render2DayForecast() {
+  const w = S.weather;
+  if (!w?.hourly?.time?.length) {
+    console.log('render2DayForecast: no hourly data', w?.hourly);
+    return;
+  }
+  const container = $('forecast-2day');
+  if (!container) return;
+
+  const now = new Date();
+  const times = w.hourly.time;
+  const temps = w.hourly.temperature_2m || [];
+  const winds = w.hourly.wind_speed_10m || [];
+  const codes = w.hourly.weather_code || [];
+
+  // Group by day
+  const days = {};
+  times.forEach((t, i) => {
+    const d = new Date(t);
+    if (d < now) return;
+    const dayKey = d.toLocaleDateString([], { weekday:'long', day:'numeric', month:'short' });
+    if (!days[dayKey]) days[dayKey] = [];
+    if (days[dayKey].length < 8) {  // max 8 slots per day
+      days[dayKey].push({ h: d.getHours(), temp: temps[i], wind: winds[i], code: codes[i] });
+    }
+  });
+
+  const dayEntries = Object.entries(days).slice(0, 2);
+  if (!dayEntries.length) return;
+
+  let html = '';
+  dayEntries.forEach(([dayLabel, slots]) => {
+    html += `<div class="forecast-day">
+      <div class="forecast-day-label">${dayLabel.toUpperCase()}</div>
+      <div class="forecast-day-row">`;
+    slots.forEach(s => {
+      html += `<div class="fc-slot">
+        <div class="fc-time">${s.h}:00</div>
+        <div class="fc-icon">${wIcon(s.code)}</div>
+        <div class="fc-temp">${(s.temp??'?').toFixed?.(0) ?? '?'}°</div>
+        <div class="fc-wind">${(s.wind??'?').toFixed?.(0) ?? '?'}km/h</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  container.innerHTML = html;
+  $('forecast-2day-card').style.display = 'block';
+}
+
+// ── BEACH STATUS ──────────────────────────────────────────────────
+// Normalize text: lowercase + strip accents, for robust beach name matching
+function normalize(s) {
+  return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+// Haversine distance in meters — used to find nearest lifeguard station
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+const MVD_BEACHES = ['ramírez','ramirez','pocitos','buceo','malvín','malvin','brava','carrasco',
+  'honda','ingleses','verde','mulata','pajas blancas','punta espinillo','zabala','cilindros',
+  'punta yeguas','santa catalina','nacional','cerro','colorada'];
+
+const DEPTS = {
+  montevideo: { beaches: MVD_BEACHES, keywords: ['montevideo'], api: true },
+  canelones:  { beaches: ['atlántida','atlantida','la floresta','salinas','ciudad de la costa','shangrilá','shangrila','el pinar','pinar','solymar','neptunia'],
+                keywords: ['canelones','ciudad de la costa','atlántida','atlantida'],
+                url: 'https://www.imcanelones.gub.uy/simas', label: 'SIMAS Canelones' },
+  maldonado:  { beaches: ['punta del este','piriápolis','piriapolis','josé ignacio','jose ignacio','la barra','manantiales'],
+                keywords: ['maldonado','punta del este','piriápolis','piriapolis'],
+                url: 'https://maldonado.gub.uy/playas', label: 'Info Playas Maldonado' },
+  rocha:      { beaches: ['la paloma','la pedrera','cabo polonio','punta del diablo','aguas dulces','valizas'],
+                keywords: ['rocha','la paloma','cabo polonio','punta del diablo'],
+                url: 'https://www.rocha.gub.uy/playas', label: 'Playas Seguras Rocha' },
+};
+
+function detectDept(name) {
+  const n = name.toLowerCase();
+  // Text-based detection
+  for (const [key, d] of Object.entries(DEPTS)) {
+    if (d.keywords?.some(k => n.includes(k))) return key;
+    if (d.beaches?.some(b => n.includes(b)))  return key;
+  }
+  // Coordinate-based detection — covers GPS use case
+  if (S.coords) {
+    const { lat, lon } = S.coords;
+    // Montevideo coast
+    if (lat >= -35.0 && lat <= -34.8 && lon >= -56.4 && lon <= -55.9) return 'montevideo';
+    // Canelones coast
+    if (lat >= -34.8 && lat <= -34.5 && lon >= -56.4 && lon <= -55.6) return 'canelones';
+    // Maldonado/Punta del Este
+    if (lat >= -34.95 && lat <= -34.7 && lon >= -55.4 && lon <= -54.8) return 'maldonado';
+    // Rocha
+    if (lat >= -34.5 && lat <= -33.8 && lon >= -54.5 && lon <= -53.4) return 'rocha';
+  }
+  return null;
+}
+
+async function loadBeachStatus() {
+  const dept = detectDept(S.locName);
+  if (!dept) { $('beach-card').style.display = 'none'; return; }
+
+  const d = DEPTS[dept];
+  if (!d.api) {
+    $('beach-content').innerHTML = `
+      <p style="font-size:17px;color:var(--text2);margin-bottom:12px;line-height:1.6">
+        ${t('noApiDept')} <strong>${dept.charAt(0).toUpperCase()+dept.slice(1)}</strong> ${t('noApiDept2')}
+      </p>
+      <a href="${d.url}" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px;
+        background:var(--shallow);border:1.5px solid var(--border);border-radius:var(--rad-sm);
+        text-decoration:none;color:var(--water);font-size:18px;font-weight:700">
+        🏖 ${d.label} →</a>`;
+    $('beach-updated').textContent = '';
+    $('beach-card').style.display = 'block';
+    return;
+  }
+
+  try {
+    const res = await fetch(BEACHES + '?t=' + Date.now(), { signal: AbortSignal.timeout(5000) });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (data.beaches?.length) {
+      renderBeaches(data);
+    loadCommunityReports();
+    // Show report card for Montevideo beaches
+    const dept2 = detectDept(S.locName);
+    if (dept2 === 'montevideo') {
+      $('report-card').style.display = 'block';
+      updateMessageArea(); // show message area if logged in
+    }
+    } else {
+      // beaches.json exists but empty — workflow may not have run yet
+      $('beach-content').innerHTML = `
+        <a href="https://montevideo.gub.uy/playas" target="_blank"
+          style="display:flex;align-items:center;gap:10px;padding:14px;
+          background:var(--shallow);border:1.5px solid var(--border);border-radius:var(--rad-sm);
+          text-decoration:none;color:var(--water);font-size:18px;font-weight:700">
+          🏖 Ver estado de playas Montevideo →</a>`;
+      $('beach-updated').textContent = '';
+      $('beach-card').style.display = 'block';
+    }
+  } catch (e) {
+    // beaches.json not available yet — show direct link
+    $('beach-content').innerHTML = `
+      <a href="https://montevideo.gub.uy/playas" target="_blank"
+        style="display:flex;align-items:center;gap:10px;padding:14px;
+        background:var(--shallow);border:1.5px solid var(--border);border-radius:var(--rad-sm);
+        text-decoration:none;color:var(--water);font-size:18px;font-weight:700">
+        🏖 Ver estado de playas Montevideo →</a>`;
+    $('beach-updated').textContent = '';
+    $('beach-card').style.display = 'block';
+  }
+}
+
+function renderBeaches(data) {
+  const stations = data.beaches || [];
+  if (!stations.length) { $('beach-card').style.display = 'none'; return; }
+
+  // Group stations by beach, computing nearest-station distance per beach
+  const byBeach = {};
+  stations.forEach(s => {
+    if (!s.beach) return;
+    if (!byBeach[s.beach]) {
+      byBeach[s.beach] = { stations: [], hasHealth: false, worst: 'green', healthDesc: '', minDist: Infinity };
+    }
+    const b = byBeach[s.beach];
+    b.stations.push(s);
+    if (s.healthFlag === 'true') { b.hasHealth = true; b.healthDesc = s.healthFlagCauseDesc || ''; }
+    if (s.safetyFlag === 'red' || (s.safetyFlag === 'yellow' && b.worst !== 'red')) b.worst = s.safetyFlag;
+
+    if (S.coords) {
+      const coords = s.location?.coordinates;
+      if (coords?.length >= 2) {
+        const [slon, slat] = coords;
+        const d = haversine(S.coords.lat, S.coords.lon, slat, slon);
+        if (d < b.minDist) b.minDist = d;
+      }
+    }
+  });
+
+  let beachList = Object.entries(byBeach).map(([name, info]) => ({ name, ...info }));
+
+  // Sort by distance if we have coords, otherwise alphabetically
+  if (S.coords && beachList.some(b => b.minDist < Infinity)) {
+    beachList.sort((a, b) => a.minDist - b.minDist);
+  } else {
+    beachList.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  const nearest3 = beachList.slice(0, 3);
+  const rest = beachList.slice(3);
+
+  function beachRowHTML(b) {
+    const { icon, color, label } = flagStyle(b.worst, b.hasHealth);
+    const distLabel = b.minDist < Infinity ? `<span style="font-size:14px;color:var(--text3);margin-left:6px">${(b.minDist/1000).toFixed(1)}km</span>` : '';
+    return `<div class="beach-row">
+      <span class="beach-row-flag">${icon}</span>
+      <div style="flex:1">
+        <div class="beach-row-name">${b.name.toUpperCase()}${distLabel}</div>
+        ${b.hasHealth && b.healthDesc ? `<div class="beach-row-health">⚠️ ${b.healthDesc}</div>` : ''}
+      </div>
+      <span class="beach-row-status" style="color:${color}">${label}</span></div>`;
+  }
+
+  let html = '';
+
+  // Header: nearest beach highlighted, or just label
+  if (S.coords && nearest3[0]?.minDist < Infinity) {
+    html += `<div style="font-size:14px;color:var(--text3);letter-spacing:2px;margin-bottom:8px;font-family:'Courier New',monospace">${t('nearestBeaches')}</div>`;
+  }
+
+  nearest3.forEach(b => { html += beachRowHTML(b); });
+
+  if (rest.length) {
+    html += `<button id="btn-expand-beaches" style="width:100%;padding:10px;margin-top:8px;
+      background:var(--shallow);border:1.5px dashed var(--border);border-radius:8px;
+      color:var(--water);font-size:16px;font-weight:700;letter-spacing:1px;cursor:pointer">
+      ${t('seeAllBeaches')} (${rest.length}) ▾</button>
+      <div id="beach-rest" style="display:none;margin-top:6px">
+        ${rest.map(beachRowHTML).join('')}
+      </div>`;
+  }
+
+  $('beach-content').innerHTML = html;
+  $('beach-updated').textContent = data.updated
+    ? t('beachUpdated') + ' ' + new Date(data.updated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    : '';
+  $('beach-card').style.display = 'block';
+
+  // Strava Heatmap link — always show when beach card is visible
+  if (S.coords && !$('strava-link')) {
+    const { lat, lon } = S.coords;
+    const stravaUrl = `https://www.strava.com/heatmap#15/${lon}/${lat}/hot/all`;
+    $('beach-content').insertAdjacentHTML('beforeend',
+      `<a href="${stravaUrl}" target="_blank" class="camera-link" id="strava-link"
+          style="border-color:#FC4C02;color:#FC4C02;margin-top:8px;display:block;text-align:center">
+        🔥 ${t('stravaHeatmap')}
+      </a>`);
+  }
+
+  const expandBtn = $('btn-expand-beaches');
+  if (expandBtn) {
+    expandBtn.addEventListener('click', () => {
+      const restDiv = $('beach-rest');
+      const isOpen = restDiv.style.display !== 'none';
+      restDiv.style.display = isOpen ? 'none' : 'block';
+      expandBtn.innerHTML = `${t('seeAllBeaches')} (${rest.length}) ${isOpen ? '▾' : '▴'}`;
+    });
+  }
+}
+
+function flagStyle(safety, health) {
+  if (health) return { icon: '🚩', color: '#B02020', label: t('beachHealth') };
+  if (safety === 'red')    return { icon: '🔴', color: '#B02020', label: t('beachClosed') };
+  if (safety === 'yellow') return { icon: '🟡', color: '#C07000', label: t('beachCaution') };
+  return { icon: '🟢', color: '#0A7A4A', label: t('beachOpen') };
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────
+$('link-back-loc').addEventListener('click', () => showStep('params'));
+$('btn-recalc').addEventListener('click', () => showStep('params'));
+$('link-new-loc').addEventListener('click', () => {
+  S.weather = null; S.coords = null; S.locName = '';
+  $('loc-confirmed').style.display = 'none';
+  $('btn-fetch-search').style.display = 'none';
+  $('search-results').style.display = 'none';
+  $('search-input').value = '';
+  $('forecast-card').style.display = 'none';
+  $('forecast-2day-card').style.display = 'none';
+  $('beach-card').style.display = 'none';
+  $('report-card').style.display = 'none';
+  $('wave-info').innerHTML = '';
+  showStep('location');
+});
+$('btn-info').addEventListener('click', () => {
+  $('main-app').style.display = 'none';
+  $('info-page').classList.add('active');
+  window.scrollTo(0, 0);
+});
+$('btn-close-info').addEventListener('click', () => {
+  $('main-app').style.display = 'block';
+  $('info-page').classList.remove('active');
+  window.scrollTo(0, 0);
+});
+
+function showStep(name) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  $('step-' + name).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+</script>
+</body>
+</html>
