@@ -867,6 +867,9 @@ input:focus { border-color: var(--water); background: #fff; }
       <div class="beach-updated" id="beach-updated"></div>
     </div>
 
+    <!-- Strava Heatmap link -->
+    <div id="strava-link-container" style="display:none;padding:4px 0 8px 0"></div>
+
     <!-- Community reports card -->
     <div class="card" id="report-card" style="display:none">
       <div class="card-title" id="t-report-title">REPORTAR CONDICIONES</div>
@@ -2225,6 +2228,21 @@ async function fetchWeather() {
     updateWindInfo();
     loadBeachStatus();
     loadHistoricalWaterTemp();
+
+    // Strava Heatmap link — always show after location confirmed
+    // Independent of beaches.json loading
+    const stravaContainer = $('strava-link-container');
+    if (stravaContainer && S.coords) {
+      const { lat, lon } = S.coords;
+      stravaContainer.innerHTML =
+        `<a href="https://www.strava.com/heatmap#15/${lon}/${lat}/hot/all"
+            target="_blank" class="camera-link"
+            style="border-color:#FC4C02;color:#FC4C02;width:100%;box-sizing:border-box;text-align:center;display:block">
+          🔥 ${t('stravaHeatmap')}
+        </a>`;
+      stravaContainer.style.display = 'block';
+    }
+
     showStep('params');
   } catch (e) {
     showErr('err-location', 'Error: ' + e.message);
@@ -3498,6 +3516,17 @@ function renderBeaches(data) {
     ? t('beachUpdated') + ' ' + new Date(data.updated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     : '';
   $('beach-card').style.display = 'block';
+
+  // Strava Heatmap link — always show when beach card is visible
+  if (S.coords && !$('strava-link')) {
+    const { lat, lon } = S.coords;
+    const stravaUrl = `https://www.strava.com/heatmap#15/${lon}/${lat}/hot/all`;
+    $('beach-content').insertAdjacentHTML('beforeend',
+      `<a href="${stravaUrl}" target="_blank" class="camera-link" id="strava-link"
+          style="border-color:#FC4C02;color:#FC4C02;margin-top:8px;display:block;text-align:center">
+        🔥 ${t('stravaHeatmap')}
+      </a>`);
+  }
 
   const expandBtn = $('btn-expand-beaches');
   if (expandBtn) {
