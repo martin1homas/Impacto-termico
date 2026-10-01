@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <meta name="theme-color" content="#1A4A6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -14,6 +15,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>NAUTA — Open Water Thermal Intelligence</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
 /* ── TOKENS ───────────────────────────────────────────────── */
 :root {
@@ -789,6 +791,10 @@ input:focus { border-color: var(--water); background: #fff; }
         <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.31z"/></svg>
         Continuar con Google
       </button>
+      <button id="btn-strava-login" style="display:flex;align-items:center;gap:10px;width:100%;padding:10px 16px;margin-top:8px;background:#FC4C02;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;justify-content:center">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>
+        Continuar con Strava
+      </button>
       <button class="btn btn-ghost" id="btn-close-auth" style="margin-top:8px;font-size:14px">Cancelar</button>
     </div>
   </div>
@@ -886,12 +892,22 @@ input:focus { border-color: var(--water); background: #fff; }
         <div style="font-size:14px;color:var(--text2);margin-bottom:12px" id="t-report-what">¿Qué querés reportar?</div>
         <div class="report-categories" id="report-cats"></div>
         <div id="report-value-area"></div>
-        <button class="btn btn-primary" id="btn-submit-report" style="margin-top:4px" id="t-submit-report">Enviar reporte</button>
+        <!-- Entry point marker -->
+        <label id="entry-point-label" style="display:flex;align-items:center;gap:10px;margin:10px 0;padding:10px 12px;background:var(--shallow);border-radius:8px;cursor:pointer;font-size:14px;color:var(--text2)">
+          <input type="checkbox" id="chk-entry-point" style="width:18px;height:18px;cursor:pointer">
+          <span>📍 <span id="t-entry-point">Marcar mi punto de entrada al agua</span></span>
+        </label>
+        <button class="btn btn-primary" id="btn-submit-report" style="margin-top:4px">Enviar reporte</button>
         <div id="report-feedback" style="display:none;padding:12px;background:#F0FFF8;border:1px solid var(--ok);border-radius:8px;font-size:14px;color:var(--ok);margin-top:10px;text-align:center">✅ ¡Reporte enviado! Gracias.</div>
       </div>
     </div>
 
-    <!-- Physical profile -->
+    <!-- Community map card -->
+    <div class="card" id="community-map-card" style="display:none">
+      <div class="card-title" id="t-map-title">MAPA COMUNITARIO</div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:8px" id="t-map-sub">Puntos de entrada reportados — últimos 30 días</div>
+      <div id="community-map" style="height:260px;border-radius:8px;overflow:hidden;border:1px solid var(--border)"></div>
+    </div>
     <div class="card">
       <div class="card-title" id="t-profile-title">PERFIL FÍSICO</div>
       <div id="profile-bar" class="profile-bar" style="display:none">
@@ -1226,7 +1242,7 @@ function getEquipConfig(suit, A_total) {
 // ── I18N ─────────────────────────────────────────────────────────
 const T = {
   es: {
-    gpsTitle:'UBICACIÓN GPS', gpsName:'Tu ubicación GPS',stravaHeatmap:'Ver recorridos de nadadores en Strava →',simExplain:'NAUTA calcula cómo evoluciona la temperatura de un cuerpo con las características seleccionadas, para las condiciones meteorológicas del día de hoy en la ubicación seleccionada. Las líneas de referencia indican cuándo podría comenzar el enfriamiento notable (36°C) o la hipotermia leve (35°C). Es una estimación teórica: la respuesta real depende de factores individuales. Usalo para comparar condiciones entre días, no como guía de cuánto tiempo nadar.',odeDisclaimer:'Este modelo es una estimación teórica. Tu respuesta real depende de factores individuales que no podemos medir. Lo que el sistema pretende es dar una cuantificación aproximada del impacto térmico debido a factores varios.',immersionLabel:'🧘 Plancha / Inmersión',immersionSub:'Sin nado · solo BMR',extrasLbl:'EQUIPAMIENTO ADICIONAL',eqGloves:'🧤 Guantes de neopreno',eqHood:'🧢 Gorra de neopreno',eqBooties:'🦶 Escarpines',forecast2:'PRÓXIMOS 2 DÍAS',histWaterTemp:'Hace un año en este lugar el agua estaba a',suggestedTime:'TIEMPO SUGERIDO EN EL AGUA',untilLimit:'hasta llegar a 35°C',noLimit:'Sin límite estimado para esta sesión',chartTemp:'TEMPERATURA CORPORAL ESTIMADA',chartFlows:'FLUJOS DE CALOR',qMet:'Producción metabólica',qWater:'Pérdida al agua (traje)',qAir:'Pérdida al aire',qExposed:'Pérdida zonas expuestas',qSolar:'Ganancia solar',qNet:'Balance neto',tCore:'T° núcleo',tSkinC:'T° piel cubierta',tSkinE:'T° piel expuesta',histWaterLabel:'Hace un año el agua estaba a',suggestedWarn:'Tiempo muy limitado — extrema precaución',suggestedCaution:'Tiempo moderado — salí antes de sentir frío',suggestedOk:'Tiempo disponible con este equipamiento',suggestedNoLimit:'Sin límite térmico para esta sesión',t35Label:'MINUTOS HASTA 35°C',forecast2day:'PRÓXIMOS 2 DÍAS',timeNow:'ahora mismo',timeMin:'hace {n} min',timeHour:'hace {n}h',msgLabel:'💬 Mensaje para otros nadadores',msgPlaceholder:'ej: Corriente fuerte en zona norte hoy...',reportTitle:'REPORTAR CONDICIONES',swamQ:'¿Nadaste hoy en esta playa?',swamYes:'🏊 Sí, nadé',swamNo:'👀 Solo observé',reportWhat:'¿Qué querés reportar?',submitReport:'Enviar reporte',reportSending:'Enviando...',reportSent:'✅ ¡Reporte enviado! Gracias.',swamAlert:'¿Nadaste hoy?',swimmersToday1:'nadador hoy',swimmersToday:'nadadores hoy',noSwims:'Sin nados reportados hoy',tempReported:'Temp. reportada:',lastReport:'Último reporte:',catTemperature:'Temperatura',catClarity:'Claridad',catColor:'Color',catSalinity:'Salinidad',catTide:'Marea',catJellyfish:'Aguavivas',catCyano:'Cianobacterias',catSmell:'Olor anormal',catPollution:'Contaminación',catWaves:'Oleaje',clarityLabels:'Cristalina,Clara,Turbia,Muy turbia,Opaca',salinityLabels:'Dulce,Normal,Muy salada',tideLabels:'Muy baja,Baja,Normal,Alta,Muy alta',jellyfishLabels:'Ninguna,Pocas,Muchas,Masivas',wavesLabels:'Calmo,Leve,Moderado,Agitado,Muy agitado',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Azul',colorGreen:'🟢 Verde',colorBrown:'🟤 Marrón',colorGrey:'⚪ Grisácea',colorYellow:'🟡 Amarilla',alertJellyfish:'🪼 Aguavivas',alertCyano:'🟢 Cianobacterias',alertSmell:'👃 Olor anormal',alertPollution:'⚠️ Contaminación',authSub:'Iniciá sesión para coordinar grupos de nado. Los reportes no requieren cuenta.',authCancel:'Cancelar',authGoogle:'Continuar con Google', gpsCoords:'Usando coordenadas GPS',
+    gpsTitle:'UBICACIÓN GPS', gpsName:'Tu ubicación GPS',entryPoint:'Marcar mi punto de entrada al agua',mapTitle:'MAPA COMUNITARIO',mapSub:'Puntos de entrada — últimos 30 días',stravaHeatmap:'Ver recorridos de nadadores en Strava →',simExplain:'NAUTA calcula cómo evoluciona la temperatura de un cuerpo con las características seleccionadas, para las condiciones meteorológicas del día de hoy en la ubicación seleccionada. Las líneas de referencia indican cuándo podría comenzar el enfriamiento notable (36°C) o la hipotermia leve (35°C). Es una estimación teórica: la respuesta real depende de factores individuales. Usalo para comparar condiciones entre días, no como guía de cuánto tiempo nadar.',odeDisclaimer:'Este modelo es una estimación teórica. Tu respuesta real depende de factores individuales que no podemos medir. Lo que el sistema pretende es dar una cuantificación aproximada del impacto térmico debido a factores varios.',immersionLabel:'🧘 Plancha / Inmersión',immersionSub:'Sin nado · solo BMR',extrasLbl:'EQUIPAMIENTO ADICIONAL',eqGloves:'🧤 Guantes de neopreno',eqHood:'🧢 Gorra de neopreno',eqBooties:'🦶 Escarpines',forecast2:'PRÓXIMOS 2 DÍAS',histWaterTemp:'Hace un año en este lugar el agua estaba a',suggestedTime:'TIEMPO SUGERIDO EN EL AGUA',untilLimit:'hasta llegar a 35°C',noLimit:'Sin límite estimado para esta sesión',chartTemp:'TEMPERATURA CORPORAL ESTIMADA',chartFlows:'FLUJOS DE CALOR',qMet:'Producción metabólica',qWater:'Pérdida al agua (traje)',qAir:'Pérdida al aire',qExposed:'Pérdida zonas expuestas',qSolar:'Ganancia solar',qNet:'Balance neto',tCore:'T° núcleo',tSkinC:'T° piel cubierta',tSkinE:'T° piel expuesta',histWaterLabel:'Hace un año el agua estaba a',suggestedWarn:'Tiempo muy limitado — extrema precaución',suggestedCaution:'Tiempo moderado — salí antes de sentir frío',suggestedOk:'Tiempo disponible con este equipamiento',suggestedNoLimit:'Sin límite térmico para esta sesión',t35Label:'MINUTOS HASTA 35°C',forecast2day:'PRÓXIMOS 2 DÍAS',timeNow:'ahora mismo',timeMin:'hace {n} min',timeHour:'hace {n}h',msgLabel:'💬 Mensaje para otros nadadores',msgPlaceholder:'ej: Corriente fuerte en zona norte hoy...',reportTitle:'REPORTAR CONDICIONES',swamQ:'¿Nadaste hoy en esta playa?',swamYes:'🏊 Sí, nadé',swamNo:'👀 Solo observé',reportWhat:'¿Qué querés reportar?',submitReport:'Enviar reporte',reportSending:'Enviando...',reportSent:'✅ ¡Reporte enviado! Gracias.',swamAlert:'¿Nadaste hoy?',swimmersToday1:'nadador hoy',swimmersToday:'nadadores hoy',noSwims:'Sin nados reportados hoy',tempReported:'Temp. reportada:',lastReport:'Último reporte:',catTemperature:'Temperatura',catClarity:'Claridad',catColor:'Color',catSalinity:'Salinidad',catTide:'Marea',catJellyfish:'Aguavivas',catCyano:'Cianobacterias',catSmell:'Olor anormal',catPollution:'Contaminación',catWaves:'Oleaje',clarityLabels:'Cristalina,Clara,Turbia,Muy turbia,Opaca',salinityLabels:'Dulce,Normal,Muy salada',tideLabels:'Muy baja,Baja,Normal,Alta,Muy alta',jellyfishLabels:'Ninguna,Pocas,Muchas,Masivas',wavesLabels:'Calmo,Leve,Moderado,Agitado,Muy agitado',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Azul',colorGreen:'🟢 Verde',colorBrown:'🟤 Marrón',colorGrey:'⚪ Grisácea',colorYellow:'🟡 Amarilla',alertJellyfish:'🪼 Aguavivas',alertCyano:'🟢 Cianobacterias',alertSmell:'👃 Olor anormal',alertPollution:'⚠️ Contaminación',authSub:'Iniciá sesión para coordinar grupos de nado. Los reportes no requieren cuenta.',authCancel:'Cancelar',authGoogle:'Continuar con Google', gpsCoords:'Usando coordenadas GPS',
     fetchWeather:'Obtener condiciones actuales', searchOther:'→ Buscar otra ubicación',
     searchTitle:'BUSCAR UBICACIÓN', searchHint:'Playas, ríos, lagos, ciudades — cualquier lugar geográfico.',
     searchPH:'ej: Playa Ramírez Montevideo...', searchBtn:'Buscar', searching:'Buscando...',
@@ -1279,7 +1295,7 @@ const T = {
     exitSign3:'Agua templada (16°C) por más de 20 min — la fatiga acumulada también enfría',exitRecSource:'Basado en estudios de fisiología de natación en aguas frías.',
   },
   en: {
-    gpsTitle:'GPS LOCATION', gpsName:'Your GPS location',stravaHeatmap:'View swimmer routes on Strava →',simExplain:'NAUTA calculates how the temperature of a body with the selected characteristics evolves, for today\'s weather conditions at the selected location. Reference lines show when notable cooling (36°C) or mild hypothermia (35°C) might begin. This is a theoretical estimate: the real response depends on individual factors. Use it to compare conditions day to day, not as a guide for how long to swim.',odeDisclaimer:'This model is a theoretical estimate. Your real response depends on individual factors we cannot measure. The purpose of this system is to provide an approximate quantification of thermal impact due to various factors.',immersionLabel:'🧘 Float / Immersion',immersionSub:'No swimming · BMR only',extrasLbl:'ADDITIONAL EQUIPMENT',eqGloves:'🧤 Neoprene gloves',eqHood:'🧢 Neoprene cap',eqBooties:'🦶 Booties',forecast2:'NEXT 2 DAYS',histWaterTemp:'One year ago water temperature here was',suggestedTime:'SUGGESTED TIME IN WATER',untilLimit:'until reaching 35°C',noLimit:'No estimated limit for this session',chartTemp:'ESTIMATED BODY TEMPERATURE',chartFlows:'HEAT FLOWS',qMet:'Metabolic production',qWater:'Water heat loss (wetsuit)',qAir:'Air heat loss',qExposed:'Exposed zones heat loss',qSolar:'Solar gain',qNet:'Net balance',tCore:'Core temp',tSkinC:'Covered skin temp',tSkinE:'Exposed skin temp',histWaterLabel:'One year ago the water was',suggestedWarn:'Very limited time — extreme caution',suggestedCaution:'Moderate time — exit before feeling cold',suggestedOk:'Time available with this equipment',suggestedNoLimit:'No thermal limit for this session',t35Label:'MINUTES TO 35°C',forecast2day:'NEXT 2 DAYS',timeNow:'just now',timeMin:'{n} min ago',timeHour:'{n}h ago',msgLabel:'💬 Message for other swimmers',msgPlaceholder:'e.g.: Strong current in north area today...',reportTitle:'REPORT CONDITIONS',swamQ:'Did you swim here today?',swamYes:'🏊 Yes, I swam',swamNo:'👀 Just observed',reportWhat:'What do you want to report?',submitReport:'Submit report',reportSending:'Sending...',reportSent:'✅ Report submitted! Thank you.',swamAlert:'Did you swim today?',swimmersToday1:'swimmer today',swimmersToday:'swimmers today',noSwims:'No swims reported today',tempReported:'Reported temp:',lastReport:'Last report:',catTemperature:'Temperature',catClarity:'Clarity',catColor:'Color',catSalinity:'Salinity',catTide:'Tide',catJellyfish:'Jellyfish',catCyano:'Cyanobacteria',catSmell:'Unusual smell',catPollution:'Pollution',catWaves:'Waves',clarityLabels:'Crystal clear,Clear,Murky,Very murky,Opaque',salinityLabels:'Fresh,Normal,Very salty',tideLabels:'Very low,Low,Normal,High,Very high',jellyfishLabels:'None,Few,Many,Massive',wavesLabels:'Calm,Light,Moderate,Rough,Very rough',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Blue',colorGreen:'🟢 Green',colorBrown:'🟤 Brown',colorGrey:'⚪ Grey',colorYellow:'🟡 Yellow',alertJellyfish:'🪼 Jellyfish',alertCyano:'🟢 Cyanobacteria',alertSmell:'👃 Unusual smell',alertPollution:'⚠️ Pollution',authSub:'Sign in to coordinate swim groups. Reports do not require an account.',authCancel:'Cancel',authGoogle:'Continue with Google', gpsCoords:'Using GPS coordinates',
+    gpsTitle:'GPS LOCATION', gpsName:'Your GPS location',entryPoint:'Mark my water entry point',mapTitle:'COMMUNITY MAP',mapSub:'Entry points — last 30 days',stravaHeatmap:'View swimmer routes on Strava →',simExplain:'NAUTA calculates how the temperature of a body with the selected characteristics evolves, for today\'s weather conditions at the selected location. Reference lines show when notable cooling (36°C) or mild hypothermia (35°C) might begin. This is a theoretical estimate: the real response depends on individual factors. Use it to compare conditions day to day, not as a guide for how long to swim.',odeDisclaimer:'This model is a theoretical estimate. Your real response depends on individual factors we cannot measure. The purpose of this system is to provide an approximate quantification of thermal impact due to various factors.',immersionLabel:'🧘 Float / Immersion',immersionSub:'No swimming · BMR only',extrasLbl:'ADDITIONAL EQUIPMENT',eqGloves:'🧤 Neoprene gloves',eqHood:'🧢 Neoprene cap',eqBooties:'🦶 Booties',forecast2:'NEXT 2 DAYS',histWaterTemp:'One year ago water temperature here was',suggestedTime:'SUGGESTED TIME IN WATER',untilLimit:'until reaching 35°C',noLimit:'No estimated limit for this session',chartTemp:'ESTIMATED BODY TEMPERATURE',chartFlows:'HEAT FLOWS',qMet:'Metabolic production',qWater:'Water heat loss (wetsuit)',qAir:'Air heat loss',qExposed:'Exposed zones heat loss',qSolar:'Solar gain',qNet:'Net balance',tCore:'Core temp',tSkinC:'Covered skin temp',tSkinE:'Exposed skin temp',histWaterLabel:'One year ago the water was',suggestedWarn:'Very limited time — extreme caution',suggestedCaution:'Moderate time — exit before feeling cold',suggestedOk:'Time available with this equipment',suggestedNoLimit:'No thermal limit for this session',t35Label:'MINUTES TO 35°C',forecast2day:'NEXT 2 DAYS',timeNow:'just now',timeMin:'{n} min ago',timeHour:'{n}h ago',msgLabel:'💬 Message for other swimmers',msgPlaceholder:'e.g.: Strong current in north area today...',reportTitle:'REPORT CONDITIONS',swamQ:'Did you swim here today?',swamYes:'🏊 Yes, I swam',swamNo:'👀 Just observed',reportWhat:'What do you want to report?',submitReport:'Submit report',reportSending:'Sending...',reportSent:'✅ Report submitted! Thank you.',swamAlert:'Did you swim today?',swimmersToday1:'swimmer today',swimmersToday:'swimmers today',noSwims:'No swims reported today',tempReported:'Reported temp:',lastReport:'Last report:',catTemperature:'Temperature',catClarity:'Clarity',catColor:'Color',catSalinity:'Salinity',catTide:'Tide',catJellyfish:'Jellyfish',catCyano:'Cyanobacteria',catSmell:'Unusual smell',catPollution:'Pollution',catWaves:'Waves',clarityLabels:'Crystal clear,Clear,Murky,Very murky,Opaque',salinityLabels:'Fresh,Normal,Very salty',tideLabels:'Very low,Low,Normal,High,Very high',jellyfishLabels:'None,Few,Many,Massive',wavesLabels:'Calm,Light,Moderate,Rough,Very rough',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Blue',colorGreen:'🟢 Green',colorBrown:'🟤 Brown',colorGrey:'⚪ Grey',colorYellow:'🟡 Yellow',alertJellyfish:'🪼 Jellyfish',alertCyano:'🟢 Cyanobacteria',alertSmell:'👃 Unusual smell',alertPollution:'⚠️ Pollution',authSub:'Sign in to coordinate swim groups. Reports do not require an account.',authCancel:'Cancel',authGoogle:'Continue with Google', gpsCoords:'Using GPS coordinates',
     fetchWeather:'Get current conditions', searchOther:'→ Search another location',
     searchTitle:'SEARCH LOCATION', searchHint:'Beaches, rivers, lakes, cities — any geographic location.',
     searchPH:'e.g.: Brighton Beach, Dover...', searchBtn:'Search', searching:'Searching...',
@@ -1332,7 +1348,7 @@ const T = {
     exitSign3:'Mild water (16°C) over 20 min — accumulated fatigue also cools you down',exitRecSource:'Based on cold-water swimming physiology research.',
   },
   it: {
-    gpsTitle:'POSIZIONE GPS', gpsName:'La tua posizione GPS',stravaHeatmap:'Visualizza percorsi nuotatori su Strava →',simExplain:'NAUTA calcola come evolve la temperatura di un corpo con le caratteristiche selezionate, per le condizioni meteorologiche di oggi nella posizione selezionata. Le linee di riferimento indicano quando potrebbe iniziare un raffreddamento notevole (36°C) o un\'ipotermia lieve (35°C). È una stima teorica: la risposta reale dipende da fattori individuali. Usalo per confrontare le condizioni giorno per giorno, non come guida su quanto tempo nuotare.',odeDisclaimer:"Questo modello è una stima teorica. La tua risposta reale dipende da fattori individuali che non possiamo misurare. Lo scopo del sistema è fornire una quantificazione approssimativa dell'impatto termico dovuto a vari fattori.",immersionLabel:'🧘 Galleggiamento / Immersione',immersionSub:'Senza nuoto · solo BMR',extrasLbl:'EQUIPAGGIAMENTO AGGIUNTIVO',eqGloves:'🧤 Guanti in neoprene',eqHood:'🧢 Cuffia in neoprene',eqBooties:'🦶 Calzari',forecast2:'PROSSIMI 2 GIORNI',histWaterTemp:"Un anno fa la temperatura dell'acqua qui era",suggestedTime:'TEMPO CONSIGLIATO IN ACQUA',untilLimit:'fino a raggiungere 35°C',noLimit:'Nessun limite stimato per questa sessione',chartTemp:'TEMPERATURA CORPOREA STIMATA',chartFlows:'FLUSSI DI CALORE',qMet:'Produzione metabolica',qWater:'Perdita in acqua (muta)',qAir:'Perdita in aria',qExposed:'Perdita zone esposte',qSolar:'Guadagno solare',qNet:'Bilancio netto',tCore:'Temp. nucleo',tSkinC:'Temp. pelle coperta',tSkinE:'Temp. pelle esposta',histWaterLabel:'Un anno fa l\'acqua era a',suggestedWarn:'Tempo molto limitato — massima cautela',suggestedCaution:'Tempo moderato — uscire prima del freddo',suggestedOk:'Tempo disponibile con questo equipaggiamento',suggestedNoLimit:'Nessun limite termico per questa sessione',t35Label:'MINUTI A 35°C',forecast2day:'PROSSIMI 2 GIORNI',timeNow:'adesso',timeMin:'{n} min fa',timeHour:'{n}h fa',msgLabel:'💬 Messaggio per altri nuotatori',msgPlaceholder:'es: Corrente forte nella zona nord oggi...',reportTitle:'SEGNALA CONDIZIONI',swamQ:'Hai nuotato qui oggi?',swamYes:'🏊 Sì, ho nuotato',swamNo:'👀 Solo osservato',reportWhat:'Cosa vuoi segnalare?',submitReport:'Invia segnalazione',reportSending:'Invio...',reportSent:'✅ Segnalazione inviata! Grazie.',swamAlert:'Hai nuotato oggi?',swimmersToday1:'nuotatore oggi',swimmersToday:'nuotatori oggi',noSwims:'Nessun nuoto segnalato oggi',tempReported:'Temp. segnalata:',lastReport:'Ultima segnalazione:',catTemperature:'Temperatura',catClarity:'Chiarezza',catColor:'Colore',catSalinity:'Salinità',catTide:'Marea',catJellyfish:'Meduse',catCyano:'Cianobatteri',catSmell:'Odore anomalo',catPollution:'Inquinamento',catWaves:'Moto ondoso',clarityLabels:'Cristallina,Chiara,Torbida,Molto torbida,Opaca',salinityLabels:'Dolce,Normale,Molto salata',tideLabels:'Molto bassa,Bassa,Normale,Alta,Molto alta',jellyfishLabels:'Nessuna,Poche,Molte,Massive',wavesLabels:'Calmo,Lieve,Moderato,Mosso,Molto mosso',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Blu',colorGreen:'🟢 Verde',colorBrown:'🟤 Marrone',colorGrey:'⚪ Grigia',colorYellow:'🟡 Gialla',alertJellyfish:'🪼 Meduse',alertCyano:'🟢 Cianobatteri',alertSmell:'👃 Odore anomalo',alertPollution:'⚠️ Inquinamento',authSub:'Accedi per coordinare gruppi di nuoto. Le segnalazioni non richiedono account.',authCancel:'Annulla',authGoogle:'Continua con Google', gpsCoords:'Usando coordinate GPS',
+    gpsTitle:'POSIZIONE GPS', gpsName:'La tua posizione GPS',entryPoint:'Segna il mio punto di ingresso in acqua',mapTitle:'MAPPA COMUNITARIA',mapSub:'Punti di ingresso — ultimi 30 giorni',stravaHeatmap:'Visualizza percorsi nuotatori su Strava →',simExplain:'NAUTA calcola come evolve la temperatura di un corpo con le caratteristiche selezionate, per le condizioni meteorologiche di oggi nella posizione selezionata. Le linee di riferimento indicano quando potrebbe iniziare un raffreddamento notevole (36°C) o un\'ipotermia lieve (35°C). È una stima teorica: la risposta reale dipende da fattori individuali. Usalo per confrontare le condizioni giorno per giorno, non come guida su quanto tempo nuotare.',odeDisclaimer:"Questo modello è una stima teorica. La tua risposta reale dipende da fattori individuali che non possiamo misurare. Lo scopo del sistema è fornire una quantificazione approssimativa dell'impatto termico dovuto a vari fattori.",immersionLabel:'🧘 Galleggiamento / Immersione',immersionSub:'Senza nuoto · solo BMR',extrasLbl:'EQUIPAGGIAMENTO AGGIUNTIVO',eqGloves:'🧤 Guanti in neoprene',eqHood:'🧢 Cuffia in neoprene',eqBooties:'🦶 Calzari',forecast2:'PROSSIMI 2 GIORNI',histWaterTemp:"Un anno fa la temperatura dell'acqua qui era",suggestedTime:'TEMPO CONSIGLIATO IN ACQUA',untilLimit:'fino a raggiungere 35°C',noLimit:'Nessun limite stimato per questa sessione',chartTemp:'TEMPERATURA CORPOREA STIMATA',chartFlows:'FLUSSI DI CALORE',qMet:'Produzione metabolica',qWater:'Perdita in acqua (muta)',qAir:'Perdita in aria',qExposed:'Perdita zone esposte',qSolar:'Guadagno solare',qNet:'Bilancio netto',tCore:'Temp. nucleo',tSkinC:'Temp. pelle coperta',tSkinE:'Temp. pelle esposta',histWaterLabel:'Un anno fa l\'acqua era a',suggestedWarn:'Tempo molto limitato — massima cautela',suggestedCaution:'Tempo moderato — uscire prima del freddo',suggestedOk:'Tempo disponibile con questo equipaggiamento',suggestedNoLimit:'Nessun limite termico per questa sessione',t35Label:'MINUTI A 35°C',forecast2day:'PROSSIMI 2 GIORNI',timeNow:'adesso',timeMin:'{n} min fa',timeHour:'{n}h fa',msgLabel:'💬 Messaggio per altri nuotatori',msgPlaceholder:'es: Corrente forte nella zona nord oggi...',reportTitle:'SEGNALA CONDIZIONI',swamQ:'Hai nuotato qui oggi?',swamYes:'🏊 Sì, ho nuotato',swamNo:'👀 Solo osservato',reportWhat:'Cosa vuoi segnalare?',submitReport:'Invia segnalazione',reportSending:'Invio...',reportSent:'✅ Segnalazione inviata! Grazie.',swamAlert:'Hai nuotato oggi?',swimmersToday1:'nuotatore oggi',swimmersToday:'nuotatori oggi',noSwims:'Nessun nuoto segnalato oggi',tempReported:'Temp. segnalata:',lastReport:'Ultima segnalazione:',catTemperature:'Temperatura',catClarity:'Chiarezza',catColor:'Colore',catSalinity:'Salinità',catTide:'Marea',catJellyfish:'Meduse',catCyano:'Cianobatteri',catSmell:'Odore anomalo',catPollution:'Inquinamento',catWaves:'Moto ondoso',clarityLabels:'Cristallina,Chiara,Torbida,Molto torbida,Opaca',salinityLabels:'Dolce,Normale,Molto salata',tideLabels:'Molto bassa,Bassa,Normale,Alta,Molto alta',jellyfishLabels:'Nessuna,Poche,Molte,Massive',wavesLabels:'Calmo,Lieve,Moderato,Mosso,Molto mosso',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Blu',colorGreen:'🟢 Verde',colorBrown:'🟤 Marrone',colorGrey:'⚪ Grigia',colorYellow:'🟡 Gialla',alertJellyfish:'🪼 Meduse',alertCyano:'🟢 Cianobatteri',alertSmell:'👃 Odore anomalo',alertPollution:'⚠️ Inquinamento',authSub:'Accedi per coordinare gruppi di nuoto. Le segnalazioni non richiedono account.',authCancel:'Annulla',authGoogle:'Continua con Google', gpsCoords:'Usando coordinate GPS',
     fetchWeather:'Ottieni condizioni attuali', searchOther:'→ Cerca un\'altra posizione',
     searchTitle:'CERCA POSIZIONE', searchHint:'Spiagge, fiumi, laghi, città — qualsiasi luogo geografico.',
     searchPH:'es: Spiaggia di Ostia, Roma...', searchBtn:'Cerca', searching:'Cercando...',
@@ -1385,7 +1401,7 @@ const T = {
     exitSign3:'Acqua mite (16°C) oltre 20 min — la fatica accumulata raffredda anch\'essa',exitRecSource:'Basato su studi di fisiologia del nuoto in acque fredde.',
   },
   fr: {
-    gpsTitle:'POSITION GPS', gpsName:'Votre position GPS',stravaHeatmap:'Voir les parcours des nageurs sur Strava →',simExplain:'NAUTA calcule comment évolue la température d\'un corps avec les caractéristiques sélectionnées, pour les conditions météorologiques d\'aujourd\'hui à l\'emplacement sélectionné. Les lignes de référence indiquent quand un refroidissement notable (36°C) ou une hypothermie légère (35°C) pourrait commencer. Il s\'agit d\'une estimation théorique : la réponse réelle dépend de facteurs individuels. Utilisez-le pour comparer les conditions jour après jour, et non comme guide sur la durée de nage.',odeDisclaimer:"Ce modèle est une estimation théorique. Votre réponse réelle dépend de facteurs individuels que nous ne pouvons pas mesurer. L'objectif du système est de fournir une quantification approximative de l'impact thermique dû à divers facteurs.",immersionLabel:'🧘 Flottaison / Immersion',immersionSub:'Sans nage · BMR uniquement',extrasLbl:'ÉQUIPEMENT SUPPLÉMENTAIRE',eqGloves:'🧤 Gants en néoprène',eqHood:'🧢 Bonnet en néoprène',eqBooties:'🦶 Chaussons',forecast2:'2 PROCHAINS JOURS',histWaterTemp:"Il y a un an la température de l'eau ici était de",suggestedTime:"TEMPS SUGGÉRÉ DANS L'EAU",untilLimit:"jusqu'à atteindre 35°C",noLimit:'Aucune limite estimée pour cette session',chartTemp:'TEMPÉRATURE CORPORELLE ESTIMÉE',chartFlows:'FLUX DE CHALEUR',qMet:'Production métabolique',qWater:"Perte dans l'eau (combinaison)",qAir:"Perte dans l'air",qExposed:'Perte zones exposées',qSolar:'Apport solaire',qNet:'Bilan net',tCore:'Temp. noyau',tSkinC:'Temp. peau couverte',tSkinE:'Temp. peau exposée',histWaterLabel:'Il y a un an l\'eau était à',suggestedWarn:'Temps très limité — extrême prudence',suggestedCaution:'Temps modéré — sortez avant de sentir le froid',suggestedOk:'Temps disponible avec cet équipement',suggestedNoLimit:'Aucune limite thermique pour cette session',t35Label:'MINUTES JUSQU\'À 35°C',forecast2day:'2 PROCHAINS JOURS',timeNow:'à l\'instant',timeMin:'il y a {n} min',timeHour:'il y a {n}h',msgLabel:'💬 Message pour les autres nageurs',msgPlaceholder:'ex: Fort courant dans la zone nord aujourd\'hui...',reportTitle:'SIGNALER LES CONDITIONS',swamQ:"Avez-vous nagé ici aujourd'hui?",swamYes:"🏊 Oui, j'ai nagé",swamNo:'👀 Juste observé',reportWhat:'Que voulez-vous signaler?',submitReport:'Envoyer le signalement',reportSending:'Envoi...',reportSent:'✅ Signalement envoyé ! Merci.',swamAlert:"Avez-vous nagé aujourd'hui?",swimmersToday1:"nageur aujourd'hui",swimmersToday:"nageurs aujourd'hui",noSwims:"Aucune nage signalée aujourd'hui",tempReported:'Temp. signalée:',lastReport:'Dernier signalement:',catTemperature:'Température',catClarity:'Clarté',catColor:'Couleur',catSalinity:'Salinité',catTide:'Marée',catJellyfish:'Méduses',catCyano:'Cyanobactéries',catSmell:'Odeur anormale',catPollution:'Pollution',catWaves:'Houle',clarityLabels:'Cristalline,Claire,Trouble,Très trouble,Opaque',salinityLabels:'Douce,Normale,Très salée',tideLabels:'Très basse,Basse,Normale,Haute,Très haute',jellyfishLabels:'Aucune,Peu,Beaucoup,Massive',wavesLabels:'Calme,Légère,Modérée,Agitée,Très agitée',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Bleu',colorGreen:'🟢 Vert',colorBrown:'🟤 Brun',colorGrey:'⚪ Grise',colorYellow:'🟡 Jaune',alertJellyfish:'🪼 Méduses',alertCyano:'🟢 Cyanobactéries',alertSmell:'👃 Odeur anormale',alertPollution:'⚠️ Pollution',authSub:'Connectez-vous pour coordonner des groupes de nage. Les signalements ne nécessitent pas de compte.',authCancel:'Annuler',authGoogle:'Continuer avec Google', gpsCoords:'Utilisant les coordonnées GPS',
+    gpsTitle:'POSITION GPS', gpsName:'Votre position GPS',entryPoint:"Marquer mon point d'entrée dans l'eau",mapTitle:'CARTE COMMUNAUTAIRE',mapSub:"Points d'entrée — 30 derniers jours",stravaHeatmap:'Voir les parcours des nageurs sur Strava →',simExplain:'NAUTA calcule comment évolue la température d\'un corps avec les caractéristiques sélectionnées, pour les conditions météorologiques d\'aujourd\'hui à l\'emplacement sélectionné. Les lignes de référence indiquent quand un refroidissement notable (36°C) ou une hypothermie légère (35°C) pourrait commencer. Il s\'agit d\'une estimation théorique : la réponse réelle dépend de facteurs individuels. Utilisez-le pour comparer les conditions jour après jour, et non comme guide sur la durée de nage.',odeDisclaimer:"Ce modèle est une estimation théorique. Votre réponse réelle dépend de facteurs individuels que nous ne pouvons pas mesurer. L'objectif du système est de fournir une quantification approximative de l'impact thermique dû à divers facteurs.",immersionLabel:'🧘 Flottaison / Immersion',immersionSub:'Sans nage · BMR uniquement',extrasLbl:'ÉQUIPEMENT SUPPLÉMENTAIRE',eqGloves:'🧤 Gants en néoprène',eqHood:'🧢 Bonnet en néoprène',eqBooties:'🦶 Chaussons',forecast2:'2 PROCHAINS JOURS',histWaterTemp:"Il y a un an la température de l'eau ici était de",suggestedTime:"TEMPS SUGGÉRÉ DANS L'EAU",untilLimit:"jusqu'à atteindre 35°C",noLimit:'Aucune limite estimée pour cette session',chartTemp:'TEMPÉRATURE CORPORELLE ESTIMÉE',chartFlows:'FLUX DE CHALEUR',qMet:'Production métabolique',qWater:"Perte dans l'eau (combinaison)",qAir:"Perte dans l'air",qExposed:'Perte zones exposées',qSolar:'Apport solaire',qNet:'Bilan net',tCore:'Temp. noyau',tSkinC:'Temp. peau couverte',tSkinE:'Temp. peau exposée',histWaterLabel:'Il y a un an l\'eau était à',suggestedWarn:'Temps très limité — extrême prudence',suggestedCaution:'Temps modéré — sortez avant de sentir le froid',suggestedOk:'Temps disponible avec cet équipement',suggestedNoLimit:'Aucune limite thermique pour cette session',t35Label:'MINUTES JUSQU\'À 35°C',forecast2day:'2 PROCHAINS JOURS',timeNow:'à l\'instant',timeMin:'il y a {n} min',timeHour:'il y a {n}h',msgLabel:'💬 Message pour les autres nageurs',msgPlaceholder:'ex: Fort courant dans la zone nord aujourd\'hui...',reportTitle:'SIGNALER LES CONDITIONS',swamQ:"Avez-vous nagé ici aujourd'hui?",swamYes:"🏊 Oui, j'ai nagé",swamNo:'👀 Juste observé',reportWhat:'Que voulez-vous signaler?',submitReport:'Envoyer le signalement',reportSending:'Envoi...',reportSent:'✅ Signalement envoyé ! Merci.',swamAlert:"Avez-vous nagé aujourd'hui?",swimmersToday1:"nageur aujourd'hui",swimmersToday:"nageurs aujourd'hui",noSwims:"Aucune nage signalée aujourd'hui",tempReported:'Temp. signalée:',lastReport:'Dernier signalement:',catTemperature:'Température',catClarity:'Clarté',catColor:'Couleur',catSalinity:'Salinité',catTide:'Marée',catJellyfish:'Méduses',catCyano:'Cyanobactéries',catSmell:'Odeur anormale',catPollution:'Pollution',catWaves:'Houle',clarityLabels:'Cristalline,Claire,Trouble,Très trouble,Opaque',salinityLabels:'Douce,Normale,Très salée',tideLabels:'Très basse,Basse,Normale,Haute,Très haute',jellyfishLabels:'Aucune,Peu,Beaucoup,Massive',wavesLabels:'Calme,Légère,Modérée,Agitée,Très agitée',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Bleu',colorGreen:'🟢 Vert',colorBrown:'🟤 Brun',colorGrey:'⚪ Grise',colorYellow:'🟡 Jaune',alertJellyfish:'🪼 Méduses',alertCyano:'🟢 Cyanobactéries',alertSmell:'👃 Odeur anormale',alertPollution:'⚠️ Pollution',authSub:'Connectez-vous pour coordonner des groupes de nage. Les signalements ne nécessitent pas de compte.',authCancel:'Annuler',authGoogle:'Continuer avec Google', gpsCoords:'Utilisant les coordonnées GPS',
     fetchWeather:'Obtenir les conditions actuelles', searchOther:'→ Chercher un autre lieu',
     searchTitle:'RECHERCHER UN LIEU', searchHint:'Plages, rivières, lacs, villes — tout lieu géographique.',
     searchPH:'ex: Plage de Nice, Côte d\'Azur...', searchBtn:'Chercher', searching:'Recherche...',
@@ -1438,7 +1454,7 @@ const T = {
     exitSign3:'Eau tempérée (16°C) au-delà de 20 min — la fatigue accumulée refroidit aussi',exitRecSource:'Basé sur des études de physiologie de la nage en eau froide.',
   },
   pt: {
-    gpsTitle:'LOCALIZAÇÃO GPS', gpsName:'A sua localização GPS',stravaHeatmap:'Ver percursos de nadadores no Strava →',simExplain:'NAUTA calcula como evolui a temperatura de um corpo com as características selecionadas, para as condições meteorológicas de hoje na localização selecionada. As linhas de referência indicam quando pode começar um arrefecimento notável (36°C) ou hipotermia leve (35°C). É uma estimativa teórica: a resposta real depende de fatores individuais. Use-o para comparar condições dia a dia, não como guia de quanto tempo nadar.',odeDisclaimer:'Este modelo é uma estimativa teórica. A sua resposta real depende de fatores individuais que não podemos medir. O objetivo do sistema é fornecer uma quantificação aproximada do impacto térmico devido a vários fatores.',immersionLabel:'🧘 Prancha / Imersão',immersionSub:'Sem nado · apenas BMR',extrasLbl:'EQUIPAMENTO ADICIONAL',eqGloves:'🧤 Luvas de neoprene',eqHood:'🧢 Touca de neoprene',eqBooties:'🦶 Sapatilhas',forecast2:'PRÓXIMOS 2 DIAS',histWaterTemp:'Há um ano a temperatura da água aqui era de',suggestedTime:'TEMPO SUGERIDO NA ÁGUA',untilLimit:'até atingir 35°C',noLimit:'Sem limite estimado para esta sessão',chartTemp:'TEMPERATURA CORPORAL ESTIMADA',chartFlows:'FLUXOS DE CALOR',qMet:'Produção metabólica',qWater:'Perda na água (fato)',qAir:'Perda no ar',qExposed:'Perda zonas expostas',qSolar:'Ganho solar',qNet:'Balanço líquido',tCore:'Temp. núcleo',tSkinC:'Temp. pele coberta',tSkinE:'Temp. pele exposta',histWaterLabel:'Há um ano a água estava a',suggestedWarn:'Tempo muito limitado — extrema cautela',suggestedCaution:'Tempo moderado — sair antes de sentir frio',suggestedOk:'Tempo disponível com este equipamento',suggestedNoLimit:'Sem limite térmico para esta sessão',t35Label:'MINUTOS ATÉ 35°C',forecast2day:'PRÓXIMOS 2 DIAS',timeNow:'agora mesmo',timeMin:'há {n} min',timeHour:'há {n}h',msgLabel:'💬 Mensagem para outros nadadores',msgPlaceholder:'ex: Corrente forte na zona norte hoje...',reportTitle:'REPORTAR CONDIÇÕES',swamQ:'Nadou aqui hoje?',swamYes:'🏊 Sim, nadei',swamNo:'👀 Só observei',reportWhat:'O que quer reportar?',submitReport:'Enviar relatório',reportSending:'Enviando...',reportSent:'✅ Relatório enviado! Obrigado.',swamAlert:'Nadou hoje?',swimmersToday1:'nadador hoje',swimmersToday:'nadadores hoje',noSwims:'Sem nados reportados hoje',tempReported:'Temp. reportada:',lastReport:'Último relatório:',catTemperature:'Temperatura',catClarity:'Clareza',catColor:'Cor',catSalinity:'Salinidade',catTide:'Maré',catJellyfish:'Medusas',catCyano:'Cianobactérias',catSmell:'Cheiro anormal',catPollution:'Contaminação',catWaves:'Ondulação',clarityLabels:'Cristalina,Clara,Turva,Muito turva,Opaca',salinityLabels:'Doce,Normal,Muito salgada',tideLabels:'Muito baixa,Baixa,Normal,Alta,Muito alta',jellyfishLabels:'Nenhuma,Poucas,Muitas,Massiva',wavesLabels:'Calmo,Leve,Moderado,Agitado,Muito agitado',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Azul',colorGreen:'🟢 Verde',colorBrown:'🟤 Castanho',colorGrey:'⚪ Cinzenta',colorYellow:'🟡 Amarela',alertJellyfish:'🪼 Medusas',alertCyano:'🟢 Cianobactérias',alertSmell:'👃 Cheiro anormal',alertPollution:'⚠️ Contaminação',authSub:'Inicie sessão para coordenar grupos de natação. Os relatórios não requerem conta.',authCancel:'Cancelar',authGoogle:'Continuar com Google', gpsCoords:'Usando coordenadas GPS',
+    gpsTitle:'LOCALIZAÇÃO GPS', gpsName:'A sua localização GPS',entryPoint:'Marcar o meu ponto de entrada na água',mapTitle:'MAPA COMUNITÁRIO',mapSub:'Pontos de entrada — últimos 30 dias',stravaHeatmap:'Ver percursos de nadadores no Strava →',simExplain:'NAUTA calcula como evolui a temperatura de um corpo com as características selecionadas, para as condições meteorológicas de hoje na localização selecionada. As linhas de referência indicam quando pode começar um arrefecimento notável (36°C) ou hipotermia leve (35°C). É uma estimativa teórica: a resposta real depende de fatores individuais. Use-o para comparar condições dia a dia, não como guia de quanto tempo nadar.',odeDisclaimer:'Este modelo é uma estimativa teórica. A sua resposta real depende de fatores individuais que não podemos medir. O objetivo do sistema é fornecer uma quantificação aproximada do impacto térmico devido a vários fatores.',immersionLabel:'🧘 Prancha / Imersão',immersionSub:'Sem nado · apenas BMR',extrasLbl:'EQUIPAMENTO ADICIONAL',eqGloves:'🧤 Luvas de neoprene',eqHood:'🧢 Touca de neoprene',eqBooties:'🦶 Sapatilhas',forecast2:'PRÓXIMOS 2 DIAS',histWaterTemp:'Há um ano a temperatura da água aqui era de',suggestedTime:'TEMPO SUGERIDO NA ÁGUA',untilLimit:'até atingir 35°C',noLimit:'Sem limite estimado para esta sessão',chartTemp:'TEMPERATURA CORPORAL ESTIMADA',chartFlows:'FLUXOS DE CALOR',qMet:'Produção metabólica',qWater:'Perda na água (fato)',qAir:'Perda no ar',qExposed:'Perda zonas expostas',qSolar:'Ganho solar',qNet:'Balanço líquido',tCore:'Temp. núcleo',tSkinC:'Temp. pele coberta',tSkinE:'Temp. pele exposta',histWaterLabel:'Há um ano a água estava a',suggestedWarn:'Tempo muito limitado — extrema cautela',suggestedCaution:'Tempo moderado — sair antes de sentir frio',suggestedOk:'Tempo disponível com este equipamento',suggestedNoLimit:'Sem limite térmico para esta sessão',t35Label:'MINUTOS ATÉ 35°C',forecast2day:'PRÓXIMOS 2 DIAS',timeNow:'agora mesmo',timeMin:'há {n} min',timeHour:'há {n}h',msgLabel:'💬 Mensagem para outros nadadores',msgPlaceholder:'ex: Corrente forte na zona norte hoje...',reportTitle:'REPORTAR CONDIÇÕES',swamQ:'Nadou aqui hoje?',swamYes:'🏊 Sim, nadei',swamNo:'👀 Só observei',reportWhat:'O que quer reportar?',submitReport:'Enviar relatório',reportSending:'Enviando...',reportSent:'✅ Relatório enviado! Obrigado.',swamAlert:'Nadou hoje?',swimmersToday1:'nadador hoje',swimmersToday:'nadadores hoje',noSwims:'Sem nados reportados hoje',tempReported:'Temp. reportada:',lastReport:'Último relatório:',catTemperature:'Temperatura',catClarity:'Clareza',catColor:'Cor',catSalinity:'Salinidade',catTide:'Maré',catJellyfish:'Medusas',catCyano:'Cianobactérias',catSmell:'Cheiro anormal',catPollution:'Contaminação',catWaves:'Ondulação',clarityLabels:'Cristalina,Clara,Turva,Muito turva,Opaca',salinityLabels:'Doce,Normal,Muito salgada',tideLabels:'Muito baixa,Baixa,Normal,Alta,Muito alta',jellyfishLabels:'Nenhuma,Poucas,Muitas,Massiva',wavesLabels:'Calmo,Leve,Moderado,Agitado,Muito agitado',colorOptions:'🔵 blue,🟢 green,🟤 brown,⚪ grey,🟡 yellow',colorBlue:'🔵 Azul',colorGreen:'🟢 Verde',colorBrown:'🟤 Castanho',colorGrey:'⚪ Cinzenta',colorYellow:'🟡 Amarela',alertJellyfish:'🪼 Medusas',alertCyano:'🟢 Cianobactérias',alertSmell:'👃 Cheiro anormal',alertPollution:'⚠️ Contaminação',authSub:'Inicie sessão para coordenar grupos de natação. Os relatórios não requerem conta.',authCancel:'Cancelar',authGoogle:'Continuar com Google', gpsCoords:'Usando coordenadas GPS',
     fetchWeather:'Obter condições atuais', searchOther:'→ Procurar outro local',
     searchTitle:'PESQUISAR LOCALIZAÇÃO', searchHint:'Praias, rios, lagos, cidades — qualquer lugar geográfico.',
     searchPH:'ex: Praia de Copacabana, Rio...', searchBtn:'Pesquisar', searching:'Pesquisando...',
@@ -1661,6 +1677,17 @@ document.getElementById('btn-google-login').addEventListener('click', async () =
   });
 });
 
+document.getElementById('btn-strava-login')?.addEventListener('click', async () => {
+  if (!supa) { alert('Login no disponible'); return; }
+  await supa.auth.signInWithOAuth({
+    provider: 'strava',
+    options: {
+      redirectTo: 'https://martin1homas.github.io/Impacto-termico/',
+      scopes: 'read,activity:read'  // read profile + activities
+    }
+  });
+});
+
 // ── REPORT CATEGORIES ─────────────────────────────────────────────
 function getReportCats(swam) {
   // All categories
@@ -1822,6 +1849,14 @@ document.getElementById('btn-submit-report').addEventListener('click', async () 
   try {
     const expiresAt = midnightExpiryForCoords(lat, lon);
     const inserts = [{ lat, lon, beach_name: beachName, report_type:'swim', value: RS.swam?'si':'no', swam: RS.swam, expires_at: expiresAt }];
+
+    // Entry point — use exact GPS coords if checkbox checked
+    const markEntry = $('chk-entry-point')?.checked;
+    if (markEntry) {
+      // Get precise GPS if available, else use S.coords
+      inserts[0].entry_lat = lat;
+      inserts[0].entry_lon = lon;
+    }
     RS.selectedCats.forEach(catId => {
       const val = RS.values[catId];
       const cat = getReportCats(RS.swam).find(c => c.id === catId);
@@ -1861,6 +1896,86 @@ document.getElementById('btn-submit-report').addEventListener('click', async () 
   } catch(e) { alert('Error: ' + e.message); }
   setBtn('btn-submit-report', false, t('submitReport'));
 });
+
+
+// ── COMMUNITY MAP ─────────────────────────────────────────────────
+let communityMap = null;
+
+async function loadCommunityMap() {
+  if (!S.coords || !supa) return;
+  const { lat, lon } = S.coords;
+
+  // Fetch entry points from last 30 days
+  const since = new Date(Date.now() - 30*24*60*60*1000).toISOString();
+  const { data, error } = await supa
+    .from('reports')
+    .select('entry_lat, entry_lon, created_at, report_type, value')
+    .not('entry_lat', 'is', null)
+    .gte('created_at', since)
+    .gte('lat', lat - 0.1)
+    .lte('lat', lat + 0.1)
+    .gte('lon', lon - 0.1)
+    .lte('lon', lon + 0.1);
+
+  if (error || !data?.length) return;
+
+  // Group by entry point to get temp and jellyfish per location
+  const points = {};
+  data.forEach(r => {
+    if (!r.entry_lat || !r.entry_lon) return;
+    const key = `${r.entry_lat.toFixed(4)},${r.entry_lon.toFixed(4)}`;
+    if (!points[key]) {
+      points[key] = { lat: r.entry_lat, lon: r.entry_lon,
+                      count: 0, temp: null, jellyfish: null, last: r.created_at };
+    }
+    points[key].count++;
+    if (r.report_type === 'temperature') points[key].temp = parseFloat(r.value);
+    if (r.report_type === 'jellyfish')   points[key].jellyfish = r.value;
+    if (r.created_at > points[key].last) points[key].last = r.created_at;
+  });
+
+  const pts = Object.values(points);
+  if (!pts.length) return;
+
+  // Show map card
+  $('community-map-card').style.display = 'block';
+
+  // Init Leaflet map
+  if (!communityMap) {
+    communityMap = L.map('community-map', { zoomControl: true, scrollWheelZoom: false })
+      .setView([lat, lon], 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 18
+    }).addTo(communityMap);
+  } else {
+    communityMap.setView([lat, lon], 14);
+    communityMap.eachLayer(l => { if (l instanceof L.CircleMarker) communityMap.removeLayer(l); });
+  }
+
+  // Add markers
+  const maxCount = Math.max(...pts.map(p => p.count));
+  pts.forEach(p => {
+    const intensity = p.count / maxCount;
+    const color = intensity > 0.7 ? '#C05000' : intensity > 0.4 ? '#C09000' : '#1A8A4A';
+    const radius = 6 + intensity * 10;
+
+    const marker = L.circleMarker([p.lat, p.lon], {
+      radius, color: '#fff', fillColor: color,
+      fillOpacity: 0.85, weight: 1.5
+    }).addTo(communityMap);
+
+    // Popup with temp and jellyfish
+    const ago = formatTimeAgo(p.last);
+    let popup = `<div style="font-size:13px;line-height:1.6">
+      <b>🏊 ${p.count} ${p.count === 1 ? t('swimmersToday1') : t('swimmersToday')}</b><br>
+      ${p.temp !== null ? `🌡 ${p.temp.toFixed(1)}°C<br>` : ''}
+      ${p.jellyfish ? `🪼 ${p.jellyfish}<br>` : ''}
+      <span style="color:#888;font-size:11px">${ago}</span>
+    </div>`;
+    marker.bindPopup(popup);
+  });
+}
 
 // ── COMMUNITY REPORTS (load from Supabase) ────────────────────────
 async function loadCommunityReports() {
@@ -2052,7 +2167,7 @@ function renderCommunityReports(reports) {
   if (!$('strava-link') && beachContent && S.coords) {
     const { lat, lon } = S.coords;
     // Zoom 15 is ideal for beach-level view
-    const stravaUrl = `https://www.strava.com/heatmap#15/${lon}/${lat}/hot/all`;
+    const stravaUrl = `https://www.strava.com/heatmap#15/${lat}/${lon}/hot/all`;
     beachContent.insertAdjacentHTML('beforeend',
       `<a href="${stravaUrl}" target="_blank" class="camera-link" id="strava-link" style="border-color:#FC4C02;color:#FC4C02">
         🔥 ${t('stravaHeatmap')}
@@ -2228,6 +2343,7 @@ async function fetchWeather() {
     updateWindInfo();
     loadBeachStatus();
     loadHistoricalWaterTemp();
+    loadCommunityMap();
 
     // Strava Heatmap link — always show after location confirmed
     // Independent of beaches.json loading
@@ -2235,7 +2351,7 @@ async function fetchWeather() {
     if (stravaContainer && S.coords) {
       const { lat, lon } = S.coords;
       stravaContainer.innerHTML =
-        `<a href="https://www.strava.com/heatmap#15/${lon}/${lat}/hot/all"
+        `<a href="https://www.strava.com/heatmap#15/${lat}/${lon}/hot/all"
             target="_blank" class="camera-link"
             style="border-color:#FC4C02;color:#FC4C02;width:100%;box-sizing:border-box;text-align:center;display:block">
           🔥 ${t('stravaHeatmap')}
@@ -3520,7 +3636,7 @@ function renderBeaches(data) {
   // Strava Heatmap link — always show when beach card is visible
   if (S.coords && !$('strava-link')) {
     const { lat, lon } = S.coords;
-    const stravaUrl = `https://www.strava.com/heatmap#15/${lon}/${lat}/hot/all`;
+    const stravaUrl = `https://www.strava.com/heatmap#15/${lat}/${lon}/hot/all`;
     $('beach-content').insertAdjacentHTML('beforeend',
       `<a href="${stravaUrl}" target="_blank" class="camera-link" id="strava-link"
           style="border-color:#FC4C02;color:#FC4C02;margin-top:8px;display:block;text-align:center">
