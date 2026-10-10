@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-10T15:10:00Z",
+  "updated": "2026-10-10T19:55:48Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -67,9 +67,9 @@
         ]
       },
       "beach": "ramirez",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -86,8 +86,8 @@
       },
       "beach": "honda",
       "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlagCause": 8,
+      "healthFlagCauseDesc": "Vertidos",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -103,9 +103,9 @@
         ]
       },
       "beach": "buceo",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -121,9 +121,9 @@
         ]
       },
       "beach": "malvin",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -139,9 +139,9 @@
         ]
       },
       "beach": "delcerro",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -157,9 +157,9 @@
         ]
       },
       "beach": "delcerro",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -193,9 +193,9 @@
         ]
       },
       "beach": "buceo",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -211,9 +211,9 @@
         ]
       },
       "beach": "verde",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 8,
+      "healthFlagCauseDesc": "Vertidos",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -229,9 +229,9 @@
         ]
       },
       "beach": "pajasblancas",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -247,9 +247,9 @@
         ]
       },
       "beach": "buceo",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -265,9 +265,9 @@
         ]
       },
       "beach": "delosingleses",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 8,
+      "healthFlagCauseDesc": "Vertidos",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -283,9 +283,9 @@
         ]
       },
       "beach": "lacolorada",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -301,9 +301,9 @@
         ]
       },
       "beach": "malvin",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -319,9 +319,9 @@
         ]
       },
       "beach": "malvin",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -337,9 +337,9 @@
         ]
       },
       "beach": "delnacional",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -355,9 +355,9 @@
         ]
       },
       "beach": "carrasco",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -391,9 +391,9 @@
         ]
       },
       "beach": "verde",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 8,
+      "healthFlagCauseDesc": "Vertidos",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -409,9 +409,9 @@
         ]
       },
       "beach": "carrasco",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -446,8 +446,8 @@
       },
       "beach": "santacatalina",
       "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlagCause": 8,
+      "healthFlagCauseDesc": "Vertidos",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -464,8 +464,8 @@
       },
       "beach": "honda",
       "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlagCause": 8,
+      "healthFlagCauseDesc": "Vertidos",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -499,9 +499,9 @@
         ]
       },
       "beach": "carrasco",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -553,9 +553,9 @@
         ]
       },
       "beach": "loscilindros",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -571,9 +571,9 @@
         ]
       },
       "beach": "carrasco",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     }
