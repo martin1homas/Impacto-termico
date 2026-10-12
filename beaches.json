@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-12T01:07:12Z",
+  "updated": "2026-10-12T08:56:56Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -85,9 +85,9 @@
         ]
       },
       "beach": "honda",
-      "healthFlag": "true",
-      "healthFlagCause": 8,
-      "healthFlagCauseDesc": "Vertidos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -211,9 +211,9 @@
         ]
       },
       "beach": "verde",
-      "healthFlag": "true",
-      "healthFlagCause": 8,
-      "healthFlagCauseDesc": "Vertidos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -265,9 +265,9 @@
         ]
       },
       "beach": "delosingleses",
-      "healthFlag": "true",
-      "healthFlagCause": 8,
-      "healthFlagCauseDesc": "Vertidos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -391,9 +391,9 @@
         ]
       },
       "beach": "verde",
-      "healthFlag": "true",
-      "healthFlagCause": 8,
-      "healthFlagCauseDesc": "Vertidos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -463,9 +463,9 @@
         ]
       },
       "beach": "honda",
-      "healthFlag": "true",
-      "healthFlagCause": 8,
-      "healthFlagCauseDesc": "Vertidos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
