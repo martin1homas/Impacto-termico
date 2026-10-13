@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-12T18:53:57Z",
+  "updated": "2026-10-13T01:12:11Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -445,9 +445,9 @@
         ]
       },
       "beach": "santacatalina",
-      "healthFlag": "true",
-      "healthFlagCause": 8,
-      "healthFlagCauseDesc": "Vertidos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
