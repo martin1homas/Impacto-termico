@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-15T13:15:09Z",
+  "updated": "2026-10-15T18:08:39Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -67,9 +67,9 @@
         ]
       },
       "beach": "ramirez",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -121,9 +121,9 @@
         ]
       },
       "beach": "malvin",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -301,9 +301,9 @@
         ]
       },
       "beach": "malvin",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -319,9 +319,9 @@
         ]
       },
       "beach": "malvin",
-      "healthFlag": "true",
-      "healthFlagCause": 7,
-      "healthFlagCauseDesc": "Enterococos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
       "safetyFlag": null,
       "linkComoIr": null
     },
