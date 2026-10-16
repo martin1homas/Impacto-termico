@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-16T17:15:58Z",
+  "updated": "2026-10-16T20:48:49Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -85,9 +85,9 @@
         ]
       },
       "beach": "honda",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 7,
+      "healthFlagCauseDesc": "Enterococos",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -445,9 +445,9 @@
         ]
       },
       "beach": "santacatalina",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 7,
+      "healthFlagCauseDesc": "Enterococos",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -463,9 +463,9 @@
         ]
       },
       "beach": "honda",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 7,
+      "healthFlagCauseDesc": "Enterococos",
       "safetyFlag": null,
       "linkComoIr": null
     },
