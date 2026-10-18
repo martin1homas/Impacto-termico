@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-18T14:25:00Z",
+  "updated": "2026-10-18T17:56:30Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -10,24 +10,6 @@
         "coordinates": [
           -56.14743268,
           -34.91392318
-        ]
-      },
-      "beach": "pocitos",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
-      "safetyFlag": null,
-      "linkComoIr": null
-    },
-    {
-      "id": "MVD:lifeguardstation:3",
-      "name": "Buxareo",
-      "address": "Rambla República del Perú y Buxareo.",
-      "location": {
-        "type": "Point",
-        "coordinates": [
-          -56.14250423,
-          -34.91033514
         ]
       },
       "beach": "pocitos",
@@ -56,6 +38,24 @@
       "linkComoIr": null
     },
     {
+      "id": "MVD:lifeguardstation:3",
+      "name": "Buxareo",
+      "address": "Rambla República del Perú y Buxareo.",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -56.14250423,
+          -34.91033514
+        ]
+      },
+      "beach": "pocitos",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
+      "safetyFlag": null,
+      "linkComoIr": null
+    },
+    {
       "id": "MVD:lifeguardstation:4",
       "name": "Ramírez",
       "address": "Rambla Presidente Wilson y Sarmiento",
@@ -67,60 +67,6 @@
         ]
       },
       "beach": "ramirez",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
-      "safetyFlag": null,
-      "linkComoIr": null
-    },
-    {
-      "id": "MVD:lifeguardstation:19",
-      "name": "Mississipi",
-      "address": "Rambla O’Higgins y Mississipi.",
-      "location": {
-        "type": "Point",
-        "coordinates": [
-          -56.09387441,
-          -34.89591817
-        ]
-      },
-      "beach": "honda",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
-      "safetyFlag": null,
-      "linkComoIr": null
-    },
-    {
-      "id": "MVD:lifeguardstation:12",
-      "name": "Batlle y Ordóñez",
-      "address": "Rambla República de Chile y Batlle y Ordóñez.",
-      "location": {
-        "type": "Point",
-        "coordinates": [
-          -56.12175929,
-          -34.899831
-        ]
-      },
-      "beach": "buceo",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
-      "safetyFlag": null,
-      "linkComoIr": null
-    },
-    {
-      "id": "MVD:lifeguardstation:17",
-      "name": "Río de la Plata",
-      "address": "Rambla O’Higgins y Río de la Plata.",
-      "location": {
-        "type": "Point",
-        "coordinates": [
-          -56.10260411,
-          -34.8972165
-        ]
-      },
-      "beach": "malvin",
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
@@ -164,17 +110,17 @@
       "linkComoIr": null
     },
     {
-      "id": "MVD:lifeguardstation:11",
-      "name": "Punta Espinillo",
-      "address": "Camino del Tropero hasta el final.",
+      "id": "MVD:lifeguardstation:7",
+      "name": "Frigonal",
+      "address": "Por Camino Cibils, Eduardo da Costa al final.",
       "location": {
         "type": "Point",
         "coordinates": [
-          -56.412163,
-          -34.83957299
+          -56.27051944,
+          -34.897825
         ]
       },
-      "beach": "puntaespinillo",
+      "beach": "delnacional",
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
@@ -182,35 +128,17 @@
       "linkComoIr": null
     },
     {
-      "id": "MVD:lifeguardstation:14",
-      "name": "Solano López",
-      "address": "Rambla República de Chile y Solano López.",
+      "id": "MVD:lifeguardstation:8",
+      "name": "Punta Yeguas",
+      "address": "Por Camino Burdeos al final, cruzando el monte a la izquierda.",
       "location": {
         "type": "Point",
         "coordinates": [
-          -56.12021791,
-          -34.89886402
+          -56.30331168,
+          -34.89389871
         ]
       },
-      "beach": "buceo",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
-      "safetyFlag": null,
-      "linkComoIr": null
-    },
-    {
-      "id": "MVD:lifeguardstation:23",
-      "name": "San Marino",
-      "address": "Rambla República de México y San Marino.",
-      "location": {
-        "type": "Point",
-        "coordinates": [
-          -56.07297307,
-          -34.89789892
-        ]
-      },
-      "beach": "verde",
+      "beach": "puntayeguas",
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
@@ -236,6 +164,60 @@
       "linkComoIr": null
     },
     {
+      "id": "MVD:lifeguardstation:10",
+      "name": "La Colorada",
+      "address": "Camino Sanguinetti hasta el final.",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -56.37613697,
+          -34.857966
+        ]
+      },
+      "beach": "lacolorada",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
+      "safetyFlag": null,
+      "linkComoIr": null
+    },
+    {
+      "id": "MVD:lifeguardstation:11",
+      "name": "Punta Espinillo",
+      "address": "Camino del Tropero hasta el final.",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -56.412163,
+          -34.83957299
+        ]
+      },
+      "beach": "puntaespinillo",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
+      "safetyFlag": null,
+      "linkComoIr": null
+    },
+    {
+      "id": "MVD:lifeguardstation:12",
+      "name": "Batlle y Ordóñez",
+      "address": "Rambla República de Chile y Batlle y Ordóñez.",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -56.12175929,
+          -34.899831
+        ]
+      },
+      "beach": "buceo",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
+      "safetyFlag": null,
+      "linkComoIr": null
+    },
+    {
       "id": "MVD:lifeguardstation:13",
       "name": "Arrascaeta",
       "address": "Rambla República de Chile y Arrascaeta.",
@@ -254,35 +236,17 @@
       "linkComoIr": null
     },
     {
-      "id": "MVD:lifeguardstation:21",
-      "name": "Los Ingleses",
-      "address": "Rambla O’Higgins y Grito de Gloria.",
+      "id": "MVD:lifeguardstation:14",
+      "name": "Solano López",
+      "address": "Rambla República de Chile y Solano López.",
       "location": {
         "type": "Point",
         "coordinates": [
-          -56.0849931,
-          -34.89560792
+          -56.12021791,
+          -34.89886402
         ]
       },
-      "beach": "delosingleses",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
-      "safetyFlag": null,
-      "linkComoIr": null
-    },
-    {
-      "id": "MVD:lifeguardstation:10",
-      "name": "La Colorada",
-      "address": "Camino Sanguinetti hasta el final.",
-      "location": {
-        "type": "Point",
-        "coordinates": [
-          -56.37613697,
-          -34.857966
-        ]
-      },
-      "beach": "lacolorada",
+      "beach": "buceo",
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
@@ -326,143 +290,17 @@
       "linkComoIr": null
     },
     {
-      "id": "MVD:lifeguardstation:7",
-      "name": "Frigonal",
-      "address": "Por Camino Cibils, Eduardo da Costa al final.",
+      "id": "MVD:lifeguardstation:17",
+      "name": "Río de la Plata",
+      "address": "Rambla O’Higgins y Río de la Plata.",
       "location": {
         "type": "Point",
         "coordinates": [
-          -56.27051944,
-          -34.897825
+          -56.10260411,
+          -34.8972165
         ]
       },
-      "beach": "delnacional",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
-      "safetyFlag": null,
-      "linkComoIr": null
-    },
-    {
-      "id": "MVD:lifeguardstation:26",
-      "name": "Arocena",
-      "address": "Rambla República de México y Arocena.",
-      "location": {
-        "type": "Point",
-        "coordinates": [
-          -56.05671372,
-          -34.89287195
-        ]
-      },
-      "beach": "carrasco",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
-      "safetyFlag": null,
-      "linkComoIr": null
-    },
-    {
-      "id": "MVD:lifeguardstation:24",
-      "name": "Podestá",
-      "address": "Rambla República de México y Pablo Podestá.",
-      "location": {
-        "type": "Point",
-        "coordinates": [
-          -56.06900184,
-          -34.89875903
-        ]
-      },
-      "beach": "lamulata",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
-      "safetyFlag": null,
-      "linkComoIr": null
-    },
-    {
-      "id": "MVD:lifeguardstation:22",
-      "name": "Belastiqui",
-      "address": "Rambla República de México y Belastiqui.",
-      "location": {
-        "type": "Point",
-        "coordinates": [
-          -56.07616254,
-          -34.89748462
-        ]
-      },
-      "beach": "verde",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
-      "safetyFlag": null,
-      "linkComoIr": null
-    },
-    {
-      "id": "MVD:lifeguardstation:27",
-      "name": "Cartagena",
-      "address": "Rambla Republica de México y Cartagena.",
-      "location": {
-        "type": "Point",
-        "coordinates": [
-          -56.05043638,
-          -34.88952634
-        ]
-      },
-      "beach": "carrasco",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
-      "safetyFlag": null,
-      "linkComoIr": null
-    },
-    {
-      "id": "MVD:lifeguardstation:8",
-      "name": "Punta Yeguas",
-      "address": "Por Camino Burdeos al final, cruzando el monte a la izquierda.",
-      "location": {
-        "type": "Point",
-        "coordinates": [
-          -56.30331168,
-          -34.89389871
-        ]
-      },
-      "beach": "puntayeguas",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
-      "safetyFlag": null,
-      "linkComoIr": null
-    },
-    {
-      "id": "MVD:lifeguardstation:28",
-      "name": "Santa Catalina",
-      "address": "Por Camino Burdeos, Pensamiento hasta el final.",
-      "location": {
-        "type": "Point",
-        "coordinates": [
-          -56.29593918,
-          -34.892667725
-        ]
-      },
-      "beach": "santacatalina",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
-      "safetyFlag": null,
-      "linkComoIr": null
-    },
-    {
-      "id": "MVD:lifeguardstation:20",
-      "name": "Gallinal",
-      "address": "Rambla O’Higgins y Gallinal.",
-      "location": {
-        "type": "Point",
-        "coordinates": [
-          -56.09169982,
-          -34.89526321
-        ]
-      },
-      "beach": "honda",
+      "beach": "malvin",
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
@@ -488,6 +326,114 @@
       "linkComoIr": null
     },
     {
+      "id": "MVD:lifeguardstation:19",
+      "name": "Mississipi",
+      "address": "Rambla O’Higgins y Mississipi.",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -56.09387441,
+          -34.89591817
+        ]
+      },
+      "beach": "honda",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
+      "safetyFlag": null,
+      "linkComoIr": null
+    },
+    {
+      "id": "MVD:lifeguardstation:20",
+      "name": "Gallinal",
+      "address": "Rambla O’Higgins y Gallinal.",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -56.09169982,
+          -34.89526321
+        ]
+      },
+      "beach": "honda",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
+      "safetyFlag": null,
+      "linkComoIr": null
+    },
+    {
+      "id": "MVD:lifeguardstation:21",
+      "name": "Los Ingleses",
+      "address": "Rambla O’Higgins y Grito de Gloria.",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -56.0849931,
+          -34.89560792
+        ]
+      },
+      "beach": "delosingleses",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
+      "safetyFlag": null,
+      "linkComoIr": null
+    },
+    {
+      "id": "MVD:lifeguardstation:22",
+      "name": "Belastiqui",
+      "address": "Rambla República de México y Belastiqui.",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -56.07616254,
+          -34.89748462
+        ]
+      },
+      "beach": "verde",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
+      "safetyFlag": null,
+      "linkComoIr": null
+    },
+    {
+      "id": "MVD:lifeguardstation:23",
+      "name": "San Marino",
+      "address": "Rambla República de México y San Marino.",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -56.07297307,
+          -34.89789892
+        ]
+      },
+      "beach": "verde",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
+      "safetyFlag": null,
+      "linkComoIr": null
+    },
+    {
+      "id": "MVD:lifeguardstation:24",
+      "name": "Podestá",
+      "address": "Rambla República de México y Pablo Podestá.",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -56.06900184,
+          -34.89875903
+        ]
+      },
+      "beach": "lamulata",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
+      "safetyFlag": null,
+      "linkComoIr": null
+    },
+    {
       "id": "MVD:lifeguardstation:25",
       "name": "Bolivia",
       "address": "Rambla República de México y Bolivia.",
@@ -499,6 +445,60 @@
         ]
       },
       "beach": "carrasco",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
+      "safetyFlag": null,
+      "linkComoIr": null
+    },
+    {
+      "id": "MVD:lifeguardstation:26",
+      "name": "Arocena",
+      "address": "Rambla República de México y Arocena.",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -56.05671372,
+          -34.89287195
+        ]
+      },
+      "beach": "carrasco",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
+      "safetyFlag": null,
+      "linkComoIr": null
+    },
+    {
+      "id": "MVD:lifeguardstation:27",
+      "name": "Cartagena",
+      "address": "Rambla Republica de México y Cartagena.",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -56.05043638,
+          -34.88952634
+        ]
+      },
+      "beach": "carrasco",
+      "healthFlag": null,
+      "healthFlagCause": null,
+      "healthFlagCauseDesc": null,
+      "safetyFlag": null,
+      "linkComoIr": null
+    },
+    {
+      "id": "MVD:lifeguardstation:28",
+      "name": "Santa Catalina",
+      "address": "Por Camino Burdeos, Pensamiento hasta el final.",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -56.29593918,
+          -34.892667725
+        ]
+      },
+      "beach": "santacatalina",
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
