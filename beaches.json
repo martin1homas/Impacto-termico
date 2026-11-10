@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-10T16:54:45Z",
+  "updated": "2026-11-10T22:13:35Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -337,9 +337,9 @@
         ]
       },
       "beach": "honda",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 7,
+      "healthFlagCauseDesc": "Enterococos",
       "safetyFlag": null,
       "linkComoIr": null
     },
@@ -355,9 +355,9 @@
         ]
       },
       "beach": "honda",
-      "healthFlag": null,
-      "healthFlagCause": null,
-      "healthFlagCauseDesc": null,
+      "healthFlag": "true",
+      "healthFlagCause": 7,
+      "healthFlagCauseDesc": "Enterococos",
       "safetyFlag": null,
       "linkComoIr": null
     },
