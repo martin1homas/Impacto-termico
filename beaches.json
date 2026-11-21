@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T17:15:17Z",
+  "updated": "2026-11-21T22:57:36Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -106,7 +106,7 @@
       "healthFlag": "true",
       "healthFlagCause": 9,
       "healthFlagCauseDesc": "Lluvias",
-      "safetyFlag": "green",
+      "safetyFlag": "yellow",
       "linkComoIr": null
     },
     {
