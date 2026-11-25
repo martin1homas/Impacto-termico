@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-25T12:26:33Z",
+  "updated": "2026-11-25T22:17:26Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -268,7 +268,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": "yellow",
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -448,7 +448,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": "yellow",
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -466,7 +466,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": "yellow",
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -484,7 +484,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": "yellow",
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -574,7 +574,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": "yellow",
+      "safetyFlag": "green",
       "linkComoIr": null
     }
   ]
