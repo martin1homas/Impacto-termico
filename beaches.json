@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-26T04:49:55Z",
+  "updated": "2026-11-26T14:53:28Z",
   "beaches": [
     {
       "id": "MVD:lifeguardstation:1",
@@ -16,7 +16,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -34,7 +34,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -52,7 +52,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -70,7 +70,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -88,7 +88,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "yellow",
       "linkComoIr": null
     },
     {
@@ -106,7 +106,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "yellow",
       "linkComoIr": null
     },
     {
@@ -124,7 +124,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -142,7 +142,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -160,7 +160,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -178,7 +178,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -196,7 +196,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -214,7 +214,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "yellow",
       "linkComoIr": null
     },
     {
@@ -232,7 +232,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "yellow",
       "linkComoIr": null
     },
     {
@@ -250,7 +250,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "yellow",
       "linkComoIr": null
     },
     {
@@ -268,7 +268,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "yellow",
       "linkComoIr": null
     },
     {
@@ -286,7 +286,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -304,7 +304,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -322,7 +322,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "yellow",
       "linkComoIr": null
     },
     {
@@ -340,7 +340,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -358,7 +358,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -376,7 +376,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -394,7 +394,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "yellow",
       "linkComoIr": null
     },
     {
@@ -412,7 +412,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "yellow",
       "linkComoIr": null
     },
     {
@@ -430,7 +430,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -448,7 +448,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "yellow",
       "linkComoIr": null
     },
     {
@@ -466,7 +466,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "yellow",
       "linkComoIr": null
     },
     {
@@ -484,7 +484,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "yellow",
       "linkComoIr": null
     },
     {
@@ -502,7 +502,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -520,7 +520,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -538,7 +538,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -556,7 +556,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "green",
       "linkComoIr": null
     },
     {
@@ -574,7 +574,7 @@
       "healthFlag": null,
       "healthFlagCause": null,
       "healthFlagCauseDesc": null,
-      "safetyFlag": null,
+      "safetyFlag": "yellow",
       "linkComoIr": null
     }
   ]
